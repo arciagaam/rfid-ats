@@ -1,18 +1,22 @@
-const { UserSeeder } = require('./UserSeeder');
-const connectDB = require('./../db/connect');
+import UserSeeder from './UserSeeder.js'
+import connectDB from '../db/connect.js'
+import colors from 'colors'
+
+import dotenv from 'dotenv'
+dotenv.config()
 
 async function run() {
     try {
-        await connectDB(process.env.MONGO_URI);
+        await connectDB(process.env.MONGO_URI)
     } catch (error) {
-        console.log(error);
-        process.exit(1);
+        console.log(error)
+        process.exit(1)
     }
 
-    const seeders = await Promise.allSettled([UserSeeder()]);
+    const seeders = await Promise.allSettled([UserSeeder()])
 
-    console.log('Seeding Complete!');
-    process.exit(0);
+    console.log('Seeding Complete!'.green.bold)
+    process.exit(0)
 }
 
-run();
+run()
