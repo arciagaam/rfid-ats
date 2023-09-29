@@ -11,14 +11,28 @@ const UserSeeder = async () => {
 
     const users = [
         {
-            username: 'admin',
+            firstName: 'Admin',
+            middleName: 'rfid',
+            lastName: 'ats',
+            email: 'admin@email.com',
             password: defaultPassword,
             role: 'admin',
         },
         {
-            username: 'user',
+            firstName: 'John',
+            middleName: 'Michael',
+            lastName: 'Doe',
+            email: 'john@email.com',
             password: defaultPassword,
-            role: 'admin',
+            role: 'user',
+        },
+        {
+            firstName: 'Janee',
+            middleName: 'Michaela',
+            lastName: 'Doe',
+            email: 'jane@email.com',
+            password: defaultPassword,
+            role: 'user',
         },
     ]
 
