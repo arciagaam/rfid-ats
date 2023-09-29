@@ -1,42 +1,41 @@
-require("dotenv").config();
-const connectDB = require('./../db/connect');
+import dotenv from 'dotenv'
+import connectDB from '../db/connect.js'
+import colors from 'colors'
 
-const bcrypt = require("bcrypt");
-const { User } = require('./../models/User');
+import bcrypt from 'bcrypt'
+import User from './../models/User.js'
 
 const UserSeeder = async () => {
-    const arguments = process.argv.slice(2);
-    const defaultPassword = await bcrypt.hash('password', 12);
+    const args = process.argv.slice(2)
+    const defaultPassword = await bcrypt.hash('password', 12)
 
     const users = [
         {
             username: 'admin',
             password: defaultPassword,
-            role: 'admin'
+            role: 'admin',
         },
         {
             username: 'user',
             password: defaultPassword,
-            role: 'admin'
+            role: 'admin',
         },
     ]
 
     try {
-        console.log('Users ..... SEEDING');
+        console.log('Users ..... SEEDING'.cyan.bold)
 
-        if(arguments.includes('fresh')) {
-            await User.deleteMany();
+        if (args.includes('fresh')) {
+            await User.deleteMany()
         }
 
-        await User.create(users);
-
+        await User.create(users)
     } catch (error) {
-        console.log(error);
-        process.exit(1);
+        console.error(`Error: ${error.message}`.red.bold)
+        process.exit(1)
     }
 
-    console.log('Users ..... DONE');
+    console.log('Users ..... DONE'.green.bold)
+}
 
-};
-
-module.exports = { UserSeeder }
+export default UserSeeder
