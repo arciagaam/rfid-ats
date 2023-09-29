@@ -1,5 +1,8 @@
 import express from 'express'
 import connectDB from './db/connect.js'
+
+import userRoutes from './routes/userRoutes.js'
+
 import dotenv from 'dotenv'
 dotenv.config()
 
@@ -9,9 +12,7 @@ connectDB()
 const app = express()
 
 app.get('/', (req, res) => {
-    res.send('RFID')
+    res.send('Api is running...')
 })
 
-app.get('/api/users', (req, res) => {
-    res.send('API')
-})
+app.get('/api/users', (userRoutes) => {})
