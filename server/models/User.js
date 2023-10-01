@@ -24,9 +24,24 @@ const userSchema = new mongoose.Schema(
     { timestamps: true }
 )
 
+// Check if password matches the hashed password in the database
 userSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password)
 }
+
+// Encrypt password before save
+userSchema.pre('save', async function (next) {
+    // If password is not modified, call next middleware
+    if (!this.isModified('password')) {
+        next()
+    }
+
+    // Generate salt
+    const salt = await bcrypt.genSalt(10)
+
+    // Hash password
+    this.password = await bcrypt.hash(this.password, salt)
+})
 
 // Create the User model
 const User = mongoose.model('User', userSchema)

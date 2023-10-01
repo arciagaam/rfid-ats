@@ -1,29 +1,17 @@
 import asyncHandler from '../middleware/asyncHandler.js'
 import User from '../models/User.js'
-import jwt from 'jsonwebtoken'
+import generateToken from '../utils/generateToken.js'
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
 // @access  Public
 const authUser = asyncHandler(async (req, res) => {
-    //console.log(req.body)
-
     const { email, password } = req.body
 
     const user = await User.findOne({ email })
 
     if (user && (await user.matchPassword(password))) {
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-            expiresIn: '30d', //! change to 3d in production
-        })
-
-        // Set JWT as HTTP-only cookie
-        res.cookie('jwt', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV !== 'development',
-            sameSite: 'strict',
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        })
+        generateToken(res, user._id)
 
         res.status(200).json({
             _id: user._id,
@@ -43,7 +31,39 @@ const authUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-    res.send('Register user')
+    const { firstName, middleName, lastName, email, password, role } = req.body
+
+    const userExists = await User.findOne({ email })
+
+    if (userExists) {
+        res.status(400)
+        throw new Error('User already exists')
+    }
+
+    const user = await User.create({
+        firstName,
+        middleName,
+        lastName,
+        email,
+        password,
+        role,
+    })
+
+    if (user) {
+        generateToken(res, user._id)
+
+        res.status(201).json({
+            _id: user._id,
+            firstName: user.firstName,
+            middleName: user.middleName,
+            lastName: user.lastName,
+            email: user.email,
+            role: user.role,
+        })
+    } else {
+        res.status(400)
+        throw new Error('Invalid user data')
+    }
 })
 
 // @desc    Logout user / clear cookie
