@@ -6,7 +6,7 @@ module.exports = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-	],
+  ],
   theme: {
     container: {
       center: true,
@@ -16,12 +16,31 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        gabarito: ['Gabarito', 'cursive']
+      },
+
       colors: {
+        "primary-purple": {
+          '50': '#faf6fe',
+          '100': '#f4e9fe',
+          '200': '#ebd7fd',
+          '300': '#dbb8fa',
+          '400': '#c58af6',
+          '500': '#af5eee',
+          '600': '#9b3de0',
+          '700': '#8d2ed1', //default
+          '800': '#7028a1',
+          '900': '#5c2281',
+          '950': '#3e0c5f',
+        },
+
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

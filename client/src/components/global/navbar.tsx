@@ -7,7 +7,7 @@ type Props = {
 
 const Navbar: FC<Props> = (props) => {
     return (
-        <NavigationMenu orientation='vertical' className='fixed h-screen min-w-[14rem] max-w-[14rem] bg-slate-600 pt-6 flex flex-col gap-10'>
+        <NavigationMenu orientation='vertical' className='shadow-md fixed h-screen min-w-[14rem] max-w-[14rem] py-6 flex flex-col gap-10'>
             {props.children}
         </NavigationMenu>
         // <div className="fixed h-screen min-w-[14rem] max-w-[14rem] bg-slate-600 pt-6 flex justify-center">

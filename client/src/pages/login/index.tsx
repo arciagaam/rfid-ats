@@ -70,59 +70,68 @@ const Login = () => {
     }
 
     return (
-        <div className='flex flex-col items-center justify-center w-full min-h-screen gap-10'>
-            <div className='flex flex-col items-center w-1/2 gap-10 p-10 border rounded-lg'>
-                <div className='flex items-center gap-5'>
-                    <div className='h-20 bg-blue-500 rounded-full min-h-1 aspect-square'></div>
-                    <h1>College Of Industrial Technology</h1>
+        <div className='flex w-full min-h-screen'>
+
+            <div className="flex w-[50%] items-center justify-center bg-primary-purple-700">
+                <div className='flex flex-col items-center gap-5 text-white'>
+                    <div className='h-20 bg-white rounded-full min-h-1 aspect-square'></div>
+                    <h1 className='text-2xl uppercase'>College Of Industrial Technology</h1>
                 </div>
+            </div>
 
-                <Form {...form}>
-                    <form
-                        onSubmit={form.handleSubmit(onSubmit)}
-                        className='flex flex-col w-full gap-3'>
-                        <FormField
-                            control={form.control}
-                            name='email'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder='Enter email' {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+            <div className="flex w-[50%] items-center bg-white p-20">
 
-                        <FormField
-                            control={form.control}
-                            name='password'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type='password'
-                                            placeholder='Enter password'
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                <div className='flex flex-col items-center w-full gap-10 gap1-'>
 
-                        <div className='flex items-center gap-2 mt-3'>
-                            <Checkbox id='remember_me' name='remember_me' />
-                            <Label htmlFor='remember_me'>Remember Me</Label>
-                        </div>
+                    <h2 className='self-start text-5xl'>Login</h2>
 
-                        <Button type='submit' disabled={isLoading}>
-                            Login
-                        </Button>
-                    </form>
-                </Form>
+                    <Form {...form}>
+                        <form
+                            onSubmit={form.handleSubmit(onSubmit)}
+                            className='flex flex-col w-full gap-5'>
+                            <FormField
+                                control={form.control}
+                                name='email'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className='text-base'>Email</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder='Enter email' {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name='password'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className='text-base'>Password</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type='password'
+                                                placeholder='Enter password'
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <div className='flex items-center gap-2'>
+                                <Checkbox id='remember_me' name='remember_me' />
+                                <Label htmlFor='remember_me'>Remember Me</Label>
+                            </div>
+                                
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading ? 'Logging in...' : 'Login'}
+                            </Button>
+                        </form>
+                    </Form>
+                </div>
             </div>
         </div>
     )

@@ -10,6 +10,7 @@ import {
 import Login from '@/pages/login'
 import AdminHome from '@/pages/admin/home'
 import Register from '@/pages/admin/register'
+import Users from '@/pages/admin/users'
 // import UserHome from '@/pages/user/home';
 
 // toast
@@ -26,6 +27,7 @@ const router = createBrowserRouter(
             <Route path='/admin' element={<AdminNav />}>
                 <Route index element={<AdminHome />} />
                 <Route path='register' element={<Register />} />
+                <Route path='users' element={<Users />} />
             </Route>
         </Route>
     )
