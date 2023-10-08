@@ -23,13 +23,7 @@ import { Label } from '@radix-ui/react-label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { loginSchema } from '@/validators/auth'
 
-interface ErrorResponse {
-    status: number
-    data: {
-        message: string
-        stack: string
-    }
-}
+import { ErrorResponse } from '@/types/index'
 
 const Login = () => {
     const dispatch = useDispatch()

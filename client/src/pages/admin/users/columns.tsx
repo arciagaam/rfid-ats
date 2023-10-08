@@ -87,6 +87,9 @@ export const columns: ColumnDef<Log>[] = [
                         <DropdownMenuItem onClick={() => navigator.clipboard.writeText(log.id)}>
                             View User
                         </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(log.id)}>
+                            Delete User
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )
