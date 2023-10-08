@@ -1,6 +1,7 @@
 import asyncHandler from '../middleware/asyncHandler.js'
 import User from '../models/User.js'
 import generateToken from '../utils/generateToken.js'
+import bcrypt from 'bcrypt'
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
@@ -20,6 +21,7 @@ const authUser = asyncHandler(async (req, res) => {
             lastName: user.lastName,
             email: user.email,
             role: user.role,
+            status: user.status,
         })
     } else {
         res.status(401)
@@ -31,7 +33,7 @@ const authUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-    const { firstName, middleName, lastName, email, password, role } = req.body
+    const { firstName, middleName, lastName, email, password, role, status } = req.body
 
     const userExists = await User.findOne({ email })
 
@@ -47,6 +49,7 @@ const registerUser = asyncHandler(async (req, res) => {
         email,
         password,
         role,
+        status,
     })
 
     if (user) {
@@ -59,6 +62,7 @@ const registerUser = asyncHandler(async (req, res) => {
             lastName: user.lastName,
             email: user.email,
             role: user.role,
+            status: user.status,
         })
     } else {
         res.status(400)
@@ -92,6 +96,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
             lastName: user.lastName,
             email: user.email,
             role: user.role,
+            status: user.status,
         })
     } else {
         res.status(404)
@@ -110,6 +115,8 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         user.middleName = req.body.middleName || user.middleName
         user.lastName = req.body.lastName || user.lastName
         user.email = req.body.email || user.email
+        user.role = req.body.role || user.role
+        user.status = req.body.status || user.status
 
         if (req.body.password) {
             user.password = req.body.password
@@ -124,6 +131,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
             lastName: updatedUser.lastName,
             email: updatedUser.email,
             role: updatedUser.role,
+            status: updatedUser.status,
         })
     } else {
         res.status(404)
@@ -135,7 +143,8 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-    res.send('Get users')
+    const users = await User.find({})
+    res.status(200).json(users)
 })
 
 // @desc    Get user by ID
