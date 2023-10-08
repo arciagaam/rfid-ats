@@ -16,9 +16,6 @@ module.exports = {
       },
     },
     extend: {
-      fontFamily: {
-        gabarito: ['Gabarito', 'cursive']
-      },
 
       colors: {
         "primary-purple": {

@@ -1,4 +1,4 @@
-import { USERS_URL } from '@/constants/constants'
+import { BASE_URL, USERS_URL } from '@/constants/constants'
 import { apiSlice } from '@/slices/apiSlice'
 
 export const usersApiSlice = apiSlice.injectEndpoints({
@@ -23,7 +23,12 @@ export const usersApiSlice = apiSlice.injectEndpoints({
             providesTags: ['User'],
             keepUnusedDataFor: 5,
         }),
+        getUser: builder.query({
+            query: () => ({
+                url: `${BASE_URL}/1`
+            })
+        })
     }),
 })
 
-export const { useLoginMutation, useLogoutMutation, useGetUsersQuery } = usersApiSlice
+export const { useLoginMutation, useLogoutMutation, useGetUsersQuery, useGetUserQuery } = usersApiSlice

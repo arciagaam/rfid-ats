@@ -22,16 +22,18 @@ import AdminNav from '@/components/global/adminNav'
 
 // private router
 import PrivateRoute from '@/components/global/privateRoute'
+import ShowUser from '@/pages/admin/users/show'
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path='/'>
             <Route index element={<Login />} />
             <Route path='/admin' element={<AdminNav />}>
-                <Route index element={<AdminHome />} />
+                <Route path="home" element={<AdminHome />} />
 
                 <Route path='users'>
                     <Route index element={<Users />} />
+                    <Route path=':id' element={<ShowUser />} />
                     <Route path='register' element={<Register />} />
                 </Route>
             </Route>

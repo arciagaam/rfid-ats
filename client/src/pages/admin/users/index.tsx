@@ -14,7 +14,6 @@ import { useGetUsersQuery } from '@/slices/usersApiSlice'
 
 const Users = () => {
     const [data, setData] = useState<Log[]>([])
-
     const { data: users } = useGetUsersQuery(null)
 
     useEffect(() => {
@@ -30,7 +29,7 @@ const Users = () => {
     }, [users])
 
     return (
-        <div className='flex flex-col gap-10'>
+        <div className='flex flex-col gap-10 text-[#1e1e1e]'>
             <div className='flex w-full justify-between'>
                 <h1 className='text-xl font-bold'>Users</h1>
                 <Button asChild>
