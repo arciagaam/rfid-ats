@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 
 const attendanceLogSchema = new mongoose.Schema(
     {
@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema(
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
         role: { type: String, required: true },
+        status: { type: String, required: true },
         attendanceLog: [attendanceLogSchema],
     },
     { timestamps: true }
@@ -37,9 +38,7 @@ userSchema.pre('save', async function (next) {
     }
 
     // Generate salt
-    const salt = await bcrypt.genSalt(10)
-
-    // Hash password
+    const salt = await bcrypt.genSalt(12)
     this.password = await bcrypt.hash(this.password, salt)
 })
 
