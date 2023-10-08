@@ -10,7 +10,6 @@ const attendanceLogSchema = new mongoose.Schema(
     { timestamps: true }
 )
 
-// Define the User schema
 const userSchema = new mongoose.Schema(
     {
         firstName: { type: String, required: true },

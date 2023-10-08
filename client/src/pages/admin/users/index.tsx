@@ -10,12 +10,11 @@ const Users = () => {
     const [data, setData] = useState<Log[]>([])
 
     const { data: users } = useGetUsersQuery(null)
-    console.log(users)
 
     useEffect(() => {
         if (users) {
             const simplifiedData = users.map((user: IUserRow) => ({
-                name: `${user.firstName} ${user.lastName}`,
+                name: `${user.firstName} ${user.middleName} ${user.lastName}`,
                 email: user.email,
                 role: user.role,
                 status: user.status,

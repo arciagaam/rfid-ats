@@ -22,6 +22,7 @@ export type Log = {
 
 export interface IUserRow extends Log {
     firstName: string
+    middleName: string
     lastName: string
 }
 
