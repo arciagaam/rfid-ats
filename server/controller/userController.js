@@ -177,7 +177,9 @@ const getUsers = asyncHandler(async (req, res) => {
 // @route   GET /api/users/:id
 // @access  Private/Admin
 const getUserByID = asyncHandler(async (req, res) => {
-    res.send('Get user by ID')
+    const {id} = req.params;
+    const user = await User.findOne({_id:id});
+    res.status(200).json(user)
 })
 
 // @desc    Update user by ID

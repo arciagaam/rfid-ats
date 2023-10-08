@@ -8,12 +8,14 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
+import { Navigate, useNavigate } from 'react-router-dom'
+
 
 export type Log = {
+    id: string,
     name: string
     email: string
     role: string
@@ -21,6 +23,7 @@ export type Log = {
 }
 
 export interface IUserRow extends Log {
+    _id: string
     firstName: string
     middleName: string
     lastName: string
@@ -72,7 +75,7 @@ export const columns: ColumnDef<Log>[] = [
         cell: ({ row }) => {
             const log = row.original
 
-            return (
+            return (    
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant='ghost' className='w-8 h-8 p-0'>
@@ -84,7 +87,7 @@ export const columns: ColumnDef<Log>[] = [
                     <DropdownMenuContent align='end'>
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(log.id)}>
+                        <DropdownMenuItem onClick={() => {location.href=`users/${log.id}`}}>
                             View User
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => navigator.clipboard.writeText(log.id)}>

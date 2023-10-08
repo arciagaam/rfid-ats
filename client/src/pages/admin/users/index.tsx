@@ -20,6 +20,7 @@ const Users = () => {
     useEffect(() => {
         if (users) {
             const tableData = users.map((user: IUserRow) => ({
+                id: user._id,
                 name: `${user.firstName} ${user.middleName} ${user.lastName}`,
                 email: user.email,
                 role: user.role,
