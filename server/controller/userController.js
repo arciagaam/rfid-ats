@@ -143,8 +143,13 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-    const users = await User.find({})
-    res.status(200).json(users)
+    try {
+        const users = await User.find({})
+        res.status(200).json(users)
+    } catch (error) {
+        res.status(404)
+        throw new Error('Something went wrong')
+    }
 })
 
 // @desc    Get user by ID
