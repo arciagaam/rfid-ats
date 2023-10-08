@@ -2,7 +2,7 @@ import express from 'express'
 import connectDB from './db/connect.js'
 import cookieParser from 'cookie-parser'
 import { notFound, errorHandler } from './middleware/errorMiddleware.js'
-
+import cors from 'cors';
 import userRoutes from './routes/userRoutes.js'
 
 import dotenv from 'dotenv'
@@ -16,6 +16,7 @@ const app = express()
 // Body parser middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cors());
 
 // Cookie parser middleware
 app.use(cookieParser())

@@ -31,15 +31,9 @@ const AdminNav = () => {
                 <div className='h-20 rounded-full bg-primary-purple-700 min-h-5 aspect-square'></div>
 
                 <div className='flex flex-col w-full h-full'>
-                    
                         <NavLink className='px-5 py-5 transition-all text-primary-purple-800 hover:bg-primary-purple-800 hover:text-white' to='/admin'> Home </NavLink>
-                   
-                        <NavLink className='px-5 py-5 transition-all text-primary-purple-800 hover:bg-primary-purple-800 hover:text-white' to='register'> Register </NavLink>
-                   
                         <NavLink className='px-5 py-5 transition-all text-primary-purple-800 hover:bg-primary-purple-800 hover:text-white' to='users'> Users </NavLink>
-                   
                         <button onClick={logoutHandler} className='px-5 py-5 mt-auto text-red-500 transition-all hover:bg-red-500 hover:text-white'> Logout </button>
-                   
                 </div>
             </Navbar>
 
