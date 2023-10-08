@@ -18,7 +18,40 @@ const userSchema = new mongoose.Schema(
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
         role: { type: String, required: true },
-        status: { type: String, required: true },
+        status: { type: String },
+        idNumber: {
+            type: String,
+            required: function () {
+                return this.role !== 'admin'
+            },
+        },
+        rfid: {
+            type: String,
+        },
+        birthdate: {
+            type: Date,
+            required: function () {
+                return this.role !== 'admin'
+            },
+        },
+        sex: {
+            type: String,
+            required: function () {
+                return this.role !== 'admin'
+            },
+        },
+        contactNumber: {
+            type: String,
+            required: function () {
+                return this.role !== 'admin'
+            },
+        },
+        address: {
+            type: String,
+            required: function () {
+                return this.role !== 'admin'
+            },
+        },
         attendanceLog: [attendanceLogSchema],
     },
     { timestamps: true }
