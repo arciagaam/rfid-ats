@@ -7,7 +7,8 @@ import { setCredentials } from '@/slices/authSlice'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-toastify'
-
+import logo from '../../assets/images/logo.png' 
+import wave from '../../assets/images/wave.svg'
 import {
     Form,
     FormControl,
@@ -35,7 +36,7 @@ const Login = () => {
 
     useEffect(() => {
         if (userInfo) {
-            navigate('/admin')
+            navigate('/admin/home')
         }
     }, [userInfo, navigate])
 
@@ -63,15 +64,19 @@ const Login = () => {
     }
 
     return (
-        <div className='flex w-full min-h-screen'>
-            <div className='flex w-[50%] items-center justify-center bg-primary-purple-700'>
-                <div className='flex flex-col items-center gap-5 text-white'>
-                    <div className='h-20 bg-white rounded-full min-h-1 aspect-square'></div>
-                    <h1 className='text-2xl uppercase'>College Of Industrial Technology</h1>
+        <div className='relative flex w-full min-h-screen text-[#1e1e1e]'>
+            <img src={wave} alt="layered waves" className='absolute bottom-0 w-full' />
+
+            <div className='flex w-[50%] items-center justify-center z-10'>
+                <div className='flex flex-col items-center gap-5'>
+                    <div className='h-[13rem] bg-white rounded-full min-h-1 aspect-square'>
+                        <img src={logo} alt="school logo" className='h-full w-full' />
+                    </div>
+                    <h1 className='text-2xl uppercase font-bold'>College Of Computer Studies</h1>
                 </div>
             </div>
 
-            <div className='flex w-[50%] items-center bg-white p-20'>
+            <div className='flex w-[50%] items-center p-20 z-10'>
                 <div className='flex flex-col items-center w-full gap-10 gap1-'>
                     <h2 className='self-start text-5xl'>Login</h2>
 
@@ -116,7 +121,7 @@ const Login = () => {
                                 <Label htmlFor='remember_me'>Remember Me</Label>
                             </div>
 
-                            <Button type='submit' disabled={isLoading}>
+                            <Button type='submit' disabled={isLoading} className='shadow-md'>
                                 {isLoading ? 'Logging in...' : 'Login'}
                             </Button>
                         </form>

@@ -1,11 +1,14 @@
-import React from 'react'
 import Navbar from './navbar'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '@/store/store'
 import { useLogoutMutation } from '@/slices/usersApiSlice'
 import { logout } from '@/slices/authSlice'
-import { Button } from '../ui/button'
+import { MdOutlineSpaceDashboard, MdSpaceDashboard } from 'react-icons/md'
+import {PiUsersFill, PiUsersBold} from 'react-icons/pi'
+import {RiLogoutBoxLine} from 'react-icons/ri'
+
+import logo from './../../assets/images/logo.png'
 
 const AdminNav = () => {
     const { userInfo } = useSelector((state: RootState) => state.auth)
@@ -28,12 +31,48 @@ const AdminNav = () => {
     return (
         <>
             <Navbar>
-                <div className='h-20 rounded-full bg-primary-purple-700 min-h-5 aspect-square'></div>
+                <div className="flex flex-col items-center gap-3 px-5">
+                    <div className='h-20 rounded-full min-h-5 aspect-square'>
+                        <img src={logo} alt="" className='h-full' />
+                    </div>
+
+                    <h2 className='text-center'>College of Computer Studies</h2>
+
+                </div>
 
                 <div className='flex flex-col w-full h-full'>
-                        <NavLink className='px-5 py-5 transition-all text-primary-purple-800 hover:bg-primary-purple-800 hover:text-white' to='/admin'> Home </NavLink>
-                        <NavLink className='px-5 py-5 transition-all text-primary-purple-800 hover:bg-primary-purple-800 hover:text-white' to='users'> Users </NavLink>
-                        <button onClick={logoutHandler} className='px-5 py-5 mt-auto text-red-500 transition-all hover:bg-red-500 hover:text-white'> Logout </button>
+                    <NavLink className='aria-[current]:bg-primary-purple-800 aria-[current]:text-white px-5 py-5 transition-all text-black/30 hover:bg-primary-purple-800 hover:text-white flex items-center gap-2' to='home'>
+                        {({ isActive }) => (
+                            isActive ? 
+                            <>
+                                <MdSpaceDashboard size={20} />
+                                Home
+                            </>
+                            : 
+                            <>
+                                <MdOutlineSpaceDashboard size={20} />
+                                Home
+                            </>
+                        )}
+                    </NavLink>
+
+                    <NavLink className='aria-[current]:bg-primary-purple-800 aria-[current]:text-white px-5 py-5 transition-all text-black/30 hover:bg-primary-purple-800 hover:text-white flex items-center gap-2' to='users'>
+                        {({ isActive }) => (
+                            isActive ? 
+                            <>
+                                <PiUsersFill size={20} />
+                                Users
+                            </>
+                            : 
+                            <>
+                                <PiUsersBold size={20} />
+                                Users
+                            </>
+                        )}
+                    </NavLink>
+                    <button onClick={logoutHandler} className='px-5 py-5 mt-auto text-red-500 transition-all hover:bg-red-500 hover:text-white text-left flex gap-2 items-center'> 
+                        <RiLogoutBoxLine size={20} /> Logout 
+                    </button>
                 </div>
             </Navbar>
 
