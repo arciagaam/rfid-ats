@@ -9,13 +9,15 @@
         "server": "nodemon server.js",
         "client": "npm run dev --prefix ../client",
         "dev": "concurrently \"npm run server\" \"npm run client\"",
-        "db:seed": "node seeders/runSeeders.js"
+        "db:import": "node seeders/runSeeder.js",
+        "db:destroy": "node seeders/runSeeder.js -d"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
         "bcrypt": "^5.1.1",
+        "bcryptjs": "^2.4.3",
         "colors": "^1.4.0",
         "concurrently": "^8.2.1",
         "cookie-parser": "^1.4.6",

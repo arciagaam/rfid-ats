@@ -1,29 +1,18 @@
 import asyncHandler from '../middleware/asyncHandler.js'
 import User from '../models/User.js'
-import jwt from 'jsonwebtoken'
+import generateToken from '../utils/generateToken.js'
+import bcrypt from 'bcrypt'
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
 // @access  Public
 const authUser = asyncHandler(async (req, res) => {
-    //console.log(req.body)
-
     const { email, password } = req.body
 
     const user = await User.findOne({ email })
 
     if (user && (await user.matchPassword(password))) {
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-            expiresIn: '30d', //! change to 3d in production
-        })
-
-        // Set JWT as HTTP-only cookie
-        res.cookie('jwt', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV !== 'development',
-            sameSite: 'strict',
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        })
+        generateToken(res, user._id)
 
         res.status(200).json({
             _id: user._id,
@@ -32,6 +21,7 @@ const authUser = asyncHandler(async (req, res) => {
             lastName: user.lastName,
             email: user.email,
             role: user.role,
+            status: user.status,
         })
     } else {
         res.status(401)
@@ -43,7 +33,41 @@ const authUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-    res.send('Register user')
+    const { firstName, middleName, lastName, email, password, role, status } = req.body
+
+    const userExists = await User.findOne({ email })
+
+    if (userExists) {
+        res.status(400)
+        throw new Error('User already exists')
+    }
+
+    const user = await User.create({
+        firstName,
+        middleName,
+        lastName,
+        email,
+        password,
+        role,
+        status,
+    })
+
+    if (user) {
+        generateToken(res, user._id)
+
+        res.status(201).json({
+            _id: user._id,
+            firstName: user.firstName,
+            middleName: user.middleName,
+            lastName: user.lastName,
+            email: user.email,
+            role: user.role,
+            status: user.status,
+        })
+    } else {
+        res.status(400)
+        throw new Error('Invalid user data')
+    }
 })
 
 // @desc    Logout user / clear cookie
@@ -72,6 +96,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
             lastName: user.lastName,
             email: user.email,
             role: user.role,
+            status: user.status,
         })
     } else {
         res.status(404)
@@ -90,6 +115,8 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         user.middleName = req.body.middleName || user.middleName
         user.lastName = req.body.lastName || user.lastName
         user.email = req.body.email || user.email
+        user.role = req.body.role || user.role
+        user.status = req.body.status || user.status
 
         if (req.body.password) {
             user.password = req.body.password
@@ -104,6 +131,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
             lastName: updatedUser.lastName,
             email: updatedUser.email,
             role: updatedUser.role,
+            status: updatedUser.status,
         })
     } else {
         res.status(404)
@@ -115,14 +143,8 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-
-    try {
-        const users = await User.find({});
-        res.status(200).json(users);
-    } catch (error) {   
-        res.status(404)
-        throw new Error('Something went wrong')
-    }
+    const users = await User.find({})
+    res.status(200).json(users)
 })
 
 // @desc    Get user by ID
