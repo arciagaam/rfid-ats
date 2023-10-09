@@ -72,7 +72,7 @@ const UserActions = ({ userId }: { userId: string }) => {
                 </DialogHeader>
                 <DialogFooter>
                     <Button onClick={() => handleDeleteUser(userId)} disabled={loadingDelete}>
-                        Delete
+                        {loadingDelete ? 'Deleting...' : 'Delete'}
                     </Button>
                 </DialogFooter>
             </DialogContent>
