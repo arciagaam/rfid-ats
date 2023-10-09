@@ -23,6 +23,8 @@ import AdminNav from '@/components/global/adminNav'
 // private router
 import PrivateRoute from '@/components/global/privateRoute'
 import ShowUser from '@/pages/admin/users/show'
+import FacultySchedule from '@/pages/faculty'
+import AccomplishmentReports from '@/pages/accomplishment_reports'
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -30,6 +32,8 @@ const router = createBrowserRouter(
             <Route index element={<Login />} />
             <Route path='/admin' element={<AdminNav />}>
                 <Route path="home" element={<AdminHome />} />
+                    <Route path='faculty' element={<FacultySchedule />} />
+                    <Route path='accomplishment-reports' element={<AccomplishmentReports />} />
 
                 <Route path='users'>
                     <Route index element={<Users />} />
