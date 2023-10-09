@@ -25,6 +25,12 @@ const userSchema = new mongoose.Schema(
                 return this.role !== 'admin'
             },
         },
+        department: {
+            type: String,
+            required: function() {
+                return this.role !== 'admin'
+            }
+        },
         rfid: {
             type: String,
         },

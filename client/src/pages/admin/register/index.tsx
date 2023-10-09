@@ -51,6 +51,7 @@ const Register = () => {
             email: '',
             password: '',
             role: selectedRole,
+            department: '',
             idNumber: '',
             rfid: '',
             sex: '',
@@ -69,6 +70,7 @@ const Register = () => {
             password,
             idNumber,
             rfid,
+            department,
             birthdate,
             sex,
             contactNumber,
@@ -83,6 +85,7 @@ const Register = () => {
                 email,
                 password,
                 role: selectedRole,
+                department,
                 status: rfid == '' ? 'not registered' : 'active',
                 idNumber,
                 rfid,
@@ -222,144 +225,180 @@ const Register = () => {
                                     </FormItem>
                                 )}
                             />
+
                         </div>
 
                         {selectedRole == 'faculty' ? (
-                            <div className='grid grid-cols-3 gap-5 w-full'>
-                                <FormField
-                                    control={form.control}
-                                    name='idNumber'
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className='text-base'>ID Number</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder='Enter ID Number' {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                            <>
+                                <br/>
 
-                                <FormField
-                                    control={form.control}
-                                    name='rfid'
-                                    render={({ field }) => (
-                                        <FormItem className='col-span-2'>
-                                            <FormLabel className='text-base'>
-                                                RFID{' '}
-                                                <span className='text-slate-400 text-xs ml-1'>
-                                                    Optional
-                                                </span>
-                                            </FormLabel>
-                                            <FormControl>
-                                                {/* gawing disabled to pag may pantap na or pwede naman tap or enter*/}
-                                                <Input placeholder='Tap or Enter RFID' {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name='birthdate'
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className='text-base'>Birthdate</FormLabel>
-                                            <FormControl>
-                                                <Popover>
-                                                    <PopoverTrigger asChild>
-                                                        <Button
-                                                            variant={'outline'}
-                                                            className={cn(
-                                                                'w-full justify-start text-left font-normal',
-                                                                !field.value &&
-                                                                    'text-muted-foreground'
-                                                            )}>
-                                                            <CalendarIcon className='mr-2 h-4 w-4' />
-                                                            {field.value ? (
-                                                                format(field.value, 'PPP')
-                                                            ) : (
-                                                                <span>Pick a date</span>
-                                                            )}
-                                                        </Button>
-                                                    </PopoverTrigger>
-                                                    <PopoverContent className='w-auto p-0'>
-                                                        <Calendar
-                                                            mode='single'
-                                                            selected={field.value}
-                                                            onSelect={field.onChange}
-                                                            disabled={(date) =>
-                                                                date > new Date() ||
-                                                                date < new Date('1900-01-01')
-                                                            }
-                                                            initialFocus
-                                                        />
-                                                    </PopoverContent>
-                                                </Popover>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name='sex'
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className='text-base'>Sex</FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value}>
+                                <div className='grid grid-cols-3 gap-5 w-full'>
+                                    <FormField
+                                        control={form.control}
+                                        name='idNumber'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className='text-base'>ID Number</FormLabel>
                                                 <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder='Select sex' />
-                                                    </SelectTrigger>
+                                                    <Input placeholder='Enter ID Number' {...field} />
                                                 </FormControl>
-                                                <SelectContent>
-                                                    <SelectItem value='male'>Male</SelectItem>
-                                                    <SelectItem value='female'>Female</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
 
-                                <FormField
-                                    control={form.control}
-                                    name='contactNumber'
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className='text-base'>
-                                                Contact Number
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder='Enter Contact Number'
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
 
-                                <FormField
-                                    control={form.control}
-                                    name='address'
-                                    render={({ field }) => (
-                                        <FormItem className='col-span-3'>
-                                            <FormLabel className='text-base'>Address</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder='Enter Address' {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
+                                    <FormField
+                                        control={form.control}
+                                        name='department'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className='text-base'>Department</FormLabel>
+                                                <Select
+                                                    onValueChange={(value) => {
+                                                        field.onChange(value)
+                                                    }}
+                                                    defaultValue={field.value}>
+                                                    <FormControl>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder='Select user department' />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <SelectItem value='it'>IT</SelectItem>
+                                                        <SelectItem value='cs'>CS</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name='rfid'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className='text-base'>
+                                                    RFID{' '}
+                                                    <span className='text-slate-400 text-xs ml-1'>
+                                                        Optional
+                                                    </span>
+                                                </FormLabel>
+                                                <FormControl>
+                                                    
+                                                    <Input placeholder='Tap or Enter RFID' {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name='birthdate'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className='text-base'>Birthdate</FormLabel>
+                                                <FormControl>
+                                                    <Popover>
+                                                        <PopoverTrigger asChild>
+                                                            <Button
+                                                                variant={'outline'}
+                                                                className={cn(
+                                                                    'w-full justify-start text-left font-normal',
+                                                                    !field.value &&
+                                                                    'text-muted-foreground'
+                                                                )}>
+                                                                <CalendarIcon className='mr-2 h-4 w-4' />
+                                                                {field.value ? (
+                                                                    format(field.value, 'PPP')
+                                                                ) : (
+                                                                    <span>Pick a date</span>
+                                                                )}
+                                                            </Button>
+                                                        </PopoverTrigger>
+                                                        <PopoverContent className='w-auto p-0'>
+                                                            <Calendar
+                                                                mode='single'
+                                                                selected={field.value}
+                                                                onSelect={field.onChange}
+                                                                disabled={(date) =>
+                                                                    date > new Date() ||
+                                                                    date < new Date('1900-01-01')
+                                                                }
+                                                                initialFocus
+                                                            />
+                                                        </PopoverContent>
+                                                    </Popover>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name='sex'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className='text-base'>Sex</FormLabel>
+                                                <Select
+                                                    onValueChange={field.onChange}
+                                                    defaultValue={field.value}>
+                                                    <FormControl>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder='Select sex' />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <SelectItem value='male'>Male</SelectItem>
+                                                        <SelectItem value='female'>Female</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name='contactNumber'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className='text-base'>
+                                                    Contact Number
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <div className="flex items-center bg-white rounded-md focus-within:ring-ring focus-within:ring-2 focus-within:ring-offset-2">
+                                                        <div className='text-[#1e1e1e80] flex items-center justify-center text-sm rounded-l-md pl-3 border border-input ring-offset-background h-10 border-r-0 py-2'>+63</div>
+                                                        <Input
+                                                            className='border-l-0 rounded-l-none w-full focus-visible:ring-0 focus-visible:ring-offset-0'
+                                                            placeholder='Enter Contact Number'
+                                                            {...field}
+                                                        />
+                                                    </div>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name='address'
+                                        render={({ field }) => (
+                                            <FormItem className='col-span-3'>
+                                                <FormLabel className='text-base'>Address</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder='Enter Address' {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            </>
                         ) : null}
 
                         <Button type='submit' disabled={isLoading}>
