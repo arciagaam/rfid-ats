@@ -1,21 +1,12 @@
 import { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal, ArrowUpDown } from 'lucide-react'
+import { ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
-import { Navigate, useNavigate } from 'react-router-dom'
-
+import UserActions from './useractions'
 
 export type Log = {
-    id: string,
+    id: string
     name: string
     email: string
     role: string
@@ -75,27 +66,7 @@ export const columns: ColumnDef<Log>[] = [
         cell: ({ row }) => {
             const log = row.original
 
-            return (    
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant='ghost' className='w-8 h-8 p-0'>
-                            <span className='sr-only'>Open menu</span>
-                            <MoreHorizontal className='w-4 h-4' />
-                        </Button>
-                    </DropdownMenuTrigger>
-
-                    <DropdownMenuContent align='end'>
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-                        <DropdownMenuItem onClick={() => {location.href=`users/${log.id}`}}>
-                            View User
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(log.id)}>
-                            Delete User
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            )
+            return <UserActions userId={log.id} />
         },
     },
 ]

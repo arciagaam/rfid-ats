@@ -7,7 +7,7 @@ import { setCredentials } from '@/slices/authSlice'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-toastify'
-import logo from '../../assets/images/logo.png' 
+import logo from '../../assets/images/logo.png'
 import wave from '../../assets/images/wave.svg'
 import {
     Form,
@@ -24,7 +24,7 @@ import { Label } from '@radix-ui/react-label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { loginSchema } from '@/validators/auth'
 
-import { ErrorResponse } from '@/types/index'
+import { IErrorResponse } from '@/types/index'
 
 const Login = () => {
     const dispatch = useDispatch()
@@ -57,7 +57,7 @@ const Login = () => {
             //navigate('/admin')
         } catch (error) {
             //toast.error(error?.data?.message || error.error)
-            toast.error((error as ErrorResponse)?.data?.message)
+            toast.error((error as IErrorResponse)?.data?.message || (error as IErrorResponse).error)
             // toast.error('Error')
             console.log(error)
         }
@@ -65,12 +65,12 @@ const Login = () => {
 
     return (
         <div className='relative flex w-full min-h-screen text-[#1e1e1e]'>
-            <img src={wave} alt="layered waves" className='absolute bottom-0 w-full' />
+            <img src={wave} alt='layered waves' className='absolute bottom-0 w-full' />
 
             <div className='flex w-[50%] items-center justify-center z-10'>
                 <div className='flex flex-col items-center gap-5'>
                     <div className='h-[13rem] bg-white rounded-full min-h-1 aspect-square'>
-                        <img src={logo} alt="school logo" className='h-full w-full' />
+                        <img src={logo} alt='school logo' className='h-full w-full' />
                     </div>
                     <h1 className='text-2xl uppercase font-bold'>College Of Computer Studies</h1>
                 </div>
