@@ -216,7 +216,7 @@ const Register = () => {
                                                     <SelectValue placeholder='Select user role' />
                                                 </SelectTrigger>
                                             </FormControl>
-                                            <SelectContent>
+                                            <SelectContent >
                                                 <SelectItem value='admin'>Admin</SelectItem>
                                                 <SelectItem value='faculty'>Faculty</SelectItem>
                                             </SelectContent>

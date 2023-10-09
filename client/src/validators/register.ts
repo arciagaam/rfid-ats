@@ -2,7 +2,7 @@ import { ZodSchema, z } from 'zod'
 
 export const registerSchema = z.object({
     firstName: z.string(),
-    middleName: z.string(),
+    middleName: z.string().optional(),
     lastName: z.string(),
     email: z.string().email(),
     password: z.string(),
@@ -31,20 +31,22 @@ export const registerSchema = z.object({
             });
         }
 
+        const nullables = ['middleName', 'rfid', 'status']
+
         for(const name in schema) {
-            if (name == 'rfid') continue;
+            if (nullables.includes(name)) continue;
 
             const def: keyof typeof schema = name;
-
-            if(!schema[def]) {
+            console.log(def, schema[def]);
+            if(schema[def] == '') {
                 refinementContext.addIssue({
                     code: z.ZodIssueCode.custom,
                     message: `The ${name} field is required`,
-                    path: [...refinementContext.path, name]
+                    path: [name]
                 });
             }
         }
+
     }
 
-    return true;
 })
