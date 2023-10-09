@@ -27,8 +27,8 @@ const Users = () => {
                 status: user.status,
             }))
             setData(tableData)
-            refetch()
         }
+        refetch()
     }, [users, refetch])
 
     return (
@@ -39,11 +39,11 @@ const Users = () => {
             <DataTable
                 columns={columns}
                 data={data}
-                component={
+                component={[
                     <Button asChild>
                         <Link to='register'>Add User</Link>
-                    </Button>
-                }
+                    </Button>,
+                ]}
             />
         </div>
     )

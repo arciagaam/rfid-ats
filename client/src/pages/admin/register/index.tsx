@@ -32,10 +32,8 @@ import { Calendar } from '@/components/ui/calendar'
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
-import { ErrorResponse } from '@/types/index'
+import { IErrorResponse } from '@/types/index'
 import { useRegisterMutation } from '@/slices/usersApiSlice'
-import { useDispatch } from 'react-redux'
-import { stat } from 'fs'
 
 const Register = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -43,8 +41,6 @@ const Register = () => {
     // console.log(selectedRole)
 
     const [register, { isLoading: loadingRegister }] = useRegisterMutation()
-
-    const dispatch = useDispatch()
 
     const form = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
@@ -80,7 +76,7 @@ const Register = () => {
         } = data
 
         try {
-            const res = await register({
+            await register({
                 firstName,
                 middleName,
                 lastName,
@@ -96,9 +92,8 @@ const Register = () => {
                 address,
             }).unwrap()
             toast.success('User successfully registered')
-            dispatch({ ...res })
         } catch (error) {
-            toast.error((error as ErrorResponse)?.data?.message)
+            toast.error((error as IErrorResponse)?.data?.message || (error as IErrorResponse).error)
         }
     }
 

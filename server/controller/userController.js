@@ -73,8 +73,6 @@ const registerUser = asyncHandler(async (req, res) => {
     })
 
     if (user) {
-        generateToken(res, user._id)
-
         res.status(201).json({
             _id: user._id,
             firstName: user.firstName,
@@ -177,8 +175,8 @@ const getUsers = asyncHandler(async (req, res) => {
 // @route   GET /api/users/:id
 // @access  Private/Admin
 const getUserByID = asyncHandler(async (req, res) => {
-    const {id} = req.params;
-    const user = await User.findOne({_id:id});
+    const { id } = req.params
+    const user = await User.findOne({ _id: id })
     res.status(200).json(user)
 })
 
@@ -193,7 +191,15 @@ const updateUserByID = asyncHandler(async (req, res) => {
 // @route   DELETE /api/users/:id
 // @access  Private/Admin
 const deleteUser = asyncHandler(async (req, res) => {
-    res.send('Delete user')
+    const user = await User.findById(req.params.id)
+
+    if (user) {
+        await User.deleteOne({ _id: user._id })
+        res.status(200).json({ message: 'User deleted' })
+    } else {
+        res.status(404)
+        throw new Error('User not found')
+    }
 })
 
 export {
