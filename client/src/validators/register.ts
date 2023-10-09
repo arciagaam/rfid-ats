@@ -37,7 +37,6 @@ export const registerSchema = z.object({
             if (nullables.includes(name)) continue;
 
             const def: keyof typeof schema = name;
-            console.log(def, schema[def]);
             if(schema[def] == '') {
                 refinementContext.addIssue({
                     code: z.ZodIssueCode.custom,
