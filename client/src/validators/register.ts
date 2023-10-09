@@ -12,6 +12,6 @@ export const registerSchema = z.object({
     rfid: z.string().optional(),
     birthdate: z.date().optional(),
     sex: z.string().optional(),
-    contactNumber: z.string().optional(),
+    contactNumber: z.string().regex(new RegExp(/^[1-9][0-9]{9}$/), {message: 'Invalid format'}).optional(),
     address: z.string().optional(),
 })
