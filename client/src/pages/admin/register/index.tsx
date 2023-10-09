@@ -38,7 +38,6 @@ import { useRegisterMutation } from '@/slices/usersApiSlice'
 const Register = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [selectedRole, setSelectedRole] = useState<string>('')
-    // console.log(selectedRole)
 
     const [register, { isLoading: loadingRegister }] = useRegisterMutation()
 
@@ -76,6 +75,9 @@ const Register = () => {
         } = data
 
         try {
+            const formattedBirthdate = format(birthdate!, 'yyyy-MM-dd')
+            const birthdateISO = new Date(formattedBirthdate).toISOString()
+
             await register({
                 firstName,
                 middleName,
@@ -86,7 +88,7 @@ const Register = () => {
                 status: rfid == '' ? 'not registered' : 'active',
                 idNumber,
                 rfid,
-                birthdate,
+                birthdate: birthdateISO,
                 sex,
                 contactNumber,
                 address,
@@ -267,7 +269,7 @@ const Register = () => {
                                         <FormItem>
                                             <FormLabel className='text-base'>Birthdate</FormLabel>
                                             <FormControl>
-                                                <Popover>
+                                                {/* <Popover>
                                                     <PopoverTrigger asChild>
                                                         <Button
                                                             variant={'outline'}
@@ -294,6 +296,41 @@ const Register = () => {
                                                                 date < new Date('1900-01-01')
                                                             }
                                                             initialFocus
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover> */}
+
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <Button
+                                                            variant={'outline'}
+                                                            className={cn(
+                                                                'w-full justify-start text-left font-normal',
+                                                                !field.value &&
+                                                                    'text-muted-foreground'
+                                                            )}>
+                                                            <CalendarIcon className='mr-2 h-4 w-4' />
+                                                            {field.value ? (
+                                                                format(field.value, 'PPP')
+                                                            ) : (
+                                                                <span>Pick a date</span>
+                                                            )}
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent
+                                                        align='start'
+                                                        className=' w-auto p-0'>
+                                                        <Calendar
+                                                            mode='single'
+                                                            captionLayout='dropdown-buttons'
+                                                            selected={field.value}
+                                                            onSelect={field.onChange}
+                                                            fromYear={1960}
+                                                            toYear={new Date().getFullYear()}
+                                                            disabled={(date) =>
+                                                                date > new Date() ||
+                                                                date < new Date('1900-01-01')
+                                                            }
                                                         />
                                                     </PopoverContent>
                                                 </Popover>
@@ -362,7 +399,7 @@ const Register = () => {
                             </div>
                         ) : null}
 
-                        <Button type='submit' disabled={isLoading}>
+                        <Button type='submit' disabled={isLoading} className='w-1/6 mt-4'>
                             {isLoading ? 'Please wait...' : 'Register User'}
                         </Button>
                     </form>
