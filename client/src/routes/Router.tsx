@@ -25,7 +25,7 @@ import PrivateRoute from '@/components/global/privateRoute'
 import ShowUser from '@/pages/admin/userprofile'
 import FacultySchedule from '@/pages/faculty'
 import AccomplishmentReports from '@/pages/accomplishment_reports'
-import CreateRFID from '@/pages/admin/users/rfid/create'
+import CreateRFID from '@/pages/admin/users/rfid'
 
 const router = createBrowserRouter(
     createRoutesFromElements(

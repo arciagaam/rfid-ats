@@ -28,12 +28,14 @@ interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
     component?: React.ReactNode
+    columnSearch: string
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
     component,
+    columnSearch
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -57,10 +59,10 @@ export function DataTable<TData, TValue>({
             <CardHeader className='px-0 pb-3'>
                 <div className='flex justify-between'>
                     <Input
-                        placeholder='Search user'
-                        value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+                        placeholder={`Search`}
+                        value={(table.getColumn(columnSearch)?.getFilterValue() as string) ?? ''}
                         onChange={(event) =>
-                            table.getColumn('name')?.setFilterValue(event.target.value)
+                            table.getColumn(columnSearch)?.setFilterValue(event.target.value)
                         }
                         className='max-w-sm'
                     />

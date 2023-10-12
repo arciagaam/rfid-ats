@@ -1,4 +1,7 @@
+import { DataTable } from '@/components/global/dataTable'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Link } from 'react-router-dom'
 
 const Home = () => {
   return (
@@ -34,7 +37,23 @@ const Home = () => {
       </div>
 
       <div className="flex">
-        Data Table Here
+        <Card>
+          {/* <CardContent>
+            <DataTable
+              columns={columns}
+              data={data}
+              component={[
+                <Button asChild className='mr-2'>
+                  <Link to='register'>Add User</Link>
+                </Button>,
+
+                <Button asChild className='ml-2'>
+                  <Link to='rfid'>Add RFID</Link>
+                </Button>,
+              ]}
+            />
+          </CardContent> */}
+        </Card>
       </div>
 
     </div>

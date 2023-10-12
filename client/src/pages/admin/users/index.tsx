@@ -48,9 +48,10 @@ const Users = () => {
                             </Button>,
 
                             <Button asChild className='ml-2'>
-                                <Link to='rfid'>Add RFID</Link>
+                                <Link to='rfid'>Manage RFID</Link>
                             </Button>,
                         ]}
+                        columnSearch='name'
                     />
                 </CardContent>
             </Card>
