@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser'
 import { notFound, errorHandler } from './middleware/errorMiddleware.js'
 import cors from 'cors';
 import userRoutes from './routes/userRoutes.js'
-
+import rfidRoutes from './routes/rfidRoutes.js'
 import dotenv from 'dotenv'
 dotenv.config()
 
@@ -26,6 +26,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/users', userRoutes)
+app.use('/api/rfid', rfidRoutes)
 
 app.use(notFound)
 app.use(errorHandler)

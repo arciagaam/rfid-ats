@@ -63,7 +63,10 @@ export function DataTable<TData, TValue>({
                     className='max-w-sm'
                 />
 
-                {component}
+                <div className="flex gap-2">
+                    {component}
+                </div>
+
             </div>
 
             <div className='border rounded-md'>
