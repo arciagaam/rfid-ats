@@ -11,6 +11,7 @@ import {
     updateUserByID,
     deleteUser,
 } from '../controller/userController.js'
+
 import { protect, admin } from '../middleware/authMiddleware.js'
 
 const router = express.Router()
@@ -24,5 +25,6 @@ router
     .delete(protect, admin, deleteUser)
     .get(protect, admin, getUserByID)
     .put(protect, admin, updateUserByID)
+
 
 export default router

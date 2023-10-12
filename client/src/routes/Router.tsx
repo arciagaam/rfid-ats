@@ -25,6 +25,7 @@ import PrivateRoute from '@/components/global/privateRoute'
 import ShowUser from '@/pages/admin/users/show'
 import FacultySchedule from '@/pages/faculty'
 import AccomplishmentReports from '@/pages/accomplishment_reports'
+import CreateRFID from '@/pages/admin/users/rfid/create'
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -39,6 +40,7 @@ const router = createBrowserRouter(
                     <Route index element={<Users />} />
                     <Route path=':id' element={<ShowUser />} />
                     <Route path='register' element={<Register />} />
+                    <Route path='rfid' element={<CreateRFID />} />
                 </Route>
             </Route>
         </Route>

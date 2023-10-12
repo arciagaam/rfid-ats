@@ -43,6 +43,10 @@ const Users = () => {
                     <Button asChild>
                         <Link to='register'>Add User</Link>
                     </Button>,
+
+                    <Button asChild>
+                        <Link to='rfid'>Add RFID</Link>
+                    </Button>,
                 ]}
             />
         </div>
