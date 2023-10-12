@@ -53,5 +53,6 @@ const deleteRfid = asyncHandler((req, res) => {
 
 export {
     getRfids,
-    storeRfid
+    storeRfid,
+    deleteRfid
 }
