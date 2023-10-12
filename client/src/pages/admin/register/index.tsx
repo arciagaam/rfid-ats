@@ -439,7 +439,7 @@ const Register = () => {
                         ) : null}
 
                         <Button type='submit' disabled={isLoading} className='w-1/6 mt-4'>
-                            {isLoading ? 'Please wait...' : 'Register User'}
+                            {loadingRegister ? 'Please wait...' : 'Register User'}
                         </Button>
                     </form>
                 </Form>

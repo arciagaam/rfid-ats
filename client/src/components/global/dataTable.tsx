@@ -54,7 +54,7 @@ export function DataTable<TData, TValue>({
 
     return (
         <div className='flex flex-col gap-3'>
-            <CardHeader className='pl-0 pb-3'>
+            <CardHeader className='px-0 pb-3'>
                 <div className='flex justify-between'>
                     <Input
                         placeholder='Search user'
@@ -65,7 +65,7 @@ export function DataTable<TData, TValue>({
                         className='max-w-sm'
                     />
 
-                    {component}
+                    <div>{component}</div>
                 </div>
             </CardHeader>
 

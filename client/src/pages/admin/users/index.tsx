@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 
 import { useGetUsersQuery } from '@/slices/usersApiSlice'
+import { Card, CardContent } from '@/components/ui/card'
 
 const Users = () => {
     const [data, setData] = useState<Log[]>([])
@@ -36,19 +37,23 @@ const Users = () => {
             <div className='flex w-full justify-between'>
                 <h1 className='text-xl font-bold'>Users</h1>
             </div>
-            <DataTable
-                columns={columns}
-                data={data}
-                component={[
-                    <Button asChild>
-                        <Link to='register'>Add User</Link>
-                    </Button>,
+            <Card>
+                <CardContent>
+                    <DataTable
+                        columns={columns}
+                        data={data}
+                        component={[
+                            <Button asChild className='mr-2'>
+                                <Link to='register'>Add User</Link>
+                            </Button>,
 
-                    <Button asChild>
-                        <Link to='rfid'>Add RFID</Link>
-                    </Button>,
-                ]}
-            />
+                            <Button asChild className='ml-2'>
+                                <Link to='rfid'>Add RFID</Link>
+                            </Button>,
+                        ]}
+                    />
+                </CardContent>
+            </Card>
         </div>
     )
 }
