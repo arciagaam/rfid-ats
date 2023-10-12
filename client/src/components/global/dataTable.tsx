@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/table'
 
 import { Input } from '@/components/ui/input'
+import { CardHeader } from '../ui/card'
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -53,18 +54,20 @@ export function DataTable<TData, TValue>({
 
     return (
         <div className='flex flex-col gap-3'>
-            <div className='flex justify-between'>
-                <Input
-                    placeholder='Search user'
-                    value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-                    onChange={(event) =>
-                        table.getColumn('name')?.setFilterValue(event.target.value)
-                    }
-                    className='max-w-sm'
-                />
+            <CardHeader className='pl-0 pb-3'>
+                <div className='flex justify-between'>
+                    <Input
+                        placeholder='Search user'
+                        value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+                        onChange={(event) =>
+                            table.getColumn('name')?.setFilterValue(event.target.value)
+                        }
+                        className='max-w-sm'
+                    />
 
-                {component}
-            </div>
+                    {component}
+                </div>
+            </CardHeader>
 
             <div className='border rounded-md'>
                 <Table>
