@@ -9,7 +9,7 @@ import connectDB from '../db/connect.js'
 
 dotenv.config()
 
-connectDB()
+await connectDB()
 
 const importData = async () => {
     try {
