@@ -7,7 +7,7 @@ export interface IErrorResponse {
     error: string
 }
 
-export interface UserProfile {
+export interface IUserProfile {
     fullname: string
     email: string
     role: string
