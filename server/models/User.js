@@ -1,14 +1,6 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
-
-const attendanceLogSchema = new mongoose.Schema(
-    {
-        date: { type: Date, required: true },
-        timeIn: { type: Date, required: true },
-        timeOut: { type: Date, required: true },
-    },
-    { timestamps: true }
-)
+import AttendanceLog from './AttendanceLog.js'
 
 const userSchema = new mongoose.Schema(
     {
@@ -27,9 +19,9 @@ const userSchema = new mongoose.Schema(
         },
         department: {
             type: String,
-            required: function() {
+            required: function () {
                 return this.role !== 'admin'
-            }
+            },
         },
         rfid: {
             type: String,
@@ -58,7 +50,7 @@ const userSchema = new mongoose.Schema(
                 return this.role !== 'admin'
             },
         },
-        attendanceLog: [attendanceLogSchema],
+        attendanceLog: [AttendanceLog.schema],
     },
     { timestamps: true }
 )
