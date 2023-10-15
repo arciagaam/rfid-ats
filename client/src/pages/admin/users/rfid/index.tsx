@@ -2,9 +2,9 @@ import { Card, CardContent } from '@/components/ui/card'
 import React, { useEffect, useState } from 'react'
 import { useGetRfidsQuery } from '@/slices/rfidApiSlice'
 import { DataTable } from '@/components/global/dataTable';
-import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { columns, RfidColumn, IRfidRow } from './columns'
+import AddRfidModal from './addrfids';
 const CreateRFID = () => {
   const [data, setData] = useState<RfidColumn[]>([]);
   const { data: rfids, refetch } = useGetRfidsQuery(null);
@@ -24,7 +24,10 @@ const CreateRFID = () => {
   return (
     <div className='flex flex-col gap-10 text-[#1e1e1e]'>
       <div className='flex w-full justify-between'>
-        <h1 className='text-xl font-bold'>Manage RFIDs</h1>
+        <hgroup>
+          <Link to='/admin/users'> Back to Users </Link>
+          <h1 className='text-xl font-bold'>Manage RFIDs</h1>
+        </hgroup>
       </div>
 
       <Card>
@@ -33,6 +36,9 @@ const CreateRFID = () => {
             columns={columns}
             data={data}
             columnSearch='number'
+            component={
+              <AddRfidModal/>
+            }
           />
         </CardContent>
       </Card>

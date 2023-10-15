@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom'
 
 import { useGetUsersQuery } from '@/slices/usersApiSlice'
 import { Card, CardContent } from '@/components/ui/card'
+import AddUserModal from './adduser'
 
 const Users = () => {
     const [data, setData] = useState<Log[]>([])
@@ -43,10 +44,8 @@ const Users = () => {
                         columns={columns}
                         data={data}
                         component={[
-                            <Button asChild className='mr-2'>
-                                <Link to='register'>Add User</Link>
-                            </Button>,
-
+                            <AddUserModal/>,
+ 
                             <Button asChild className='ml-2'>
                                 <Link to='rfid'>Manage RFID</Link>
                             </Button>,
