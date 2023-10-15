@@ -1,6 +1,5 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
-import AttendanceLog from './AttendanceLog.js'
 
 const userSchema = new mongoose.Schema(
     {
@@ -50,7 +49,6 @@ const userSchema = new mongoose.Schema(
                 return this.role !== 'admin'
             },
         },
-        attendanceLog: [AttendanceLog.schema],
     },
     { timestamps: true }
 )
