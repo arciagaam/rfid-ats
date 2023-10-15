@@ -1,24 +1,24 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { ColumnDef } from '@tanstack/react-table'
+import { ArrowUpDown } from 'lucide-react'
 
 export type RfidColumn = {
-    id: string,
-    number: string,
-    status: string,
+    id: string
+    rfidTag: string
+    status: string
 }
 
 export interface IRfidRow extends RfidColumn {
-    _id: string,
-    number: string,
-    status: string,
+    _id: string
+    rfidTag: string
+    status: string
 }
 
 export const columns: ColumnDef<RfidColumn>[] = [
     {
-        accessorKey: 'number',
-        header: 'Number',
+        accessorKey: 'rfidTag',
+        header: 'RFID Tag',
     },
 
     {
