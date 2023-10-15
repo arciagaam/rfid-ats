@@ -2,7 +2,8 @@ import mongoose from 'mongoose'
 
 const rfidSchema = new mongoose.Schema(
     {
-        number: { type: String, required: true },
+        rfidTag: { type: String, required: true, unique: true },
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
         status: { type: String, required: true, default: 'inactive' },
     },
     { timestamps: true }
