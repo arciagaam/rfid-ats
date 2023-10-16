@@ -1,6 +1,8 @@
 import Rfid from './../models/Rfid.js'
+import AttendanceLog from '../models/AttendanceLog.js'
+import User from '../models/User.js'
 import asyncHandler from '../middleware/asyncHandler.js'
-import compareUIDToDatabase from '../utils/compareUID.js'
+import { compareUIDToDatabase, getAttendanceLog } from '../utils/logApi.js'
 
 // @desc    Get rfids
 // @route   GET /api/users/rfid
@@ -40,6 +42,9 @@ const storeRfid = asyncHandler(async (req, res) => {
     }
 })
 
+// @desc    Delete rfid
+// @route   DELETE /api/users/rfid
+// @access  Private/Admin
 const deleteRfid = asyncHandler((req, res) => {
     const rfid = Rfid.findById(req.params.id)
 
@@ -52,6 +57,9 @@ const deleteRfid = asyncHandler((req, res) => {
     }
 })
 
+// @desc    Reads rfid from reader
+// @route   POST /api/rfid
+// @access  Public
 const getRfidFromReader = asyncHandler(async (req, res) => {
     const { rfidData } = req.body
 
@@ -64,11 +72,36 @@ const getRfidFromReader = asyncHandler(async (req, res) => {
         const matchingRfid = await compareUIDToDatabase(formattedUID)
 
         if (matchingRfid) {
-            console.log('RFID found in database')
+            // Get user name from matching rfid
+            const user = await User.findOne({ rfid: matchingRfid.rfidTag })
+            const { firstName, middleName, lastName } = user
+            const fullName = `${firstName} ${middleName} ${lastName}`
 
-            // timeins and timeouts
+            // Check if user has existing attendance log
+            const existingLog = await getAttendanceLog(matchingRfid.user)
 
-            res.status(200).json({ rfid: matchingRfid })
+            if (existingLog) {
+                existingLog.timeOut = new Date()
+
+                await existingLog.save()
+                res.status(200).json({
+                    message: `${fullName} has timed out at ${existingLog.timeOut}`,
+                })
+            } else {
+                const newLog = await AttendanceLog.create({
+                    user: matchingRfid.user,
+                    date: new Date(),
+                    timeIn: new Date(),
+                    timeOut: null,
+                })
+
+                await newLog.save()
+                res.status(200).json({
+                    message: `${fullName} has timed in at ${newLog.timeIn}`,
+                })
+            }
+
+            // res.status(200).json({ rfid: matchingRfid })
         } else {
             console.log('RFID not found in database')
             res.status(404)

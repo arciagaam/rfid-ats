@@ -9,7 +9,7 @@ const attendanceLogSchema = new mongoose.Schema(
         },
         date: { type: Date, required: true },
         timeIn: { type: Date, required: true },
-        timeOut: { type: Date, required: true },
+        timeOut: { type: Date },
     },
     { timestamps: true }
 )
