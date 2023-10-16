@@ -50,7 +50,6 @@ const AddUserForm = () => {
             email: '',
             password: '',
             role: selectedRole,
-            department: '',
             idNumber: '',
             rfid: '',
             sex: '',
@@ -69,16 +68,18 @@ const AddUserForm = () => {
             password,
             idNumber,
             rfid,
-            department,
             birthdate,
             sex,
             contactNumber,
             address,
         } = data
-
+        
         try {
-            const formattedBirthdate = format(birthdate!, 'yyyy-MM-dd')
-            const birthdateISO = new Date(formattedBirthdate).toISOString()
+            let birthdateISO;
+            if(birthdate) {
+                const formattedBirthdate = format(birthdate!, 'yyyy-MM-dd')
+                birthdateISO = new Date(formattedBirthdate).toISOString()
+            }
 
             await register({
                 firstName,
@@ -87,7 +88,6 @@ const AddUserForm = () => {
                 email,
                 password,
                 role: selectedRole,
-                department,
                 status: rfid == '' ? 'not registered' : 'active',
                 idNumber,
                 rfid,
@@ -96,7 +96,6 @@ const AddUserForm = () => {
                 contactNumber,
                 address,
             }).unwrap()
-
             form.reset({});
             
             toast.success('User successfully registered')
@@ -244,33 +243,6 @@ const AddUserForm = () => {
                                             <FormControl>
                                                 <Input placeholder='Enter ID Number' {...field} />
                                             </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-
-                                <FormField
-                                    control={form.control}
-                                    name='department'
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className='text-base'>Department</FormLabel>
-                                            <Select
-                                                onValueChange={(value) => {
-                                                    field.onChange(value)
-                                                }}
-                                                defaultValue={field.value}>
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder='Select user department' />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    <SelectItem value='it'>IT</SelectItem>
-                                                    <SelectItem value='cs'>CS</SelectItem>
-                                                </SelectContent>
-                                            </Select>
                                             <FormMessage />
                                         </FormItem>
                                     )}

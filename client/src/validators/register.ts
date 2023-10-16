@@ -1,51 +1,32 @@
-import { ZodSchema, z } from 'zod'
+import { z } from 'zod'
 
-export const registerSchema = z.object({
-    firstName: z.string(),
+const registerSchemaBase = z.object({
+    firstName: z.string().nonempty('Required'),
     middleName: z.string().optional(),
-    lastName: z.string(),
-    email: z.string().email(),
-    password: z.string(),
-    role: z.string(),
-    status: z.string(),
-    department: z.string().optional(),
-    idNumber: z.string().optional(),
-    rfid: z.string().optional(),
-    birthdate: z.date().optional(),
-    sex: z.string().optional(),
-    contactNumber: z.string().optional(),
-    address: z.string().optional(),
-}).superRefine((schema, refinementContext) => {
-    const {
-        role,
-        contactNumber,
-    } = schema;
-
-    if (role !== 'admin') {
-
-        if (!(/^[1-9][0-9]{9}$/).test(contactNumber ?? '')) {
-            refinementContext.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: 'Invalid format',
-                path: ['contactNumber']
-            });
-        }
-
-        const nullables = ['middleName', 'rfid', 'status']
-
-        for(const name in schema) {
-            if (nullables.includes(name)) continue;
-
-            const def: keyof typeof schema = name;
-            if(schema[def] == '') {
-                refinementContext.addIssue({
-                    code: z.ZodIssueCode.custom,
-                    message: `The ${name} field is required`,
-                    path: [name]
-                });
-            }
-        }
-
-    }
-
+    lastName: z.string().nonempty('Required'),
+    email: z.string().email().nonempty('Required'),
+    password: z.string().nonempty('Required'),
 })
+
+const adminUser = z.object({
+    role: z.literal('admin'),
+    status: z.string(),
+}).merge(registerSchemaBase);
+
+const facultyUser = z.object({
+    role: z.literal('faculty'),
+    status: z.string(),
+    idNumber: z.string().nonempty('Required'),
+    rfid: z.string().optional(),
+    birthdate: z.date(),
+    sex: z.string().nonempty('Required'),
+    contactNumber: z.string().nonempty('Required').regex(new RegExp(/^9\d{9}$/)),
+    address: z.string().nonempty('Required'),
+}).merge(registerSchemaBase);
+
+
+
+export const registerSchema = z.discriminatedUnion('role', [adminUser, facultyUser]);
+
+console.log(registerSchema)
+

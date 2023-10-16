@@ -2,6 +2,19 @@ import Rfid from './../models/Rfid.js'
 import asyncHandler from '../middleware/asyncHandler.js'
 import compareUIDToDatabase from '../utils/compareUID.js'
 
+let storingActive = false;
+let windowTimeout;
+
+const storeRfidWindow = asyncHandler(async (req, res) => {
+    clearTimeout(windowTimeout);
+    storingActive = true;
+    res.status(200).json({message: 'Window is open'})
+    
+    windowTimeout = setTimeout(() => {
+        storingActive = false;
+    }, 11000);
+})
+
 // @desc    Get rfids
 // @route   GET /api/users/rfid
 // @access  Public
@@ -14,6 +27,12 @@ const getRfids = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/rfid
 // @access  Public
 const storeRfid = asyncHandler(async (req, res) => {
+
+    if(!storingActive) {
+        res.status(400)
+        throw new Error('Add RFID window is not opened.')
+    }
+
     const { rfidTag } = req.body
 
     const rfidExists = await Rfid.findOne({ rfidTag })
@@ -80,4 +99,4 @@ const getRfidFromReader = asyncHandler(async (req, res) => {
     }
 })
 
-export { getRfids, storeRfid, deleteRfid, getRfidFromReader }
+export { storeRfidWindow, getRfids, storeRfid, deleteRfid, getRfidFromReader }
