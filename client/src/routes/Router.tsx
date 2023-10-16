@@ -9,7 +9,6 @@ import {
 // pages
 import Login from '@/pages/login'
 import AdminHome from '@/pages/admin/home'
-import Register from '@/pages/admin/register'
 import Users from '@/pages/admin/users'
 // import UserHome from '@/pages/user/home';
 
@@ -39,7 +38,6 @@ const router = createBrowserRouter(
                 <Route path='users'>
                     <Route index element={<Users />} />
                     <Route path=':id' element={<ShowUser />} />
-                    <Route path='register' element={<Register />} />
                     <Route path='rfid' element={<CreateRFID />} />
                 </Route>
             </Route>

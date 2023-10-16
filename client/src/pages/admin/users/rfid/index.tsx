@@ -5,6 +5,7 @@ import { DataTable } from '@/components/global/dataTable'
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 import { columns, RfidColumn, IRfidRow } from './columns'
+import AddRfidModal from './addrfids';
 const CreateRFID = () => {
     const [data, setData] = useState<RfidColumn[]>([])
     const { data: rfids, refetch } = useGetRfidsQuery(null)
@@ -27,7 +28,8 @@ const CreateRFID = () => {
 
             <Card>
                 <CardContent>
-                    <DataTable columns={columns} data={data} columnSearch='number' />
+                    <DataTable columns={columns} data={data} columnSearch='number' component={<AddRfidModal/>
+            }/>
                 </CardContent>
             </Card>
         </div>

@@ -4,7 +4,7 @@ import { apiSlice } from '@/slices/apiSlice'
 export const usersApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         login: builder.mutation({
-            query: (data) => ({
+            query: (data: object) => ({
                 url: `${USERS_URL}/auth`,
                 method: 'POST',
                 body: data,
@@ -24,19 +24,19 @@ export const usersApiSlice = apiSlice.injectEndpoints({
             keepUnusedDataFor: 5,
         }),
         register: builder.mutation({
-            query: (data) => ({
+            query: (data: object) => ({
                 url: `${USERS_URL}`,
                 method: 'POST',
                 body: data,
             }),
         }),
         getUser: builder.query({
-            query: (data) => ({
+            query: (data: string | number) => ({
                 url: `${USERS_URL}/${data}`,
             }),
         }),
         deleteUser: builder.mutation({
-            query: (userId) => ({
+            query: (userId: string | number) => ({
                 url: `${USERS_URL}/${userId}`,
                 method: 'DELETE',
             }),
