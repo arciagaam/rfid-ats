@@ -8,17 +8,17 @@ export const rfidApiSlice = apiSlice.injectEndpoints({
                 url: `${RFID_URL}`,
             }),
         }),
-
-        addRfidWindowOpen: builder.query({
-            query: () => ({
-                url: `${RFID_URL}/open`,
+        windowState: builder.mutation({
+            query: (data: object) => ({
+                url: `${RFID_URL}/window`,
+                method: 'POST',
+                body: data
             }),
-            keepUnusedDataFor: 2,
         })
     } )
 });
 
 export const {
     useGetRfidsQuery,
-    useAddRfidWindowOpenQuery
+    useWindowStateMutation
 } = rfidApiSlice;

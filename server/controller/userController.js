@@ -75,7 +75,7 @@ const registerUser = asyncHandler(async (req, res) => {
     })
 
     if (user) {
-        req.io.emit('new_user', 'new user created');
+        req.io.emit('new_user', {message: 'new user created'});
         res.status(201).json({
             _id: user._id,
             firstName: user.firstName,

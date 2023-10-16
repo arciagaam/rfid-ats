@@ -25,14 +25,10 @@ const io = new Server(socketServer, {
 });
 
 io.on('connection', (socket) => {
-    console.log('a user connected');
+    console.log('Socket connection initialized'.blue.bold);
     
-    socket.on('hi', (content) => {
-        console.log(content);
-    })
-
     socket.on('disconnect', () => {
-        console.log('disconnect')
+        console.log('Socket connection disconnected'.red.bold)
     })
 });
 
@@ -64,5 +60,6 @@ app.use(errorHandler)
 
 
 socketServer.listen(port, () => {
-    console.log(`Server running on port ${port}`)
+    console.log('==========================='.yellow.bold)
+    console.log(`Server running on port ${port}`.yellow.bold)
 });
