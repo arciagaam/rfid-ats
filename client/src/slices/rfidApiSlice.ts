@@ -7,10 +7,18 @@ export const rfidApiSlice = apiSlice.injectEndpoints({
             query: () => ({
                 url: `${RFID_URL}`,
             }),
+        }),
+
+        addRfidWindowOpen: builder.query({
+            query: () => ({
+                url: `${RFID_URL}/open`,
+            }),
+            keepUnusedDataFor: 2,
         })
     } )
 });
 
 export const {
-    useGetRfidsQuery
+    useGetRfidsQuery,
+    useAddRfidWindowOpenQuery
 } = rfidApiSlice;

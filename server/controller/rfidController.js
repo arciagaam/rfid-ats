@@ -12,11 +12,11 @@ const storeRfidWindow = asyncHandler(async (req, res) => {
     
     windowTimeout = setTimeout(() => {
         storingActive = false;
-    }, 11000);
+    }, 13000);
 })
 
 // @desc    Get rfids
-// @route   GET /api/users/rfid
+// @route   GET /api/rfid
 // @access  Public
 const getRfids = asyncHandler(async (req, res) => {
     const rfids = await Rfid.find({})
@@ -24,11 +24,10 @@ const getRfids = asyncHandler(async (req, res) => {
 })
 
 // @desc    Store new rfid
-// @route   PUT /api/users/rfid
+// @route   PUT /api/rfid
 // @access  Public
 const storeRfid = asyncHandler(async (req, res) => {
-
-    if(!storingActive) {
+    if(storingActive == false) {
         res.status(400)
         throw new Error('Add RFID window is not opened.')
     }

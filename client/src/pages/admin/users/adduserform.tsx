@@ -320,13 +320,13 @@ const AddUserForm = () => {
                                     name='sex'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className='text-base'>Sex</FormLabel>
+                                            <FormLabel className='text-base'>Gender</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}>
                                                 <FormControl>
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder='Select sex' />
+                                                        <SelectValue placeholder='Select gender' />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>

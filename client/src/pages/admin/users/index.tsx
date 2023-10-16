@@ -3,6 +3,7 @@
 // import { DataTable } from '../../../components/global/dataTable'
 // import { Log, IUserRow, columns } from './columns'
 // import { useEffect, useState } from 'react'
+import {io} from 'socket.io-client'
 
 import { DataTable } from '../../../components/global/dataTable'
 import { Log, columns, IUserRow } from './columns'
@@ -13,6 +14,8 @@ import { Link } from 'react-router-dom'
 import { useGetUsersQuery } from '@/slices/usersApiSlice'
 import { Card, CardContent } from '@/components/ui/card'
 import AddUserModal from './adduser'
+
+
 
 const Users = () => {
     const [data, setData] = useState<Log[]>([])
@@ -31,7 +34,15 @@ const Users = () => {
             setData(tableData)
         }
         refetch()
-    }, [users, refetch])
+    }, [users, refetch]);
+
+    useEffect(() => {
+        const socket = io('http://127.0.0.1:3001');
+        socket.on('new_user', (content) => {
+          refetch();
+        })
+        return () => {socket.disconnect()}
+    }, [])
 
     return (
         <div className='flex flex-col gap-10 text-[#1e1e1e]'>

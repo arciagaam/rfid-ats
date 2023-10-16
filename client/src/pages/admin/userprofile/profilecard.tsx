@@ -136,7 +136,7 @@ export function ProfileCard() {
                                 <Input id='birtdate' type='text' value={profile?.birthdate} />
                             </div>
                             <div>
-                                <Label htmlFor='sex'>Sex</Label>
+                                <Label htmlFor='sex'>Gender</Label>
                                 <Input id='sex' type='text' value={profile?.sex} />
                             </div>
                         </div>
