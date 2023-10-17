@@ -19,13 +19,14 @@ import { Label } from '@/components/ui/label'
 import { useGetUserQuery } from '@/slices/usersApiSlice'
 import { IUserProfile } from '@/types/index'
 
+import { formatDate } from '@/util/formatter'
+
 export function ProfileCard() {
     const [profile, setProfile] = useState<IUserProfile>()
 
     const { id } = useParams()
 
-    const { data: user } = useGetUserQuery(id)
-    console.log(user)
+    const { data: user } = useGetUserQuery(id as string)
 
     useEffect(() => {
         if (user) {
@@ -45,16 +46,6 @@ export function ProfileCard() {
             setProfile(data)
         }
     }, [user])
-
-    function formatDate(date = new Date()) {
-        const year = date.toLocaleString('default', { year: 'numeric' })
-        const month = date.toLocaleString('default', {
-            month: '2-digit',
-        })
-        const day = date.toLocaleString('default', { day: '2-digit' })
-
-        return [year, month, day].join('-')
-    }
 
     return (
         <Card>
@@ -86,11 +77,11 @@ export function ProfileCard() {
                         <div className='grid grid-cols-3 gap-6 mt-5'>
                             <div>
                                 <Label htmlFor='name'>Name</Label>
-                                <Input id='name' type='text' value={profile?.fullname} />
+                                <Input id='name' type='text' value={profile?.fullname} readOnly />
                             </div>
                             <div>
                                 <Label htmlFor='email'>Email</Label>
-                                <Input id='email' type='email' value={profile?.email} />
+                                <Input id='email' type='email' value={profile?.email} readOnly />
                             </div>
                             <div>
                                 <Label htmlFor='contactNumber'>Contact Number</Label>
@@ -103,6 +94,7 @@ export function ProfileCard() {
                                         className='border-l-0 rounded-l-none w-full focus-visible:ring-0 focus-visible:ring-offset-0'
                                         type='text'
                                         value={profile?.contactNumber}
+                                        readOnly
                                     />
                                 </div>
                             </div>
@@ -113,36 +105,51 @@ export function ProfileCard() {
                         <div className='grid grid-cols-2 gap-6 mt-5'>
                             <div>
                                 <Label htmlFor='role'>Role</Label>
-                                <Input id='role' type='text' value={profile?.role} />
+                                <Input id='role' type='text' value={profile?.role} readOnly />
                             </div>
                             <div>
                                 <Label htmlFor='department'>Department</Label>
-                                <Input id='department' type='text' value={profile?.department} />
+                                <Input
+                                    id='department'
+                                    type='text'
+                                    value={profile?.department}
+                                    readOnly
+                                />
                             </div>
                         </div>
                         <div className='grid grid-cols-2 gap-6 mt-3'>
                             <div>
                                 <Label htmlFor='idNumber'>ID Number</Label>
-                                <Input id='idNumber' type='text' value={profile?.idNumber} />
+                                <Input
+                                    id='idNumber'
+                                    type='text'
+                                    value={profile?.idNumber}
+                                    readOnly
+                                />
                             </div>
                             <div>
                                 <Label htmlFor='rfid'>RFID</Label>
-                                <Input id='rfid' type='text' value={profile?.rfid} />
+                                <Input id='rfid' type='text' value={profile?.rfid} readOnly />
                             </div>
                         </div>
                         <div className='grid grid-cols-2 gap-6 mt-3'>
                             <div>
                                 <Label htmlFor='birtdate'>Birthdate</Label>
-                                <Input id='birtdate' type='text' value={profile?.birthdate} />
+                                <Input
+                                    id='birtdate'
+                                    type='text'
+                                    value={profile?.birthdate}
+                                    readOnly
+                                />
                             </div>
                             <div>
                                 <Label htmlFor='sex'>Sex</Label>
-                                <Input id='sex' type='text' value={profile?.sex} />
+                                <Input id='sex' type='text' value={profile?.sex} readOnly />
                             </div>
                         </div>
                         <div className='gap-6 mt-3'>
                             <Label htmlFor='address'>Address</Label>
-                            <Input id='address' type='text' value={profile?.address} />
+                            <Input id='address' type='text' value={profile?.address} readOnly />
                         </div>
                     </TabsContent>
                 </Tabs>

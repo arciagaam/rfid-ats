@@ -3,18 +3,19 @@ import AttendanceLog from '../models/AttendanceLog.js'
 import User from '../models/User.js'
 import asyncHandler from '../middleware/asyncHandler.js'
 import { compareUIDToDatabase, getAttendanceLog } from '../utils/logApi.js'
+import { io } from '../server.js'
 
-let storingActive = false;
-let windowTimeout;
+let storingActive = false
+let windowTimeout
 
 const storeRfidWindow = asyncHandler(async (req, res) => {
-    clearTimeout(windowTimeout);
-    storingActive = true;
-    res.status(200).json({message: 'Window is open'})
-    
+    clearTimeout(windowTimeout)
+    storingActive = true
+    res.status(200).json({ message: 'Window is open' })
+
     windowTimeout = setTimeout(() => {
-        storingActive = false;
-    }, 11000);
+        storingActive = false
+    }, 11000)
 })
 
 // @desc    Get rfids
@@ -29,8 +30,7 @@ const getRfids = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/rfid
 // @access  Public
 const storeRfid = asyncHandler(async (req, res) => {
-
-    if(!storingActive) {
+    if (!storingActive) {
         res.status(400)
         throw new Error('Add RFID window is not opened.')
     }
@@ -115,6 +115,9 @@ const getRfidFromReader = asyncHandler(async (req, res) => {
                 })
 
                 await newLog.save()
+
+                io.emit('newLog', newLog)
+
                 res.status(200).json({
                     message: `${fullName} has timed in at ${newLog.timeIn}`,
                 })

@@ -12,6 +12,8 @@ import {
     deleteUser,
 } from '../controller/userController.js'
 
+import { getLogs } from '../controller/logController.js'
+
 import { protect, admin } from '../middleware/authMiddleware.js'
 
 const router = express.Router()
@@ -26,5 +28,6 @@ router
     .get(protect, admin, getUserByID)
     .put(protect, admin, updateUserByID)
 
+router.route('/logs/:id').get(protect, admin, getLogs)
 
 export default router

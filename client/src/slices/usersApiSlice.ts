@@ -35,6 +35,11 @@ export const usersApiSlice = apiSlice.injectEndpoints({
                 url: `${USERS_URL}/${data}`,
             }),
         }),
+        getUserLogs: builder.query({
+            query: (data: string) => ({
+                url: `${USERS_URL}/logs/${data}`,
+            }),
+        }),
         deleteUser: builder.mutation({
             query: (userId: string | number) => ({
                 url: `${USERS_URL}/${userId}`,
@@ -50,5 +55,6 @@ export const {
     useGetUsersQuery,
     useRegisterMutation,
     useGetUserQuery,
+    useGetUserLogsQuery,
     useDeleteUserMutation,
 } = usersApiSlice
