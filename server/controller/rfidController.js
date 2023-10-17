@@ -8,29 +8,35 @@ import { io } from '../server.js'
 let storingActive = false
 let windowTimeout
 
-const storeRfidWindow = asyncHandler(async (req, res) => {
+const changeWindowState = asyncHandler(async (req, res) => {
+    const { windowState } = req.body
     clearTimeout(windowTimeout)
-    storingActive = true
-    res.status(200).json({ message: 'Window is open' })
+    if (windowState == 'open') {
+        storingActive = true
+        res.status(200).json({ message: 'window is open' })
 
-    windowTimeout = setTimeout(() => {
+        windowTimeout = setTimeout(() => {
+            storingActive = false
+        }, 13000)
+    } else {
         storingActive = false
-    }, 11000)
+        res.status(200).json({ message: 'window is closed' })
+    }
 })
 
 // @desc    Get rfids
-// @route   GET /api/users/rfid
+// @route   GET /api/rfid
 // @access  Public
 const getRfids = asyncHandler(async (req, res) => {
-    const rfids = await Rfid.find({})
+    const rfids = await Rfid.find({}).sort({ _id: -1 })
     res.status(200).json(rfids)
 })
 
 // @desc    Store new rfid
-// @route   PUT /api/users/rfid
+// @route   PUT /api/rfid
 // @access  Public
 const storeRfid = asyncHandler(async (req, res) => {
-    if (!storingActive) {
+    if (storingActive == false) {
         res.status(400)
         throw new Error('Add RFID window is not opened.')
     }
@@ -50,11 +56,14 @@ const storeRfid = asyncHandler(async (req, res) => {
     })
 
     if (rfid) {
-        res.status(201).json({
+        const newRfid = {
             _id: rfid._id,
             rfidTag: rfid.rfidTag,
             status: rfid.status,
-        })
+        }
+        req.io.emit('new_rfid', { message: 'New RFID card added.', ...newRfid })
+
+        res.status(201).json(newRfid)
     } else {
         res.status(400)
         throw new Error('Invalid rfid data')
@@ -135,4 +144,4 @@ const getRfidFromReader = asyncHandler(async (req, res) => {
     }
 })
 
-export { storeRfidWindow, getRfids, storeRfid, deleteRfid, getRfidFromReader }
+export { changeWindowState, getRfids, storeRfid, deleteRfid, getRfidFromReader }

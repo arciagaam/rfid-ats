@@ -143,8 +143,8 @@ export function ProfileCard() {
                                 />
                             </div>
                             <div>
-                                <Label htmlFor='sex'>Sex</Label>
-                                <Input id='sex' type='text' value={profile?.sex} readOnly />
+                                <Label htmlFor='sex'>Gender</Label>
+                                <Input id='sex' type='text' value={profile?.sex} />
                             </div>
                         </div>
                         <div className='gap-6 mt-3'>

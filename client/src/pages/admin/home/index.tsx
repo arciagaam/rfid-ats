@@ -1,8 +1,8 @@
 import { DataTable } from '@/components/global/dataTable'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-
 const Home = () => {
   return (
     <div className="flex flex-col gap-5">
