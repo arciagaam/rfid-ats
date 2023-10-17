@@ -22,6 +22,7 @@ const ShowUser = () => {
     const navigate = useNavigate()
 
     const { data: userLogs, refetch } = useGetUserLogsQuery(userId as string)
+    console.log(userLogs)
 
     useEffect(() => {
         if (userLogs) {
@@ -33,7 +34,7 @@ const ShowUser = () => {
                     date: formatDate(new Date(userLog.date)),
                     timeIn: formattedTimeIn,
                     timeOut: formattedTimeOut,
-                    hoursWorked: userLog.hoursWorked,
+                    totalTimeWorked: userLog.totalTimeWorked,
                 }
             })
 
@@ -43,11 +44,35 @@ const ShowUser = () => {
     }, [userLogs, refetch])
 
     useEffect(() => {
-        const socket = io('http://localhost:3001')
+        const socket = io('http://127.0.0.1:3001')
 
         socket.on('newLog', (newLogData) => {
-            console.log('Received new log data:', newLogData)
-            setData((prevData) => [newLogData, ...prevData])
+            // Check if the new log is a "time in" or "time out" entry
+            const isTimeIn = newLogData.timeOut === null
+
+            const formattedDate = formatDate(new Date(newLogData.date))
+            const formattedTimeIn = formatTime(newLogData.timeIn)
+            const formattedTimeOut = newLogData.timeOut ? formatTime(newLogData.timeOut) : 'N/A'
+
+            newLogData.date = formattedDate
+            newLogData.timeIn = formattedTimeIn
+            newLogData.timeOut = formattedTimeOut
+
+            // Update the data based on whether it's a "time in" or "time out" entry
+            setData((prevData) => {
+                if (isTimeIn) {
+                    return [newLogData, ...prevData] // "Time in" entry
+                } else {
+                    // Find the corresponding "time in" entry in the data and update it
+                    const updatedData = prevData.map((log) => {
+                        if (log.date === formattedDate && log.timeOut === 'N/A') {
+                            return newLogData // Update the existing "time in" entry
+                        }
+                        return log
+                    })
+                    return updatedData
+                }
+            })
         })
 
         return () => {

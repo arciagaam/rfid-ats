@@ -1,9 +1,15 @@
 import Rfid from './../models/Rfid.js'
-import AttendanceLog from '../models/AttendanceLog.js'
-import User from '../models/User.js'
 import asyncHandler from '../middleware/asyncHandler.js'
 import { compareUIDToDatabase, getAttendanceLog } from '../utils/logApi.js'
-import { io } from '../server.js'
+
+import {
+    formatRfidData,
+    getUserByRfid,
+    getFullName,
+    handleTimeIn,
+    handleTimeOut,
+    handleRfidNotFound,
+} from '../utils/rfidHelpers.js'
 
 let storingActive = false
 let windowTimeout
@@ -91,56 +97,28 @@ const deleteRfid = asyncHandler((req, res) => {
 const getRfidFromReader = asyncHandler(async (req, res) => {
     const { rfidData } = req.body
 
-    if (rfidData) {
-        // Remove spaces from the UID received from ESP8266
-        const formattedUID = rfidData.replace(/\s/g, '')
+    if (!rfidData) {
+        return handleInvalidRequest(res)
+    }
 
-        console.log('RFID from reader:', formattedUID)
+    const formattedUID = formatRfidData(rfidData)
+    console.log('RFID from reader:', formattedUID)
 
-        const matchingRfid = await compareUIDToDatabase(formattedUID)
+    const matchingRfid = await compareUIDToDatabase(formattedUID)
 
-        if (matchingRfid) {
-            // Get user name from matching rfid
-            const user = await User.findOne({ rfid: matchingRfid.rfidTag })
-            const { firstName, middleName, lastName } = user
-            const fullName = `${firstName} ${middleName} ${lastName}`
+    if (matchingRfid) {
+        const user = await getUserByRfid(matchingRfid.rfidTag)
+        const fullName = getFullName(user)
 
-            // Check if user has existing attendance log
-            const existingLog = await getAttendanceLog(matchingRfid.user)
+        const existingLog = await getAttendanceLog(matchingRfid.user)
 
-            if (existingLog) {
-                existingLog.timeOut = new Date()
-
-                await existingLog.save()
-                res.status(200).json({
-                    message: `${fullName} has timed out at ${existingLog.timeOut}`,
-                })
-            } else {
-                const newLog = await AttendanceLog.create({
-                    user: matchingRfid.user,
-                    date: new Date(),
-                    timeIn: new Date(),
-                    timeOut: null,
-                })
-
-                await newLog.save()
-
-                io.emit('newLog', newLog)
-
-                res.status(200).json({
-                    message: `${fullName} has timed in at ${newLog.timeIn}`,
-                })
-            }
-
-            // res.status(200).json({ rfid: matchingRfid })
+        if (existingLog) {
+            return handleTimeOut(req, res, existingLog, fullName)
         } else {
-            console.log('RFID not found in database')
-            res.status(404)
-            throw new Error('RFID not found in database')
+            return handleTimeIn(req, res, matchingRfid.user, fullName)
         }
     } else {
-        res.status(400).json({ error: 'Invalid request data' })
-        throw new Error('Invalid request data')
+        return handleRfidNotFound(res)
     }
 })
 

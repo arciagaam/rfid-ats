@@ -1,12 +1,10 @@
 import { ColumnDef } from '@tanstack/react-table'
 
-// import UserActions from './useractions'
-
 export type Log = {
     date: string
     timeIn: string
     timeOut: string
-    hoursWorked: string
+    totalTimeWorked: string
 }
 
 export const columns: ColumnDef<Log>[] = [
@@ -23,15 +21,7 @@ export const columns: ColumnDef<Log>[] = [
         header: 'Time out',
     },
     {
-        accessorKey: 'hoursWorked',
-        header: 'Hours Worked',
+        accessorKey: 'totalTimeWorked',
+        header: 'Total Time Worked',
     },
-    // {
-    //     id: 'actions',
-    //     cell: ({ row }) => {
-    //         const log = row.original
-
-    //         return <UserActions userId={log.id} />
-    //     },
-    // },
 ]
