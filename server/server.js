@@ -9,9 +9,6 @@ import dotenv from 'dotenv'
 import { Server } from 'socket.io'
 import { createServer } from 'node:http'
 
-import { Server } from 'socket.io'
-import { createServer } from 'node:http'
-
 dotenv.config()
 
 const port = process.env.PORT || 5000
@@ -40,21 +37,6 @@ app.use((req, res, next) => {
     return next()
 })
 
-const socketServer = createServer(app)
-const io = new Server(socketServer, {
-    cors: {
-        origin: 'http://localhost:5173',
-    },
-})
-
-io.on('connection', (socket) => {
-    console.log('Socket connection initialized')
-
-    socket.on('disconnect', () => {
-        console.log('Socket connection disconnected')
-    })
-})
-
 // Body parser middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -72,11 +54,6 @@ app.use('/api/rfid', rfidRoutes)
 
 app.use(notFound)
 app.use(errorHandler)
-
-socketServer.listen(port, () => {
-    console.log('==========================='.yellow.bold)
-    console.log(`Server running on port ${port}`.yellow.bold)
-})
 
 socketServer.listen(port, () => {
     console.log('==========================='.yellow.bold)
