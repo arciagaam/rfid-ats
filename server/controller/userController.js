@@ -75,7 +75,7 @@ const registerUser = asyncHandler(async (req, res) => {
     })
 
     if (user) {
-        req.io.emit('new_user', {message: 'new user created'});
+        req.io.emit('new_user', { message: 'new user created' })
         res.status(201).json({
             _id: user._id,
             firstName: user.firstName,
@@ -143,8 +143,13 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         user.middleName = req.body.middleName || user.middleName
         user.lastName = req.body.lastName || user.lastName
         user.email = req.body.email || user.email
-        user.role = req.body.role || user.role
-        user.status = req.body.status || user.status
+        user.contactNumber = req.body.contactNumber || user.contactNumber
+        user.department = req.body.department || user.department
+        user.idNumber = req.body.idNumber || user.idNumber
+        user.rfid = req.body.rfid || user.rfid
+        user.birthdate = req.body.birthdate || user.birthdate
+        user.sex = req.body.sex || user.sex
+        user.address = req.body.address || user.address
 
         if (req.body.password) {
             user.password = req.body.password
@@ -158,7 +163,14 @@ const updateUserProfile = asyncHandler(async (req, res) => {
             middleName: updatedUser.middleName,
             lastName: updatedUser.lastName,
             email: updatedUser.email,
+            contactNumber: updatedUser.contactNumber,
             role: updatedUser.role,
+            department: updatedUser.department,
+            idNumber: updatedUser.idNumber,
+            rfid: updatedUser.rfid,
+            birthdate: updatedUser.birthdate,
+            sex: updatedUser.sex,
+            address: updatedUser.address,
             status: updatedUser.status,
         })
     } else {
@@ -171,7 +183,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-    const users = await User.find({}).sort({_id:-1})
+    const users = await User.find({}).sort({ _id: -1 })
     res.status(200).json(users)
 })
 
@@ -188,7 +200,49 @@ const getUserByID = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/:id
 // @access  Private/Admin
 const updateUserByID = asyncHandler(async (req, res) => {
-    res.send('Update user by ID')
+    const user = await User.findById(req.params.id)
+
+    if (user) {
+        user.firstName = req.body.firstName || user.firstName
+        user.middleName = req.body.middleName || user.middleName
+        user.lastName = req.body.lastName || user.lastName
+        user.email = req.body.email || user.email
+        user.contactNumber = req.body.contactNumber || user.contactNumber
+        user.role = req.body.role || user.role
+        user.department = req.body.department || user.department
+        user.idNumber = req.body.idNumber || user.idNumber
+        user.rfid = req.body.rfid || user.rfid
+        user.birthdate = req.body.birthdate || user.birthdate
+        user.sex = req.body.sex || user.sex
+        user.address = req.body.address || user.address
+        user.status = req.body.status || user.status
+
+        if (req.body.password) {
+            user.password = req.body.password
+        }
+
+        const updatedUser = await user.save()
+
+        res.status(200).json({
+            _id: updatedUser._id,
+            firstName: updatedUser.firstName,
+            middleName: updatedUser.middleName,
+            lastName: updatedUser.lastName,
+            email: updatedUser.email,
+            contactNumber: updatedUser.contactNumber,
+            role: updatedUser.role,
+            department: updatedUser.department,
+            idNumber: updatedUser.idNumber,
+            rfid: updatedUser.rfid,
+            birthdate: updatedUser.birthdate,
+            sex: updatedUser.sex,
+            address: updatedUser.address,
+            status: updatedUser.status,
+        })
+    } else {
+        res.status(404)
+        throw new Error('User not found')
+    }
 })
 
 // @desc    Delete user
