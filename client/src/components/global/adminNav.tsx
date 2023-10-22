@@ -1,5 +1,5 @@
 import Navbar from './navbar'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '@/store/store'
 import { useLogoutMutation } from '@/slices/usersApiSlice'
@@ -10,6 +10,7 @@ import { RiLogoutBoxLine } from 'react-icons/ri'
 import { AiOutlineSchedule, AiFillSchedule } from 'react-icons/ai'
 
 import logo from './../../assets/images/logo.png'
+import SubNav from './subNav'
 
 const AdminNav = () => {
     const { userInfo } = useSelector((state: RootState) => state.auth)
@@ -28,7 +29,7 @@ const AdminNav = () => {
             console.log(error)
         }
     }
-
+    
     return (
         <>
             <Navbar>
@@ -87,20 +88,14 @@ const AdminNav = () => {
                         )}
                     </NavLink>
 
-                    <NavLink className='aria-[current]:bg-primary-purple-800 aria-[current]:text-white px-5 py-5 transition-all text-black/30 hover:bg-primary-purple-800 hover:text-white flex items-center gap-2' to='accomplishment-reports'>
-                        {({ isActive }) => (
-                            isActive ?
-                                <>
-                                    <MdAnalytics size={25} />
-                                    Accomplishment Reports
-                                </>
-                                :
-                                <>
-                                    <MdOutlineAnalytics size={25} />
-                                    Accomplishment Reports
-                                </>
-                        )}
-                    </NavLink>
+                    <SubNav 
+                        label="Accomplishment Report"
+                        icon={<MdAnalytics size={25}/>}
+                    >
+                            <Link to="accomplishment-reports/regular" className='hover:bg-primary-purple-800 hover:text-white py-5 px-5 bg-white'>Regular Faculty</Link>
+                            <Link to="accomplishment-reports/part-time" className='hover:bg-primary-purple-800 hover:text-white py-5 px-5 bg-white'>Part Time Faculty</Link>
+                    </SubNav>
+
                     <button onClick={logoutHandler} className='px-5 py-5 mt-auto text-red-500 transition-all hover:bg-red-500 hover:text-white text-left flex gap-2 items-center'>
                         <RiLogoutBoxLine size={20} /> Logout
                     </button>
