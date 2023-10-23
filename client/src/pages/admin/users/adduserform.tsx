@@ -218,8 +218,9 @@ const AddUserForm = () => {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent >
+                                            <SelectItem value='regular'>Regular Faculty</SelectItem>
+                                            <SelectItem value='part-time'>Part Time Faculty</SelectItem>
                                             <SelectItem value='admin'>Admin</SelectItem>
-                                            <SelectItem value='faculty'>Faculty</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
@@ -229,7 +230,7 @@ const AddUserForm = () => {
 
                     </div>
 
-                    {selectedRole == 'faculty' ? (
+                    {selectedRole != 'admin' ? (
                         <>
                             <br />
 

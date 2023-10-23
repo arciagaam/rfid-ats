@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 
-const userSchema = new mongoose.Schema(
+export const userSchema = new mongoose.Schema(
     {
         firstName: { type: String, required: true },
         middleName: { type: String },

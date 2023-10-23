@@ -23,10 +23,9 @@ import AdminNav from '@/components/global/adminNav'
 import PrivateRoute from '@/components/global/privateRoute'
 import ShowUser from '@/pages/admin/userprofile'
 import FacultySchedule from '@/pages/faculty'
-import AccomplishmentReports from '@/pages/accomplishment_reports'
+
 import CreateRFID from '@/pages/admin/users/rfid'
-import PartTime from '@/pages/accomplishment_reports/parttime'
-import Regular from '@/pages/accomplishment_reports/regular'
+import AccomplishmentReport from '@/pages/accomplishment_reports'
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -36,8 +35,8 @@ const router = createBrowserRouter(
                 <Route path='home' element={<AdminHome />} />
                 <Route path='faculty' element={<FacultySchedule />} />
                 <Route path='accomplishment-reports'>
-                    <Route path='regular' element={<Regular/>}/>
-                    <Route path='part-time' element={<PartTime/>}/>
+                    <Route path='regular' element={<AccomplishmentReport/>}/>
+                    <Route path='part-time' element={<AccomplishmentReport/>}/>
                 </Route>
 
 

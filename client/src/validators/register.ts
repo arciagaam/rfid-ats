@@ -13,8 +13,10 @@ const adminUser = z.object({
     status: z.string(),
 }).merge(registerSchemaBase);
 
+const regularFaculty = z.ob
+
 const facultyUser = z.object({
-    role: z.literal('faculty'),
+    role: z.enum(['regular', 'part-time']),
     status: z.string(),
     idNumber: z.string().nonempty('Required'),
     rfid: z.string().optional(),
@@ -26,7 +28,7 @@ const facultyUser = z.object({
 
 
 
+
 export const registerSchema = z.discriminatedUnion('role', [adminUser, facultyUser]);
 
-console.log(registerSchema)
 

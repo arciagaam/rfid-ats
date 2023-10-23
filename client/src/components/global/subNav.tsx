@@ -5,7 +5,7 @@ const SubNav = ({...props}) => {
 
     const [isOpen, setIsOpen] = useState(false)
     return (
-        <div className='relative aria-[current]:bg-primary-purple-800 aria-[current]:text-white text-black/30 flex items-start gap-2 cursor-pointer'>
+        <div className={`relative text-black/30 flex items-start gap-2 cursor-pointer ${isOpen ? 'bg-primary-purple-800 text-white' : ''}`}>
             <button onClick={() => setIsOpen(!isOpen)} className='flex gap-2 text-left items-center hover:bg-primary-purple-800 hover:text-white px-5 py-5 transition-all'>
                 {icon}
                 <span>{label}</span>

@@ -5,6 +5,7 @@ import { notFound, errorHandler } from './middleware/errorMiddleware.js'
 import cors from 'cors'
 import userRoutes from './routes/userRoutes.js'
 import rfidRoutes from './routes/rfidRoutes.js'
+import accomplishmentReportRoutes from './routes/accomplishmentReportRoutes.js'
 import dotenv from 'dotenv'
 import { Server } from 'socket.io'
 import { createServer } from 'node:http'
@@ -51,6 +52,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/users', userRoutes)
 app.use('/api/rfid', rfidRoutes)
+app.use('/api/accomplishment-reports', accomplishmentReportRoutes)
 
 app.use(notFound)
 app.use(errorHandler)
