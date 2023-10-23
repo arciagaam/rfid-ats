@@ -22,7 +22,6 @@ const ShowUser = () => {
     const navigate = useNavigate()
 
     const { data: userLogs, refetch } = useGetUserLogsQuery(userId as string)
-    console.log(userLogs)
 
     useEffect(() => {
         if (userLogs) {
