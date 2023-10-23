@@ -221,6 +221,8 @@ const updateUserByID = asyncHandler(async (req, res) => {
             user.password = req.body.password
         }
 
+        console.log(user)
+
         const updatedUser = await user.save()
 
         res.status(200).json({

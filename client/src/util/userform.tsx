@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
+import { useParams } from 'react-router-dom'
 import {
     Form,
     FormControl,
@@ -12,7 +13,7 @@ import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { registerSchema } from '@/validators/register'
+import { registerSchema, adminUser, facultyUser } from '@/validators/register'
 
 import {
     Select,
@@ -22,85 +23,202 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+
 import { Input } from '@/components/ui/input'
 import { format } from 'date-fns'
 import { toast } from 'react-toastify'
-import { Calendar as CalendarIcon } from 'lucide-react'
+import { IErrorResponse } from '@/types/index'
 
 import { cn } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
+import { Calendar as CalendarIcon } from 'lucide-react'
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
-import { IErrorResponse } from '@/types/index'
-import { useRegisterMutation } from '@/slices/usersApiSlice'
+import {
+    useRegisterMutation,
+    useGetUserQuery,
+    useUpdateUserByIDMutation,
+} from '@/slices/usersApiSlice'
 
-const AddUserForm = () => {
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [selectedRole, setSelectedRole] = useState<string>('')
+type IUserFormProps = {
+    isEdit?: boolean
+    closeDialog?: () => void
+}
 
+const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog }) => {
     const [register, { isLoading: loadingRegister }] = useRegisterMutation()
+    const [updateUser, { isLoading: loadingEditUser }] = useUpdateUserByIDMutation()
+
+    const { id } = useParams()
+    const { data: user, refetch } = useGetUserQuery(id as string)
+    const [selectedRole, setSelectedRole] = useState<string>(user?.role)
 
     const form = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
-            firstName: '',
-            middleName: '',
-            lastName: '',
-            email: '',
-            password: '',
-            role: selectedRole,
-            idNumber: '',
-            rfid: '',
-            sex: '',
-            contactNumber: '',
-            address: '',
-            status: '',
+            firstName: isEdit ? user?.firstName : '',
+            middleName: isEdit ? user?.middleName : '',
+            lastName: isEdit ? user?.lastName : '',
+            email: isEdit ? user?.email : '',
+            password: isEdit ? user?.password : '',
+            role: isEdit ? user?.role : selectedRole,
+            idNumber: isEdit ? user?.idNumber : '',
+            rfid: isEdit ? user?.rfid : '',
+            birthdate: isEdit ? new Date(user!.birthdate!) : undefined,
+            sex: isEdit ? user?.sex : '',
+            contactNumber: isEdit ? user?.contactNumber : '',
+            address: isEdit ? user?.address : '',
+            status: isEdit ? user?.status : '',
         },
     })
 
-    const onSubmit = async (data: z.infer<typeof registerSchema>) => {
+    const handleUserSubmit = async (
+        firstName: string,
+        middleName: string | null,
+        lastName: string,
+        email: string,
+        role: string,
+        idNumber: string | null,
+        rfid: string | null,
+        birthdate: Date | null,
+        sex: string | null,
+        contactNumber: string | null,
+        address: string | null,
+        password?: string
+    ) => {
+        try {
+            let birthdateISO = null
+            if (birthdate) {
+                const formattedBirthdate = format(birthdate!, 'yyyy-MM-dd')
+                birthdateISO = new Date(formattedBirthdate).toISOString()
+            }
+            const status = rfid === null ? 'not registered' : 'active'
+
+            if (!isEdit) {
+                await register({
+                    firstName,
+                    middleName,
+                    lastName,
+                    email,
+                    role,
+                    status,
+                    idNumber,
+                    rfid,
+                    birthdate: birthdateISO,
+                    sex,
+                    contactNumber,
+                    address,
+                    password,
+                }).unwrap()
+
+                toast.success('User successfully registered')
+            } else {
+                await updateUser({
+                    userId: id as string,
+                    firstName,
+                    middleName,
+                    lastName,
+                    email,
+                    role,
+                    status,
+                    idNumber,
+                    rfid,
+                    birthdate: birthdateISO,
+                    sex,
+                    contactNumber,
+                    address,
+                    password,
+                }).unwrap()
+
+                refetch()
+                toast.success('User successfully updated')
+            }
+
+            form.reset({})
+            closeDialog!()
+        } catch (error) {
+            toast.error((error as IErrorResponse)?.data?.message || (error as IErrorResponse).error)
+        }
+    }
+
+    const handleFacultySubmit = async (data: z.infer<typeof facultyUser>) => {
         const {
             firstName,
             middleName,
             lastName,
             email,
-            password,
             idNumber,
             rfid,
             birthdate,
             sex,
             contactNumber,
             address,
+            password,
         } = data
-        
-        try {
-            let birthdateISO;
-            if(birthdate) {
-                const formattedBirthdate = format(birthdate!, 'yyyy-MM-dd')
-                birthdateISO = new Date(formattedBirthdate).toISOString()
-            }
 
-            await register({
-                firstName,
-                middleName,
-                lastName,
-                email,
-                password,
-                role: selectedRole,
-                status: rfid == '' ? 'not registered' : 'active',
-                idNumber,
-                rfid,
-                birthdate: birthdateISO,
-                sex,
-                contactNumber,
-                address,
+        await handleUserSubmit(
+            firstName,
+            middleName || null,
+            lastName,
+            email,
+            'faculty',
+            idNumber,
+            rfid || null,
+            birthdate,
+            sex,
+            contactNumber,
+            address,
+            password
+        )
+    }
+
+    const handleAdminSubmit = async (data: z.infer<typeof adminUser>) => {
+        const { firstName, middleName, lastName, email, password } = data
+
+        await handleUserSubmit(
+            firstName,
+            middleName || null,
+            lastName,
+            email,
+            'admin',
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            password
+        )
+    }
+
+    const onSubmit = async (data: z.infer<typeof registerSchema>) => {
+        console.log(data)
+        if (data.role === 'admin') {
+            await handleAdminSubmit(data)
+        } else if (data.role === 'faculty') {
+            await handleFacultySubmit(data)
+        }
+    }
+
+    const onResetPassword = async () => {
+        if (user?.role === 'admin' && user?.birthdate === null) {
+            await updateUser({
+                userId: id as string,
+                password: 'adminCCS',
             }).unwrap()
-            form.reset({});
-            
-            toast.success('User successfully registered')
-        } catch (error) {
-            toast.error((error as IErrorResponse)?.data?.message || (error as IErrorResponse).error)
+            toast.success('Password successfully reset')
+            refetch()
+        } else {
+            const formattedBirthdate = format(new Date(user!.birthdate!), 'yyyy-MM-dd')
+
+            await updateUser({
+                userId: id as string,
+                password: formattedBirthdate,
+            }).unwrap()
+            toast.success('Password successfully reset')
+            refetch()
         }
     }
 
@@ -188,12 +306,30 @@ const AddUserForm = () => {
                                 <FormItem>
                                     <FormLabel className='text-base'>Password</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            type='password'
-                                            placeholder='Enter password'
-                                            {...field}
-                                            autoComplete='new-password'
-                                        />
+                                        {isEdit ? (
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button
+                                                            type='button'
+                                                            className='w-full bg-gray-600 hover:bg-slate-500'
+                                                            onClick={onResetPassword}>
+                                                            reset
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent side='bottom'>
+                                                        <p>set to birthdate e.g. 1995-10-20</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                        ) : (
+                                            <Input
+                                                type='password'
+                                                placeholder='Enter password'
+                                                {...field}
+                                                autoComplete='new-password'
+                                            />
+                                        )}
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -217,7 +353,7 @@ const AddUserForm = () => {
                                                 <SelectValue placeholder='Select user role' />
                                             </SelectTrigger>
                                         </FormControl>
-                                        <SelectContent >
+                                        <SelectContent>
                                             <SelectItem value='admin'>Admin</SelectItem>
                                             <SelectItem value='faculty'>Faculty</SelectItem>
                                         </SelectContent>
@@ -226,7 +362,6 @@ const AddUserForm = () => {
                                 </FormItem>
                             )}
                         />
-
                     </div>
 
                     {selectedRole == 'faculty' ? (
@@ -260,7 +395,6 @@ const AddUserForm = () => {
                                                 </span>
                                             </FormLabel>
                                             <FormControl>
-
                                                 <Input placeholder='Tap or Enter RFID' {...field} />
                                             </FormControl>
                                             <FormMessage />
@@ -282,7 +416,7 @@ const AddUserForm = () => {
                                                             className={cn(
                                                                 'w-full justify-start text-left font-normal',
                                                                 !field.value &&
-                                                                'text-muted-foreground'
+                                                                    'text-muted-foreground'
                                                             )}>
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value ? (
@@ -348,8 +482,10 @@ const AddUserForm = () => {
                                                 Contact Number
                                             </FormLabel>
                                             <FormControl>
-                                                <div className="flex items-center bg-white rounded-md focus-within:ring-ring focus-within:ring-2 focus-within:ring-offset-2">
-                                                    <div className='text-[#1e1e1e80] flex items-center justify-center text-sm rounded-l-md pl-3 border border-input ring-offset-background h-10 border-r-0 py-2'>+63</div>
+                                                <div className='flex items-center bg-white rounded-md focus-within:ring-ring focus-within:ring-2 focus-within:ring-offset-2'>
+                                                    <div className='text-[#1e1e1e80] flex items-center justify-center text-sm rounded-l-md pl-3 border border-input ring-offset-background h-10 border-r-0 py-2'>
+                                                        +63
+                                                    </div>
                                                     <Input
                                                         className='border-l-0 rounded-l-none w-full focus-visible:ring-0 focus-visible:ring-offset-0'
                                                         placeholder='Enter Contact Number'
@@ -379,14 +515,16 @@ const AddUserForm = () => {
                         </>
                     ) : null}
 
-                    <Button type='submit' disabled={isLoading} className='self-end w-fit'>
-                        {loadingRegister ? 'Please wait...' : 'Register User'}
+                    <Button
+                        type='submit'
+                        disabled={isEdit ? loadingEditUser : loadingRegister}
+                        className='self-end w-fit'>
+                        {isEdit ? 'Update User' : 'Register User'}
                     </Button>
                 </form>
             </Form>
-
         </div>
     )
 }
 
-export default AddUserForm
+export default UserForm
