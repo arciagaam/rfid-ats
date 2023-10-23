@@ -37,6 +37,7 @@ export const columns: ColumnDef<Log>[] = [
         accessorKey: 'status',
         cell: ({ row }) => {
             const status: string = row.getValue('status')
+
             return (
                 <Badge
                     className={`${

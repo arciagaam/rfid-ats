@@ -1,15 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { Button } from '@/components/ui/button'
-import {
-    Card,
-    CardContent,
-    // CardDescription,
-    // CardFooter,
-    // CardHeader,
-    // CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
+
+import { FormModalBtn } from '@/components/global/formModalBtn'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
@@ -20,6 +14,8 @@ import { useGetUserQuery } from '@/slices/usersApiSlice'
 import { IUserProfile } from '@/types/index'
 
 import { formatDate } from '@/util/formatter'
+
+import UserForm from '../../../util/userform'
 
 export function ProfileCard() {
     const [profile, setProfile] = useState<IUserProfile>()
@@ -34,14 +30,14 @@ export function ProfileCard() {
                 fullname: `${user.firstName} ${user.middleName ?? ''} ${user.lastName}`,
                 email: user.email,
                 role: user.role,
-                department: user.department,
+                department: user.department ?? 'N/A',
                 status: user.status,
                 idNumber: user.idNumber ?? 'N/A',
                 rfid: user.rfid ?? 'N/A',
-                birthdate: formatDate(new Date(user.birthdate)),
-                sex: user.sex,
-                contactNumber: user.contactNumber,
-                address: user.address,
+                birthdate: user.birthdate ? formatDate(new Date(user.birthdate)) : 'N/A',
+                sex: user.sex ?? 'N/A',
+                contactNumber: user.contactNumber ?? 'N/A',
+                address: user.address ?? 'N/A',
             }
             setProfile(data)
         }
@@ -50,38 +46,56 @@ export function ProfileCard() {
     return (
         <Card>
             <CardContent className='grid gap-4'>
-                {/* <div className='grid grid-cols-2 gap-6'>
-                    <Button variant='outline'>Github</Button>
-                    <Button variant='outline'>Google</Button>
-                </div>
-                <div className='relative'>
-                    <div className='absolute inset-0 flex items-center'>
-                        <span className='w-full border-t' />
-                    </div>
-                    <div className='relative flex justify-center text-xs uppercase'>
-                        <span className='bg-background px-2 text-muted-foreground'>
-                            Or continue with
-                        </span>
-                    </div>
-                </div> */}
                 <Tabs defaultValue='basicInfo' className='mt-6 w-full'>
                     <div className='flex justify-between'>
-                        <TabsList>
-                            <TabsTrigger value='basicInfo'>Basic Info</TabsTrigger>
-                            <TabsTrigger value='addtlInfo'>Additional Info</TabsTrigger>
-                        </TabsList>
-                        <Button>Edit User Details</Button>
+                        <div className='flex items-center gap-4'>
+                            <TabsList>
+                                <TabsTrigger value='basicInfo'>Basic Info</TabsTrigger>
+                                <TabsTrigger value='addtlInfo'>Additional Info</TabsTrigger>
+                            </TabsList>
+                            {/*  Status here */}
+                            {/* Status */}
+                            <div className='flex items-center gap-2'>
+                                <div
+                                    className={`h-4 w-4 rounded-full ${
+                                        profile?.status === 'active' ? 'bg-green-500' : 'bg-red-500'
+                                    }`}></div>
+                                <span
+                                    className={`text-sm font-medium ${
+                                        profile?.status === 'active'
+                                            ? 'text-green-500'
+                                            : 'text-red-500'
+                                    }`}>
+                                    {profile?.status}
+                                </span>
+                            </div>
+                        </div>
+                        <FormModalBtn
+                            btnLabel='Edit User Details'
+                            dlgTitle='Edit User Details'
+                            formComponent={<UserForm isEdit={true} />}
+                        />
                     </div>
 
                     <TabsContent value='basicInfo'>
                         <div className='grid grid-cols-3 gap-6 mt-5'>
                             <div>
                                 <Label htmlFor='name'>Name</Label>
-                                <Input id='name' type='text' value={profile?.fullname} readOnly />
+                                <Input
+                                    id='name'
+                                    type='text'
+                                    defaultValue={profile?.fullname}
+                                    readOnly
+                                />
                             </div>
                             <div>
                                 <Label htmlFor='email'>Email</Label>
-                                <Input id='email' type='email' value={profile?.email} readOnly />
+                                <Input
+                                    id='email'
+                                    type='email'
+                                    defaultValue={profile?.email}
+                                    readOnly
+                                />
                             </div>
                             <div>
                                 <Label htmlFor='contactNumber'>Contact Number</Label>
@@ -93,7 +107,7 @@ export function ProfileCard() {
                                         id='contactNumber'
                                         className='border-l-0 rounded-l-none w-full focus-visible:ring-0 focus-visible:ring-offset-0'
                                         type='text'
-                                        value={profile?.contactNumber}
+                                        defaultValue={profile?.contactNumber}
                                         readOnly
                                     />
                                 </div>
@@ -105,14 +119,19 @@ export function ProfileCard() {
                         <div className='grid grid-cols-2 gap-6 mt-5'>
                             <div>
                                 <Label htmlFor='role'>Role</Label>
-                                <Input id='role' type='text' value={profile?.role} readOnly />
+                                <Input
+                                    id='role'
+                                    type='text'
+                                    defaultValue={profile?.role}
+                                    readOnly
+                                />
                             </div>
                             <div>
                                 <Label htmlFor='department'>Department</Label>
                                 <Input
                                     id='department'
                                     type='text'
-                                    value={profile?.department}
+                                    defaultValue={profile?.department}
                                     readOnly
                                 />
                             </div>
@@ -123,13 +142,18 @@ export function ProfileCard() {
                                 <Input
                                     id='idNumber'
                                     type='text'
-                                    value={profile?.idNumber}
+                                    defaultValue={profile?.idNumber}
                                     readOnly
                                 />
                             </div>
                             <div>
                                 <Label htmlFor='rfid'>RFID</Label>
-                                <Input id='rfid' type='text' value={profile?.rfid} readOnly />
+                                <Input
+                                    id='rfid'
+                                    type='text'
+                                    defaultValue={profile?.rfid}
+                                    readOnly
+                                />
                             </div>
                         </div>
                         <div className='grid grid-cols-2 gap-6 mt-3'>
@@ -138,18 +162,23 @@ export function ProfileCard() {
                                 <Input
                                     id='birtdate'
                                     type='text'
-                                    value={profile?.birthdate}
+                                    defaultValue={profile?.birthdate}
                                     readOnly
                                 />
                             </div>
                             <div>
                                 <Label htmlFor='sex'>Gender</Label>
-                                <Input id='sex' type='text' value={profile?.sex} />
+                                <Input id='sex' type='text' defaultValue={profile?.sex} readOnly />
                             </div>
                         </div>
                         <div className='gap-6 mt-3'>
                             <Label htmlFor='address'>Address</Label>
-                            <Input id='address' type='text' value={profile?.address} readOnly />
+                            <Input
+                                id='address'
+                                type='text'
+                                defaultValue={profile?.address}
+                                readOnly
+                            />
                         </div>
                     </TabsContent>
                 </Tabs>

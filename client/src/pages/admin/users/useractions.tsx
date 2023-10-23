@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { MoreHorizontal } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -25,6 +27,8 @@ import { toast } from 'react-toastify'
 import { IErrorResponse } from '@/types/index'
 
 const UserActions = ({ userId }: { userId: string }) => {
+    const [open, setOpen] = React.useState(false)
+
     const [deleteUser, { isLoading: loadingDelete }] = useDeleteUserMutation()
 
     const { refetch } = useGetUsersQuery(null)
@@ -34,13 +38,15 @@ const UserActions = ({ userId }: { userId: string }) => {
             await deleteUser(userId)
             refetch()
             toast.success('User deleted successfully')
+
+            setOpen(false)
         } catch (error) {
             toast.error((error as IErrorResponse)?.data?.message || (error as IErrorResponse).error)
         }
     }
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant='ghost' className='w-8 h-8 p-0'>

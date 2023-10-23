@@ -3,7 +3,7 @@
 // import { DataTable } from '../../../components/global/dataTable'
 // import { Log, IUserRow, columns } from './columns'
 // import { useEffect, useState } from 'react'
-import {io} from 'socket.io-client'
+import { io } from 'socket.io-client'
 
 import { DataTable } from '../../../components/global/dataTable'
 import { Log, columns, IUserRow } from './columns'
@@ -13,9 +13,8 @@ import { Link } from 'react-router-dom'
 
 import { useGetUsersQuery } from '@/slices/usersApiSlice'
 import { Card, CardContent } from '@/components/ui/card'
-import AddUserModal from './adduser'
-
-
+import { FormModalBtn } from '@/components/global/formModalBtn'
+import UserForm from '../../../util/userform'
 
 const Users = () => {
     const [data, setData] = useState<Log[]>([])
@@ -26,7 +25,7 @@ const Users = () => {
         if (users) {
             const tableData = users.map((user: IUserRow) => ({
                 id: user._id,
-                name: `${user.firstName} ${user.middleName} ${user.lastName}`,
+                name: `${user.firstName} ${user.middleName ?? ''} ${user.lastName}`,
                 email: user.email,
                 role: user.role,
                 status: user.status,
@@ -34,14 +33,16 @@ const Users = () => {
             setData(tableData)
         }
         refetch()
-    }, [users, refetch]);
+    }, [users, refetch])
 
     useEffect(() => {
-        const socket = io('http://127.0.0.1:3001');
+        const socket = io('http://127.0.0.1:3001')
         socket.on('new_user', (content) => {
-          refetch();
+            refetch()
         })
-        return () => {socket.disconnect()}
+        return () => {
+            socket.disconnect()
+        }
     }, [])
 
     return (
@@ -55,8 +56,12 @@ const Users = () => {
                         columns={columns}
                         data={data}
                         component={[
-                            <AddUserModal/>,
- 
+                            <FormModalBtn
+                                btnLabel='Add User'
+                                dlgTitle='Add User'
+                                formComponent={<UserForm />}
+                            />,
+
                             <Button asChild className='ml-2'>
                                 <Link to='rfid'>Manage RFID</Link>
                             </Button>,
