@@ -1,5 +1,5 @@
 import Navbar from './navbar'
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '@/store/store'
 import { useLogoutMutation } from '@/slices/usersApiSlice'
@@ -13,6 +13,8 @@ import logo from './../../assets/images/logo.png'
 import SubNav from './subNav'
 
 const AdminNav = () => {
+    const location = useLocation();
+    
     const { userInfo } = useSelector((state: RootState) => state.auth)
 
     const dispatch = useDispatch()
@@ -90,7 +92,9 @@ const AdminNav = () => {
 
                     <SubNav 
                         label="Accomplishment Report"
-                        icon={<MdAnalytics size={25}/>}
+                        icon={{active: <MdAnalytics size={25}/>, inactive:  <MdOutlineAnalytics size={25}/>}}
+                        active={location.pathname.includes('admin/accomplishment-reports')}
+                        
                     >
                             <Link to="accomplishment-reports/regular" className='hover:bg-primary-purple-800 hover:text-white py-5 px-5 bg-white'>Regular Faculty</Link>
                             <Link to="accomplishment-reports/part-time" className='hover:bg-primary-purple-800 hover:text-white py-5 px-5 bg-white'>Part Time Faculty</Link>

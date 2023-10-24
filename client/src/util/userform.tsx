@@ -149,6 +149,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog }) => {
             middleName,
             lastName,
             email,
+            role,
             idNumber,
             rfid,
             birthdate,
@@ -163,7 +164,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog }) => {
             middleName || null,
             lastName,
             email,
-            'faculty',
+            role,
             idNumber,
             rfid || null,
             birthdate,
@@ -197,7 +198,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog }) => {
         console.log(data)
         if (data.role === 'admin') {
             await handleAdminSubmit(data)
-        } else if (data.role === 'faculty') {
+        }else {
             await handleFacultySubmit(data)
         }
     }
@@ -354,8 +355,9 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog }) => {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
+                                            <SelectItem value='regular'>Regular Faculty</SelectItem>
+                                            <SelectItem value='part-time'>Part Time Faculty</SelectItem>
                                             <SelectItem value='admin'>Admin</SelectItem>
-                                            <SelectItem value='faculty'>Faculty</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
@@ -364,7 +366,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog }) => {
                         />
                     </div>
 
-                    {selectedRole == 'faculty' ? (
+                    {selectedRole != 'admin' ? (
                         <>
                             <br />
 

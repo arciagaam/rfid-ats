@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 
 const SubNav = ({...props}) => {
-    const {icon, label, children} = props;
+    const {icon, label, children, active} = props;
+    const [isOpen, setIsOpen] = useState(false);
 
-    const [isOpen, setIsOpen] = useState(false)
     return (
-        <div className={`relative text-black/30 flex items-start gap-2 cursor-pointer ${isOpen ? 'bg-primary-purple-800 text-white' : ''}`}>
+        <div className={`relative text-black/30 flex items-start gap-2 cursor-pointer ${isOpen || active ? 'bg-primary-purple-800 text-white' : ''}`}>
             <button onClick={() => setIsOpen(!isOpen)} className='flex gap-2 text-left items-center hover:bg-primary-purple-800 hover:text-white px-5 py-5 transition-all'>
-                {icon}
+                {isOpen || active ? icon.active : icon.inactive }
                 <span>{label}</span>
             </button>
 
