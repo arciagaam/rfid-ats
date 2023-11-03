@@ -8,6 +8,11 @@ export const accomplishmentReportApiSlice = apiSlice.injectEndpoints({
                 url: `${AR_URL}${params ? (`?${params}`) : ''}`
             }),
         }),
+        getAccomplishmentReportsPerUser: builder.query({
+            query: () => ({
+                url: `${AR_URL}/per-user`
+            })
+        }),
         storeAccomplishmentReport: builder.mutation({
             query: (data: object) => ({
                 url: `${AR_URL}`,
@@ -20,5 +25,6 @@ export const accomplishmentReportApiSlice = apiSlice.injectEndpoints({
 
 export const {
     useGetAccomplishmentReportsQuery,
+    useGetAccomplishmentReportsPerUserQuery,
     useStoreAccomplishmentReportMutation
 } = accomplishmentReportApiSlice;

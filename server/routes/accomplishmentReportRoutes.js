@@ -1,7 +1,7 @@
 import express from 'express'
 
 // import { getRfids, storeRfid, deleteRfid, getRfidFromReader, changeWindowState } from '../controller/rfidController.js'
-import { getAccomplishmentReports, storeAccomplishmentReports } from '../controller/accomplishmentReportController.js'
+import { getAccomplishmentReports, storeAccomplishmentReports, getAccomplishmentReportsPerUser } from '../controller/accomplishmentReportController.js'
 
 import { protect, admin } from '../middleware/authMiddleware.js'
 
@@ -12,6 +12,8 @@ router
     .get(protect, admin, getAccomplishmentReports)
     // .put(protect, admin, storeAccomplishmentReports)
     .post(protect, admin, storeAccomplishmentReports)
+
+router.route('/per-user').get(protect, getAccomplishmentReportsPerUser);
 
 // router.route('/window').post(protect, admin, changeWindowState)
 // router.route('/:id').delete(protect, admin, deleteRfid)

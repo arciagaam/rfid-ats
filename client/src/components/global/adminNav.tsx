@@ -11,6 +11,7 @@ import { AiOutlineSchedule, AiFillSchedule } from 'react-icons/ai'
 
 import logo from './../../assets/images/logo.png'
 import SubNav from './subNav'
+import { useEffect } from 'react'
 
 const AdminNav = () => {
     const location = useLocation();
@@ -26,11 +27,20 @@ const AdminNav = () => {
         try {
             await logoutApiCall().unwrap()
             dispatch(logout())
-            navigate('/')
+            navigate('/login')
         } catch (error) {
             console.log(error)
         }
     }
+    
+    useEffect(() => {
+        const { role } = userInfo;
+
+        if(role !== 'admin') {
+            navigate('/')
+        }
+
+    }, [])
     
     return (
         <>

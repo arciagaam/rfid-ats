@@ -18,19 +18,36 @@ import 'react-toastify/dist/ReactToastify.css'
 
 // components
 import AdminNav from '@/components/global/adminNav'
+import UserNav from '@/components/global/userNav'
 
 // private router
 import PrivateRoute from '@/components/global/privateRoute'
 import ShowUser from '@/pages/admin/userprofile'
 import FacultySchedule from '@/pages/faculty'
 
+import UserHome from '@/pages/user/home/index'
+import UserAccomplishmentReport from '@/pages/user/accomplishment_reports/index'
+import UserShowAccomplishmentReport from '@/pages/user/accomplishment_reports/show'
+
 import CreateRFID from '@/pages/admin/users/rfid'
-import AccomplishmentReport from '@/pages/accomplishment_reports'
+import AccomplishmentReport from '@/pages/admin/accomplishment_reports'
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path='/'>
-            <Route index element={<Login />} />
+            <Route path="/login" element={<Login />} />
+
+            {/* users only route */}
+            <Route path="/" element={<UserNav/>}>
+                <Route index element={<UserHome/>} />
+
+                <Route path='/accomplishment-reports'> 
+                    <Route index element={<UserAccomplishmentReport/>} />
+                    <Route path=':id' element={<UserShowAccomplishmentReport/>} />
+                </Route>
+            </Route>
+
+            {/* admin only route */}
             <Route path='/admin' element={<AdminNav />}>
                 <Route path='home' element={<AdminHome />} />
                 <Route path='faculty' element={<FacultySchedule />} />
@@ -38,7 +55,6 @@ const router = createBrowserRouter(
                     <Route path='regular' element={<AccomplishmentReport/>}/>
                     <Route path='part-time' element={<AccomplishmentReport/>}/>
                 </Route>
-
 
                 <Route path='users'>
                     <Route index element={<Users />} />
