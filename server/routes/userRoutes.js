@@ -12,11 +12,14 @@ import {
     deleteUser,
 } from '../controller/userController.js'
 
-import { getLogs } from '../controller/logController.js'
+import { getLogs, getAllLogs } from '../controller/logController.js'
 
 import { protect, admin } from '../middleware/authMiddleware.js'
 
 const router = express.Router()
+
+router.route('/logs').get(protect, admin, getAllLogs)
+router.route('/logs/:id').get(protect, admin, getLogs)
 
 router.route('/').post(registerUser).get(protect, admin, getUsers)
 router.post('/logout', logoutUser)
@@ -27,7 +30,5 @@ router
     .delete(protect, admin, deleteUser)
     .get(protect, admin, getUserByID)
     .put(protect, admin, updateUserByID)
-
-router.route('/logs/:id').get(protect, admin, getLogs)
 
 export default router

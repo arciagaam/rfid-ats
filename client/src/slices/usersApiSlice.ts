@@ -17,8 +17,8 @@ export const usersApiSlice = apiSlice.injectEndpoints({
             }),
         }),
         getUsers: builder.query({
-            query: (params:string) => ({
-                url: `${USERS_URL}${params ? (`?${params}`) : ''}`,
+            query: (params: string) => ({
+                url: `${USERS_URL}${params ? `?${params}` : ''}`,
             }),
             providesTags: ['User'],
             keepUnusedDataFor: 5,
@@ -35,7 +35,12 @@ export const usersApiSlice = apiSlice.injectEndpoints({
                 url: `${USERS_URL}/${data}`,
             }),
         }),
-        getUserLogs: builder.query({
+        getUsersLogs: builder.query({
+            query: () => ({
+                url: `${USERS_URL}/logs`,
+            }),
+        }),
+        getUserLogsByID: builder.query({
             query: (data: string) => ({
                 url: `${USERS_URL}/logs/${data}`,
             }),
@@ -56,14 +61,14 @@ export const usersApiSlice = apiSlice.injectEndpoints({
     }),
 })
 
-
 export const {
     useLoginMutation,
     useLogoutMutation,
     useGetUsersQuery,
     useRegisterMutation,
     useGetUserQuery,
-    useGetUserLogsQuery,
+    useGetUsersLogsQuery,
+    useGetUserLogsByIDQuery,
     useUpdateUserByIDMutation,
     useDeleteUserMutation,
 } = usersApiSlice

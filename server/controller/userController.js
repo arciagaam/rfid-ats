@@ -183,22 +183,22 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-    const { role, search } = req.query;
+    const { role, search } = req.query
     if (role) {
-        console.log(search);
+        console.log(search)
         const users = await User.find({
-            role: role, 
-            "$expr": {
-                "$regexMatch": {
-                    "input": { "$concat": ["$firstName", " ", "$middleName", " ", "$lastName"] },
-                    "regex": search,  //Your text search here
-                    "options": "im"
-                }
-            }
+            role: role,
+            $expr: {
+                $regexMatch: {
+                    input: { $concat: ['$firstName', ' ', '$middleName', ' ', '$lastName'] },
+                    regex: search, //Your text search here
+                    options: 'im',
+                },
+            },
         }).sort({ _id: -1 })
 
         res.status(200).json(users)
-        return;
+        return
     }
 
     const users = await User.find({}).sort({ _id: -1 })

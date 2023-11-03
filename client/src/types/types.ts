@@ -7,6 +7,19 @@ export interface IErrorResponse {
     error: string
 }
 
+export interface IUser {
+    _id: string
+    firstName: string
+    middleName?: string
+    lastName: string
+}
+
+export interface IUserSelect extends IUser {
+    key: string
+    label: string
+    value: string
+}
+
 export interface IUserProfile {
     fullname: string
     email: string
