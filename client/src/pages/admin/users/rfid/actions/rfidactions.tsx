@@ -1,12 +1,28 @@
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal } from "lucide-react"
+import React from 'react'
+import { Button } from '@/components/ui/button'
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { MoreHorizontal } from 'lucide-react'
 
+const RfidActions = ({ userId }: { userId: string }) => {
+    const [open, setOpen] = React.useState(false)
 
-const RfidActions = () => {
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant='ghost' className='w-8 h-8 p-0'>
@@ -18,9 +34,7 @@ const RfidActions = () => {
                 <DropdownMenuContent align='end'>
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-                    <DropdownMenuItem>
-                        View User
-                    </DropdownMenuItem>
+                    <DropdownMenuItem>Assign RFID to...</DropdownMenuItem>
 
                     {/* <DropdownMenuItem disabled={loadingDelete}>
                         <DialogTrigger>Delete User</DialogTrigger>

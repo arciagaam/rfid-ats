@@ -17,6 +17,7 @@ function getFullName(user) {
 async function handleTimeIn(req, res, userId, fullName) {
     const newLog = await AttendanceLog.create({
         user: userId,
+        userName: fullName,
         date: new Date(),
         timeIn: new Date(),
         timeOut: null,

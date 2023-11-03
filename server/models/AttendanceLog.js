@@ -11,6 +11,7 @@ const attendanceLogSchema = new mongoose.Schema(
         timeIn: { type: Date, required: true },
         timeOut: { type: Date },
         totalTimeWorked: String,
+        userName: { type: String },
     },
     { timestamps: true }
 )

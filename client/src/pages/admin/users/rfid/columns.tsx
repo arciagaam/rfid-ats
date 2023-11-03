@@ -3,24 +3,34 @@ import { Button } from '@/components/ui/button'
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown } from 'lucide-react'
 
-export type RfidColumn = {
+import RfidActions from './actions/rfidactions'
+import { ComboboxDemo } from './actions/assignedto'
+
+export type Log = {
     id: string
     rfidTag: string
+    assignedTo: string
     status: string
 }
 
-export interface IRfidRow extends RfidColumn {
+export interface IRfidRow extends Log {
     _id: string
     rfidTag: string
     status: string
 }
 
-export const columns: ColumnDef<RfidColumn>[] = [
+export const columns: ColumnDef<Log>[] = [
     {
         accessorKey: 'rfidTag',
         header: 'RFID Tag',
     },
-
+    {
+        accessorKey: 'assignedTo',
+        header: 'Assigned to',
+        cell: ({ row }) => {
+            return <ComboboxDemo />
+        },
+    },
     {
         accessorKey: 'status',
         cell: ({ row }) => {
@@ -28,10 +38,10 @@ export const columns: ColumnDef<RfidColumn>[] = [
             return (
                 <Badge
                     className={`${
-                        status == 'active'
-                            ? 'border-green-500 text-green-500'
+                        status == 'unused'
+                            ? 'border-yellow-300 text-gray-500'
                             : 'border-red-500 text-red-500'
-                    } bg-transparent font-thin hover:bg-transparent`}>
+                    } bg-yellow-300 font-thin hover:bg-transparent`}>
                     {status}
                 </Badge>
             )
@@ -49,9 +59,12 @@ export const columns: ColumnDef<RfidColumn>[] = [
             )
         },
     },
+    // {
+    //     id: 'actions',
+    //     cell: ({ row }) => {
+    //         const log = row.original
 
-    {
-        accessorKey: 'actions',
-        header: 'Actions',
-    },
+    //         return <RfidActions userId={log.id} />
+    //     },
+    // },
 ]

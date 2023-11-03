@@ -10,4 +10,15 @@ const getLogs = asyncHandler(async (req, res) => {
     res.status(200).json(logs)
 })
 
-export { getLogs }
+// @desc    Get all logs
+// @route   GET /api/users/logs
+// @access  Private/Admin
+const getAllLogs = asyncHandler(async (req, res) => {
+    const logs = await AttendanceLog.find({})
+        .populate('user', ['firstName', 'middleName', 'lastName'])
+        .populate('userName', 'firstName middleName lastName')
+
+    res.status(200).json(logs)
+})
+
+export { getLogs, getAllLogs }

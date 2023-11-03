@@ -26,7 +26,7 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 import { Input } from '@/components/ui/input'
-import { format } from 'date-fns'
+import { format, set } from 'date-fns'
 import { toast } from 'react-toastify'
 import { IErrorResponse } from '@/types/index'
 
@@ -35,6 +35,7 @@ import { Calendar } from '@/components/ui/calendar'
 import { Calendar as CalendarIcon } from 'lucide-react'
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { FormStepper } from '@/components/ui/formstepper'
 
 import {
     useRegisterMutation,
@@ -54,6 +55,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog }) => {
     const { id } = useParams()
     const { data: user, refetch } = useGetUserQuery(id as string)
     const [selectedRole, setSelectedRole] = useState<string>(user?.role)
+    const [selectedSex, setSelectedSex] = useState<string>(user?.sex)
 
     const form = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
@@ -67,7 +69,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog }) => {
             idNumber: isEdit ? user?.idNumber : '',
             rfid: isEdit ? user?.rfid : '',
             birthdate: isEdit ? new Date(user!.birthdate!) : undefined,
-            sex: isEdit ? user?.sex : '',
+            sex: isEdit ? user?.sex : selectedSex,
             contactNumber: isEdit ? user?.contactNumber : '',
             address: isEdit ? user?.address : '',
             status: isEdit ? user?.status : '',
@@ -198,7 +200,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog }) => {
         console.log(data)
         if (data.role === 'admin') {
             await handleAdminSubmit(data)
-        }else {
+        } else {
             await handleFacultySubmit(data)
         }
     }
@@ -356,7 +358,9 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog }) => {
                                         </FormControl>
                                         <SelectContent>
                                             <SelectItem value='regular'>Regular Faculty</SelectItem>
-                                            <SelectItem value='part-time'>Part Time Faculty</SelectItem>
+                                            <SelectItem value='part-time'>
+                                                Part Time Faculty
+                                            </SelectItem>
                                             <SelectItem value='admin'>Admin</SelectItem>
                                         </SelectContent>
                                     </Select>
@@ -458,7 +462,10 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog }) => {
                                         <FormItem>
                                             <FormLabel className='text-base'>Gender</FormLabel>
                                             <Select
-                                                onValueChange={field.onChange}
+                                                onValueChange={(value) => {
+                                                    field.onChange(value)
+                                                    setSelectedSex(value)
+                                                }}
                                                 defaultValue={field.value}>
                                                 <FormControl>
                                                     <SelectTrigger>

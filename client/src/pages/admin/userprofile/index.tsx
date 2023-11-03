@@ -9,7 +9,7 @@ import { columns } from './columns'
 import { Card, CardContent } from '@/components/ui/card'
 import { ProfileCard } from './profilecard'
 
-import { useGetUserLogsQuery } from '@/slices/usersApiSlice'
+import { useGetUserLogsByIDQuery } from '@/slices/usersApiSlice'
 import io from 'socket.io-client'
 
 import { formatDate, formatTime } from '@/util/formatter'
@@ -21,7 +21,7 @@ const ShowUser = () => {
 
     const navigate = useNavigate()
 
-    const { data: userLogs, refetch } = useGetUserLogsQuery(userId as string)
+    const { data: userLogs, refetch } = useGetUserLogsByIDQuery(userId as string)
 
     useEffect(() => {
         if (userLogs) {
@@ -46,7 +46,6 @@ const ShowUser = () => {
         const socket = io('http://127.0.0.1:3001')
 
         socket.on('newLog', (newLogData) => {
-            // Check if the new log is a "time in" or "time out" entry
             const isTimeIn = newLogData.timeOut === null
 
             const formattedDate = formatDate(new Date(newLogData.date))
@@ -57,27 +56,27 @@ const ShowUser = () => {
             newLogData.timeIn = formattedTimeIn
             newLogData.timeOut = formattedTimeOut
 
-            // Update the data based on whether it's a "time in" or "time out" entry
-            setData((prevData) => {
-                if (isTimeIn) {
-                    return [newLogData, ...prevData] // "Time in" entry
-                } else {
-                    // Find the corresponding "time in" entry in the data and update it
-                    const updatedData = prevData.map((log) => {
-                        if (log.date === formattedDate && log.timeOut === 'N/A') {
-                            return newLogData // Update the existing "time in" entry
-                        }
-                        return log
-                    })
-                    return updatedData
-                }
-            })
+            if (newLogData.user === userId) {
+                setData((prevData) => {
+                    if (isTimeIn) {
+                        return [newLogData, ...prevData]
+                    } else {
+                        const updatedData = prevData.map((log) => {
+                            if (log.date === formattedDate && log.timeOut === 'N/A') {
+                                return newLogData
+                            }
+                            return log
+                        })
+                        return updatedData
+                    }
+                })
+            }
         })
 
         return () => {
             socket.disconnect()
         }
-    }, [])
+    }, [userId])
 
     return (
         <>
