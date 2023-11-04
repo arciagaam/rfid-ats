@@ -34,6 +34,11 @@ const AdminNav = () => {
     }
     
     useEffect(() => {
+
+        if(!userInfo) {
+            navigate('/login');
+        }
+
         const { role } = userInfo;
 
         if(role !== 'admin') {
