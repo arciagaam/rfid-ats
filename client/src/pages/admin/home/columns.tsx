@@ -1,5 +1,8 @@
 import { ColumnDef } from '@tanstack/react-table'
 
+// import { ArrowUpDown } from 'lucide-react'
+// import { Button } from '@/components/ui/button'
+
 export type Log = {
     user: {
         firstName: string
@@ -10,7 +13,8 @@ export type Log = {
     date: string
     timeIn: string
     timeOut: string
-    totalTimeWorked: string
+    totalTimeRendered: string
+    updatedAt: Date
 }
 
 export const columns: ColumnDef<Log>[] = [
@@ -31,7 +35,7 @@ export const columns: ColumnDef<Log>[] = [
         header: 'Time out',
     },
     {
-        accessorKey: 'totalTimeWorked',
-        header: 'Total Time Worked',
+        accessorKey: 'totalTimeRendered',
+        header: 'Total Time Rendered',
     },
 ]

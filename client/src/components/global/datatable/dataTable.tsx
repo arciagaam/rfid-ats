@@ -10,7 +10,12 @@ import {
     getSortedRowModel,
     ColumnFiltersState,
     getFilteredRowModel,
+    getPaginationRowModel,
+    getFacetedRowModel,
+    getFacetedUniqueValues,
 } from '@tanstack/react-table'
+
+import { DataTablePagination } from '@/components/global/datatable/pagination'
 
 import {
     Table,
@@ -22,20 +27,24 @@ import {
 } from '@/components/ui/table'
 
 import { Input } from '@/components/ui/input'
-import { CardHeader } from '../ui/card'
+import { CardHeader } from '../../ui/card'
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    initialPageSize?: number
     component?: React.ReactNode
     columnSearch: string
+    searchPlaceholder?: string
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
     component,
+    initialPageSize,
     columnSearch,
+    searchPlaceholder,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -48,9 +57,18 @@ export function DataTable<TData, TValue>({
         getSortedRowModel: getSortedRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getFacetedRowModel: getFacetedRowModel(),
+        getFacetedUniqueValues: getFacetedUniqueValues(),
         state: {
             sorting,
             columnFilters,
+        },
+        initialState: {
+            pagination: {
+                pageSize: initialPageSize ?? 10,
+                pageIndex: 0,
+            },
         },
     })
 
@@ -59,7 +77,7 @@ export function DataTable<TData, TValue>({
             <CardHeader className='px-0 pb-3'>
                 <div className='flex justify-between'>
                     <Input
-                        placeholder={`Search`}
+                        placeholder={`${searchPlaceholder ?? 'Search'}`}
                         value={(table.getColumn(columnSearch)?.getFilterValue() as string) ?? ''}
                         onChange={(event) =>
                             table.getColumn(columnSearch)?.setFilterValue(event.target.value)
@@ -117,6 +135,7 @@ export function DataTable<TData, TValue>({
                     </TableBody>
                 </Table>
             </div>
+            <DataTablePagination table={table} />
         </div>
     )
 }

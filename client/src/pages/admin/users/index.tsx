@@ -5,7 +5,7 @@
 // import { useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 
-import { DataTable } from '../../../components/global/dataTable'
+import { DataTable } from '../../../components/global/datatable/dataTable'
 import { Log, columns, IUserRow } from './columns'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'

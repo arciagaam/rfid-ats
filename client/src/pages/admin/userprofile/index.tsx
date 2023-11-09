@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { BiArrowBack } from 'react-icons/bi'
 import { Log } from '../userprofile/columns'
 
-import { DataTable } from '@/components/global/dataTable'
+import { DataTable } from '@/components/global/datatable/dataTable'
 import { columns } from './columns'
 
 import { Card, CardContent } from '@/components/ui/card'
@@ -27,13 +27,16 @@ const ShowUser = () => {
         if (userLogs) {
             const tableData = userLogs.map((userLog: Log) => {
                 const formattedTimeIn = formatTime(userLog.timeIn)
-                const formattedTimeOut = userLog.timeOut ? formatTime(userLog.timeOut) : 'N/A'
+                const formattedTimeOut = userLog.timeOut ? formatTime(userLog.timeOut) : '--:--'
 
                 return {
                     date: formatDate(new Date(userLog.date)),
                     timeIn: formattedTimeIn,
                     timeOut: formattedTimeOut,
-                    totalTimeWorked: userLog.totalTimeWorked,
+                    totalTimeRendered: userLog.totalTimeRendered
+                        ? userLog.totalTimeRendered
+                        : '--:--',
+                    updatedAt: new Date().toISOString(),
                 }
             })
 
@@ -50,11 +53,14 @@ const ShowUser = () => {
 
             const formattedDate = formatDate(new Date(newLogData.date))
             const formattedTimeIn = formatTime(newLogData.timeIn)
-            const formattedTimeOut = newLogData.timeOut ? formatTime(newLogData.timeOut) : 'N/A'
+            const formattedTimeOut = newLogData.timeOut ? formatTime(newLogData.timeOut) : '--:--'
 
             newLogData.date = formattedDate
             newLogData.timeIn = formattedTimeIn
             newLogData.timeOut = formattedTimeOut
+            newLogData.totalTimeRendered = newLogData.totalTimeRendered ?? '--:--'
+
+            newLogData.updatedAt = new Date().toISOString()
 
             if (newLogData.user === userId) {
                 setData((prevData) => {
@@ -62,7 +68,7 @@ const ShowUser = () => {
                         return [newLogData, ...prevData]
                     } else {
                         const updatedData = prevData.map((log) => {
-                            if (log.date === formattedDate && log.timeOut === 'N/A') {
+                            if (log.date === formattedDate && log.timeOut === '--:--') {
                                 return newLogData
                             }
                             return log
@@ -95,7 +101,12 @@ const ShowUser = () => {
                 <ProfileCard />
                 <Card>
                     <CardContent>
-                        <DataTable columns={columns} data={data} columnSearch='date'></DataTable>
+                        <DataTable
+                            columns={columns}
+                            initialPageSize={5}
+                            data={data}
+                            columnSearch='date'
+                            searchPlaceholder='Search date eg. mm-dd-yyyy'></DataTable>
                     </CardContent>
                 </Card>
             </div>

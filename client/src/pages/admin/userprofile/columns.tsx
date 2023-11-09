@@ -4,7 +4,8 @@ export type Log = {
     date: string
     timeIn: string
     timeOut: string
-    totalTimeWorked: string
+    totalTimeRendered: string
+    updatedAt: Date
 }
 
 export const columns: ColumnDef<Log>[] = [
@@ -21,7 +22,7 @@ export const columns: ColumnDef<Log>[] = [
         header: 'Time out',
     },
     {
-        accessorKey: 'totalTimeWorked',
-        header: 'Total Time Worked',
+        accessorKey: 'totalTimeRendered',
+        header: 'Total Time Rendered',
     },
 ]

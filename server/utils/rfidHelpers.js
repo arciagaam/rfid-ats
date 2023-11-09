@@ -35,7 +35,7 @@ async function handleTimeIn(req, res, userId, fullName) {
 async function handleTimeOut(req, res, existingLog, fullName) {
     existingLog.timeOut = new Date()
 
-    existingLog.calculateTotalTimeWorked()
+    existingLog.calculateTotalTimeRendered()
     await existingLog.save()
 
     req.io.emit('newLog', existingLog)

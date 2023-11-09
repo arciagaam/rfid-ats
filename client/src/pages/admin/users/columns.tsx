@@ -23,7 +23,17 @@ export interface IUserRow extends Log {
 export const columns: ColumnDef<Log>[] = [
     {
         accessorKey: 'name',
-        header: 'Name',
+        header: ({ column }) => {
+            return (
+                <Button
+                    className='p-0'
+                    variant='ghost'
+                    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+                    Name
+                    <ArrowUpDown className='w-4 h-4 ml-2' />
+                </Button>
+            )
+        },
     },
     {
         accessorKey: 'email',

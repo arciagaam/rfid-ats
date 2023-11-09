@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { useEffect, useState } from 'react'
 import { useGetRfidsQuery } from '@/slices/rfidApiSlice'
-import { DataTable } from '@/components/global/dataTable'
+import { DataTable } from '@/components/global/datatable/dataTable'
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 import { columns, Log, IRfidRow } from './columns'

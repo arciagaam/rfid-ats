@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-import { DataTable } from '@/components/global/dataTable'
+import { DataTable } from '@/components/global/datatable/dataTable'
 import { Log } from './columns'
 import { columns } from './columns'
 import io from 'socket.io-client'
@@ -29,7 +29,10 @@ const Home = () => {
                     name: fullName,
                     timeIn: formattedTimeIn,
                     timeOut: formattedTimeOut,
-                    totalTimeWorked: userLog.totalTimeWorked ? userLog.totalTimeWorked : '--:--',
+                    totalTimeRendered: userLog.totalTimeRendered
+                        ? userLog.totalTimeRendered
+                        : '--:--',
+                    updatedAt: new Date().toISOString(),
                 }
             })
 
@@ -51,26 +54,27 @@ const Home = () => {
             newLogData.date = formattedDate
             newLogData.timeIn = formattedTimeIn
             newLogData.timeOut = formattedTimeOut
+            newLogData.totalTimeRendered = newLogData.totalTimeRendered ?? '--:--'
             newLogData.name = newLogData.userName
+
+            newLogData.updatedAt = new Date().toISOString()
+
+            console.log(newLogData)
 
             setData((prevData) => {
                 if (isTimeIn) {
-                    return [newLogData, ...prevData].sort((a, b) =>
-                        b.updatedAt.localeCompare(a.updatedAt)
-                    )
+                    return [newLogData, ...prevData]
                 } else {
-                    const updatedData = prevData
-                        .map((log) => {
-                            if (
-                                log.user === newLogData.user &&
-                                log.date === formattedDate &&
-                                log.timeOut === '--:--'
-                            ) {
-                                return newLogData
-                            }
-                            return log
-                        })
-                        .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+                    const updatedData = prevData.map((log) => {
+                        if (
+                            log.user === newLogData.user &&
+                            log.date === formattedDate &&
+                            log.timeOut === '--:--'
+                        ) {
+                            return newLogData
+                        }
+                        return log
+                    })
 
                     return updatedData
                 }
@@ -134,7 +138,11 @@ const Home = () => {
             </div>
             <Card>
                 <CardContent>
-                    <DataTable columns={columns} data={data} columnSearch='date'></DataTable>
+                    <DataTable
+                        columns={columns}
+                        initialPageSize={5}
+                        data={data}
+                        columnSearch='date'></DataTable>
                 </CardContent>
             </Card>
         </div>

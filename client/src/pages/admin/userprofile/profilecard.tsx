@@ -7,6 +7,7 @@ import { FormModalBtn } from '@/components/global/formModalBtn'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
+import { Skeleton } from '@/components/ui/skeleton'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
@@ -16,6 +17,8 @@ import { IUserProfile } from '@/types/index'
 import { formatDate } from '@/util/formatter'
 
 import UserForm from '../../../util/userform'
+
+import ClipLoader from 'react-spinners/ClipLoader'
 
 export function ProfileCard() {
     const [profile, setProfile] = useState<IUserProfile>()
@@ -53,22 +56,26 @@ export function ProfileCard() {
                                 <TabsTrigger value='basicInfo'>Basic Info</TabsTrigger>
                                 <TabsTrigger value='addtlInfo'>Additional Info</TabsTrigger>
                             </TabsList>
-                            {/*  Status here */}
-                            {/* Status */}
-                            <div className='flex items-center gap-2'>
-                                <div
-                                    className={`h-4 w-4 rounded-full ${
-                                        profile?.status === 'active' ? 'bg-green-500' : 'bg-red-500'
-                                    }`}></div>
-                                <span
-                                    className={`text-sm font-medium ${
-                                        profile?.status === 'active'
-                                            ? 'text-green-500'
-                                            : 'text-red-500'
-                                    }`}>
-                                    {profile?.status}
-                                </span>
-                            </div>
+                            {profile ? (
+                                <div className='flex items-center gap-2'>
+                                    <div
+                                        className={`h-4 w-4 rounded-full ${
+                                            profile?.status === 'active'
+                                                ? 'bg-green-500'
+                                                : 'bg-red-500'
+                                        }`}></div>
+                                    <span
+                                        className={`text-sm font-medium ${
+                                            profile?.status === 'active'
+                                                ? 'text-green-500'
+                                                : 'text-red-500'
+                                        }`}>
+                                        {profile?.status}
+                                    </span>
+                                </div>
+                            ) : (
+                                <ClipLoader size={20} color='#8d2dd4' />
+                            )}
                         </div>
                         <FormModalBtn
                             btnLabel='Edit User Details'
@@ -81,36 +88,48 @@ export function ProfileCard() {
                         <div className='grid grid-cols-3 gap-6 mt-5'>
                             <div>
                                 <Label htmlFor='name'>Name</Label>
-                                <Input
-                                    id='name'
-                                    type='text'
-                                    defaultValue={profile?.fullname}
-                                    readOnly
-                                />
+                                {profile ? (
+                                    <Input
+                                        id='name'
+                                        type='text'
+                                        defaultValue={profile?.fullname}
+                                        readOnly
+                                    />
+                                ) : (
+                                    <Skeleton className='h-10' />
+                                )}
                             </div>
                             <div>
                                 <Label htmlFor='email'>Email</Label>
-                                <Input
-                                    id='email'
-                                    type='email'
-                                    defaultValue={profile?.email}
-                                    readOnly
-                                />
+                                {profile ? (
+                                    <Input
+                                        id='email'
+                                        type='email'
+                                        defaultValue={profile?.email}
+                                        readOnly
+                                    />
+                                ) : (
+                                    <Skeleton className='h-10' />
+                                )}
                             </div>
                             <div>
                                 <Label htmlFor='contactNumber'>Contact Number</Label>
-                                <div className='flex items-center bg-white rounded-md focus-within:ring-ring focus-within:ring-2 focus-within:ring-offset-2'>
-                                    <div className='text-[#1e1e1e80] flex items-center justify-center text-sm rounded-l-md pl-3 border border-input ring-offset-background h-10 border-r-0 py-2'>
-                                        +63
+                                {profile ? (
+                                    <div className='flex items-center bg-white rounded-md focus-within:ring-ring focus-within:ring-2 focus-within:ring-offset-2'>
+                                        <div className='text-[#1e1e1e80] flex items-center justify-center text-sm rounded-l-md pl-3 border border-input ring-offset-background h-10 border-r-0 py-2'>
+                                            +63
+                                        </div>
+                                        <Input
+                                            id='contactNumber'
+                                            className='border-l-0 rounded-l-none w-full focus-visible:ring-0 focus-visible:ring-offset-0'
+                                            type='text'
+                                            defaultValue={profile?.contactNumber}
+                                            readOnly
+                                        />
                                     </div>
-                                    <Input
-                                        id='contactNumber'
-                                        className='border-l-0 rounded-l-none w-full focus-visible:ring-0 focus-visible:ring-offset-0'
-                                        type='text'
-                                        defaultValue={profile?.contactNumber}
-                                        readOnly
-                                    />
-                                </div>
+                                ) : (
+                                    <Skeleton className='h-10' />
+                                )}
                             </div>
                         </div>
                     </TabsContent>
@@ -119,66 +138,99 @@ export function ProfileCard() {
                         <div className='grid grid-cols-2 gap-6 mt-5'>
                             <div>
                                 <Label htmlFor='role'>Role</Label>
-                                <Input
-                                    id='role'
-                                    type='text'
-                                    defaultValue={profile?.role}
-                                    readOnly
-                                />
+                                {profile ? (
+                                    <Input
+                                        id='role'
+                                        type='text'
+                                        defaultValue={profile?.role}
+                                        readOnly
+                                    />
+                                ) : (
+                                    <Skeleton className='h-10' />
+                                )}
                             </div>
                             <div>
                                 <Label htmlFor='department'>Department</Label>
-                                <Input
-                                    id='department'
-                                    type='text'
-                                    defaultValue={profile?.department}
-                                    readOnly
-                                />
+                                {profile ? (
+                                    <Input
+                                        id='department'
+                                        type='text'
+                                        defaultValue={profile?.department}
+                                        readOnly
+                                    />
+                                ) : (
+                                    <Skeleton className='h-10' />
+                                )}
                             </div>
                         </div>
                         <div className='grid grid-cols-2 gap-6 mt-3'>
                             <div>
                                 <Label htmlFor='idNumber'>ID Number</Label>
-                                <Input
-                                    id='idNumber'
-                                    type='text'
-                                    defaultValue={profile?.idNumber}
-                                    readOnly
-                                />
+                                {profile ? (
+                                    <Input
+                                        id='idNumber'
+                                        type='text'
+                                        defaultValue={profile?.idNumber}
+                                        readOnly
+                                    />
+                                ) : (
+                                    <Skeleton className='h-10' />
+                                )}
                             </div>
                             <div>
                                 <Label htmlFor='rfid'>RFID</Label>
-                                <Input
-                                    id='rfid'
-                                    type='text'
-                                    defaultValue={profile?.rfid}
-                                    readOnly
-                                />
+                                {profile ? (
+                                    <Input
+                                        id='rfid'
+                                        type='text'
+                                        defaultValue={profile?.rfid}
+                                        readOnly
+                                    />
+                                ) : (
+                                    <Skeleton className='h-10' />
+                                )}
                             </div>
                         </div>
                         <div className='grid grid-cols-2 gap-6 mt-3'>
                             <div>
                                 <Label htmlFor='birtdate'>Birthdate</Label>
-                                <Input
-                                    id='birtdate'
-                                    type='text'
-                                    defaultValue={profile?.birthdate}
-                                    readOnly
-                                />
+                                {profile ? (
+                                    <Input
+                                        id='birtdate'
+                                        type='text'
+                                        defaultValue={profile?.birthdate}
+                                        readOnly
+                                    />
+                                ) : (
+                                    <Skeleton className='h-10' />
+                                )}
                             </div>
                             <div>
                                 <Label htmlFor='sex'>Gender</Label>
-                                <Input id='sex' type='text' defaultValue={profile?.sex} readOnly />
+                                {profile ? (
+                                    <Input
+                                        id='sex'
+                                        type='text'
+                                        defaultValue={profile?.sex}
+                                        readOnly
+                                    />
+                                ) : (
+                                    <Skeleton className='h-10' />
+                                )}
                             </div>
                         </div>
                         <div className='gap-6 mt-3'>
                             <Label htmlFor='address'>Address</Label>
-                            <Input
-                                id='address'
-                                type='text'
-                                defaultValue={profile?.address}
-                                readOnly
-                            />
+                            {profile ? (
+                                <Input
+                                    id='address'
+                                    type='text'
+                                    defaultValue={profile?.address}
+                                    readOnly
+                                />
+                            ) : (
+                                <Skeleton className='h-10' />
+                            )}
                         </div>
                     </TabsContent>
                 </Tabs>
