@@ -1,9 +1,8 @@
-import { any, z } from 'zod'
+import { z } from 'zod'
 
 export const accomplishmentReportSchema = z.object({
         title: z.string(),
-        users: z.array(any()),
-        deadline: z.date(),
+        file: z.any().optional().nullable(),
+        link: z.any().nullable(),
         type: z.string().optional().nullable()
-    })
-    .required()
+    });

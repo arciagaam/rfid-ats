@@ -17,50 +17,41 @@ import { toast } from 'react-toastify'
 import { Input } from '@/components/ui/input'
 import { useStoreAccomplishmentReportMutation } from '@/slices/accomplishmentReportApiSlice'
 import { accomplishmentReportSchema } from '@/validators/accomplishmentReport'
-import SelectUsers from './selectusers'
 import { IErrorResponse } from '@/types'
 import { useLocation } from 'react-router-dom'
 
-const AccomplishmentReportForm = () => {
-    const location = useLocation();
-    const type = Array.from(location.pathname.split('/')).at(-1);
+const AccomplishmentReportForm = ({...props}) => {
+    const {refetch} = props;
 
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [userList, setUserList] = useState<Array<object>>([]);
-
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [storeAccomplishmentReport, { isLoading: loadingRegister }] = useStoreAccomplishmentReportMutation()
-
-    const removeFromUserList = (user) => {
-        setUserList((prev) => (prev.filter((item) => item._id!=user._id)))
-    }
 
     const form = useForm<z.infer<typeof accomplishmentReportSchema>>({
         resolver: zodResolver(accomplishmentReportSchema),
         defaultValues: {
             title: '',
-            users: userList,
-            deadline: new Date(),
+            file: null,
+            link: '',
         },
     })
 
     const onSubmit = async (data: z.infer<typeof accomplishmentReportSchema>) => {
         const {
             title,
-            deadline
+            file,
+            link
         } = data
 
-        const users = userList.map((user) => user._id);
-
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('file', file);
+        formData.append('link', link);
+        
         try {
-            await storeAccomplishmentReport({
-                title,
-                users,
-                deadline,
-                type: type,
-            }).unwrap();
+            await storeAccomplishmentReport(formData).unwrap();
 
             form.reset({});
-            setUserList([]);
+            refetch();
 
             toast.success('Accomplishment Report successfully posted')
         } catch (error) {
@@ -90,23 +81,48 @@ const AccomplishmentReportForm = () => {
                             )}
                         />
 
+                        <hr />
+                        
                         <FormField
                             control={form.control}
-                            name='deadline'
-                            render={({ field }) => (
+                            name='file'
+                            render={({ field: { value, onChange, ...field } }) => (
                                 <FormItem>
-                                    <FormLabel className='text-base'>Deadline</FormLabel>
-                                    <FormControl>
-                                        <Input type='datetime-local'/>
+                                    <FormLabel className='text-base'>File</FormLabel>
+                                    <FormControl className='cursor-pointer'>
+                                        <Input {...field}
+                                        type='file'
+                                        value={value?.fileName}
+                                        onChange={(e) => {
+                                            console.log(e.target.files)
+                                            onChange(e.target.files[0]);
+                                        }}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
 
-                        <hr />
+                        <div className="flex gap-2 items-center">
+                            <div className="flex-1 min-h-[1px] h-[1px] w-full bg-black/10"></div>
+                            <p className='text-black/50'>or</p>
+                            <div className="flex-1 min-h-[1px] h-[1px] w-full bg-black/10"></div>
+                        </div>
 
-                        <SelectUsers userList={userList} setUserList={setUserList} removeFromUserList={removeFromUserList} />
+                        <FormField
+                            control={form.control}
+                            name='link'
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className='text-base'>Link</FormLabel>
+                                    <FormControl>
+                                        <Input {...field}/>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
 
                     </div>

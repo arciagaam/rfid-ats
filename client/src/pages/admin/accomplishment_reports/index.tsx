@@ -1,10 +1,6 @@
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import React, { useEffect, useState } from 'react'
 import { useGetAccomplishmentReportsQuery } from '@/slices/accomplishmentReportApiSlice'
-import AccomplishmentReportForm from './accomplishmentReportForm'
 import { useLocation } from 'react-router-dom'
-
 
 
 const AccomplishmentReport = () => {
@@ -32,19 +28,6 @@ const AccomplishmentReport = () => {
     <div className='flex flex-col gap-10 text-[#1e1e1e]'>
       <div className='flex w-full justify-between'>
         <h1 className='text-xl font-bold'>Accomplishment Reports for {type == 'regular' ? 'Regular' : 'Part Time'} Faculty</h1>
-
-        <Dialog>
-          <DialogTrigger>
-            <Button>Create Report</Button>
-          </DialogTrigger>
-          <DialogContent className='max-h-[80vh] min-w-[60%] overflow-scroll'>
-            <DialogHeader>
-              <DialogTitle>Create Report</DialogTitle>
-            </DialogHeader>
-
-            <AccomplishmentReportForm />
-          </DialogContent>
-        </Dialog>
       </div>
 
       <div className="grid grid-cols-4 gap-5">
