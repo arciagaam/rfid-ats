@@ -4,12 +4,12 @@ import AccomplishmentReportForm from '@/pages/admin/accomplishment_reports/accom
 import { useGetAccomplishmentReportsPerUserQuery } from '@/slices/accomplishmentReportApiSlice';
 import { Dialog, DialogTrigger } from '@radix-ui/react-dialog';
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
-const AccomplishmentReport = () => {
-
+const AccomplishmentReport = ({ isAdmin=false }) => {
+  const {user_id} = useParams();
   const [data, setData] = useState([])
-  const { data: reports, refetch } = useGetAccomplishmentReportsPerUserQuery(null);
+  const { data: reports, refetch } = useGetAccomplishmentReportsPerUserQuery(user_id);
 
   useEffect(() => {
     if (reports) {
@@ -25,30 +25,39 @@ const AccomplishmentReport = () => {
     refetch()
   }, [reports, refetch]);
 
-
   return (
     <div className='flex flex-col gap-10 text-[#1e1e1e]'>
-    <div className='flex w-full justify-between'>
-      <h1 className='text-xl font-bold'>Accomplishment Reports</h1>
+      <div className='flex w-full justify-between'>
+        <div className="flex flex-col gap-2">
+          {isAdmin &&
+          <Link to={ '../.'}>{"<"} Back</Link>
+          }
+          <h1 className='text-xl font-bold'>Accomplishment Reports</h1>
+        </div>
 
-      <Dialog>
-        <DialogTrigger>
-          <Button>Create Report</Button>
-        </DialogTrigger>
-        <DialogContent className='max-h-[80vh] min-w-[60%] overflow-y-auto'>
-          <DialogHeader>
-            <DialogTitle>Create Report</DialogTitle>
-          </DialogHeader>
+        {!isAdmin &&
+          <Dialog>
+            <DialogTrigger>
+              <Button>Create Report</Button>
+            </DialogTrigger>
+            <DialogContent className='max-h-[80vh] min-w-[60%] overflow-y-auto'>
+              <DialogHeader>
+                <DialogTitle>Create Report</DialogTitle>
+              </DialogHeader>
 
-          <AccomplishmentReportForm refetch={refetch}/>
-        </DialogContent>
-        </Dialog>
+              <AccomplishmentReportForm refetch={refetch} />
+            </DialogContent>
+          </Dialog>
+        }
+      </div>
+
+      <div className="grid grid-cols-4 gap-5">
+
+        
+
+        {data.length ? data.map((report, index) => <ReportItem key={index} report={report} />) : "No records found."}
+      </div>
     </div>
-
-    <div className="grid grid-cols-4 gap-5">
-      {data && data.map((report, index) => <ReportItem key={index} report={report} />)}
-    </div>
-  </div>
   )
 }
 

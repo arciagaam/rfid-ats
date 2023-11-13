@@ -27,7 +27,7 @@ const getAccomplishmentReports = asyncHandler(async (req, res) => {
 const storeAccomplishmentReports = asyncHandler(async (req, res) => {
     const token = req.cookies.jwt;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(req.body);
+
     const {
         title,
         link,
@@ -72,11 +72,14 @@ const storeAccomplishmentReports = asyncHandler(async (req, res) => {
 })
 
 const getAccomplishmentReportsPerUser = asyncHandler(async (req, res) => {
+    const {user} = req.query;
+
     const token = req.cookies.jwt;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
+    console.log(user);
     try {
-        const accomplishmentReports = await AccomplishmentReport.find({user: decoded.userId}).sort({_id: -1});
+        const accomplishmentReports = await AccomplishmentReport.find({user: user ?? decoded.userId}).sort({_id: -1});
         res.status(201).json(accomplishmentReports);
     } catch (error) {
         res.status(400)

@@ -43,6 +43,9 @@ export const userSchema = new mongoose.Schema(
                 return this.role !== 'admin'
             },
         },
+        schedule: {
+            type: Map
+        }
     },
     { timestamps: true }
 )

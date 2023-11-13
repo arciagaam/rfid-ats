@@ -9,8 +9,8 @@ export const accomplishmentReportApiSlice = apiSlice.injectEndpoints({
             }),
         }),
         getAccomplishmentReportsPerUser: builder.query({
-            query: () => ({
-                url: `${AR_URL}/per-user`
+            query: (id: string) => ({
+                url: `${AR_URL}/per-user${id ? (`?user=${id}`) : ''}`
             })
         }),
         getAccomplishmentReportById: builder.query({

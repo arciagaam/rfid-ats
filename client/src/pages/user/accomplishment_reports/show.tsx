@@ -4,9 +4,9 @@ import { useGetAccomplishmentReportByIdQuery } from '@/slices/accomplishmentRepo
 import { API_BASE_URL } from '@/constants/constants';
 import { Input } from '@/components/ui/input';
 
-const ShowAccomplishmentReport = () => {
+const ShowAccomplishmentReport = ({isAdmin=false}) => {
 
-  const { id } = useParams();
+  const { user_id, id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState({})
   const { data: accomplishmentReport, refetch } = useGetAccomplishmentReportByIdQuery(id)
@@ -16,15 +16,14 @@ const ShowAccomplishmentReport = () => {
       setData(accomplishmentReport);
       setIsLoading(false);
     }
-
-    refetch()
+    
   }, [accomplishmentReport, refetch])
 
   if(!isLoading) {
     return (
       <div className="flex flex-col gap-5">
 
-        <Link to={'/accomplishment-reports'}>{"<"} Back</Link>
+        <Link to={ !isAdmin ? '/accomplishment-reports' : '../'}>{"<"} Back</Link>
   
         <div className="flex gap-5">
           <div className="h-14 aspect-square bg-blue-400 rounded-full"></div>

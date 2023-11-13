@@ -23,7 +23,7 @@ import UserNav from '@/components/global/userNav'
 // private router
 import PrivateRoute from '@/components/global/privateRoute'
 import ShowUser from '@/pages/admin/userprofile'
-import FacultySchedule from '@/pages/faculty'
+import FacultySchedule from '@/pages/admin/faculty_schedule'
 
 import UserHome from '@/pages/user/home/index'
 import UserAccomplishmentReport from '@/pages/user/accomplishment_reports/index'
@@ -31,6 +31,7 @@ import UserShowAccomplishmentReport from '@/pages/user/accomplishment_reports/sh
 
 import CreateRFID from '@/pages/admin/users/rfid'
 import AccomplishmentReport from '@/pages/admin/accomplishment_reports'
+import ShowSchedule from '@/pages/admin/faculty_schedule/show'
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -38,22 +39,33 @@ const router = createBrowserRouter(
             <Route path="/login" element={<Login />} />
 
             {/* users only route */}
-            <Route path="/" element={<UserNav/>}>
-                <Route index element={<UserHome/>} />
+            <Route path="/" element={<UserNav />}>
+                <Route index element={<UserHome />} />
 
-                <Route path='/accomplishment-reports'> 
-                    <Route index element={<UserAccomplishmentReport/>} />
-                    <Route path=':id' element={<UserShowAccomplishmentReport/>} />
+                <Route path='/accomplishment-reports'>
+                    <Route index element={<UserAccomplishmentReport />} />
+                    <Route path=':id' element={<UserShowAccomplishmentReport />} />
                 </Route>
             </Route>
 
             {/* admin only route */}
             <Route path='/admin' element={<AdminNav />}>
                 <Route path='home' element={<AdminHome />} />
-                <Route path='faculty' element={<FacultySchedule />} />
+
+                <Route path='faculty-schedules'>
+                    <Route index element={<FacultySchedule />} />
+                    <Route path=':id' element={<ShowSchedule />} />
+                </Route>
+
                 <Route path='accomplishment-reports'>
-                    <Route path='regular' element={<AccomplishmentReport/>}/>
-                    <Route path='part-time' element={<AccomplishmentReport/>}/>
+                    <Route path=":role">
+                        <Route index element={<AccomplishmentReport />} />
+                        <Route path=':user_id'>
+                            <Route index element={<UserAccomplishmentReport isAdmin={true} />} />
+                            <Route path=':id' element={<UserShowAccomplishmentReport isAdmin={true}  />} />
+                        </Route>
+                    </Route>
+
                 </Route>
 
                 <Route path='users'>
