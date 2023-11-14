@@ -21,20 +21,8 @@ const CreateRFID = () => {
                 status: data.status,
             }))
             setData(tableData)
-            refetch()
         }
-    }, [rfids, refetch])
-
-    useEffect(() => {
-        const socket = io('http://127.0.0.1:3001')
-        socket.on('new_rfid', (content) => {
-            refetch()
-            toast.success(`RFID Tag: ${content.rfidTag} added to list.`)
-        })
-        return () => {
-            socket.disconnect()
-        }
-    }, [])
+    }, [rfids])
 
     useEffect(() => {
         const socket = io('http://127.0.0.1:3001')
