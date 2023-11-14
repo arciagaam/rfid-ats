@@ -22,7 +22,6 @@ const ShowAccomplishmentReport = ({isAdmin=false}) => {
   if(!isLoading) {
     return (
       <div className="flex flex-col gap-5">
-
         <Link to={ !isAdmin ? '/accomplishment-reports' : '../'}>{"<"} Back</Link>
   
         <div className="flex gap-5">

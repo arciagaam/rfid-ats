@@ -9,6 +9,7 @@ import logo from './../../assets/images/logo.png'
 import { RiLogoutBoxLine } from 'react-icons/ri'
 import { MdAnalytics, MdOutlineAnalytics, MdOutlineSpaceDashboard, MdSpaceDashboard } from 'react-icons/md'
 import { useEffect } from 'react'
+import { BsCalendar2Week, BsFillCalendar2WeekFill } from 'react-icons/bs'
 
 const UserNav = () => {
 
@@ -83,6 +84,21 @@ const UserNav = () => {
                 <>
                   <MdOutlineAnalytics size={20} />
                   Accomplishment Reports
+                </>
+            )}
+          </NavLink>
+
+          <NavLink className='aria-[current]:bg-primary-purple-800 aria-[current]:text-white px-5 py-5 transition-all text-black/30 hover:bg-primary-purple-800 hover:text-white flex items-center gap-2' to='schedule'>
+            {({ isActive }) => (
+              isActive ?
+                <>
+                  <BsFillCalendar2WeekFill size={20} />
+                  My Schedule
+                </>
+                :
+                <>
+                  <BsCalendar2Week size={20} />
+                  My Schedule
                 </>
             )}
           </NavLink>

@@ -69,6 +69,11 @@ export const usersApiSlice = apiSlice.injectEndpoints({
             query: () => ({
                 url: `${USERS_URL}/schedule`,
             })
+        }),
+        getProfile: builder.query({
+            query: () => ({
+                url: `${USERS_URL}/profile`,
+            })
         })
     }),
 })
@@ -84,5 +89,6 @@ export const {
     useUpdateUserByIDMutation,
     useDeleteUserMutation,
     useAttachScheduleMutation,
-    useGetUsersWithScheduleQuery
+    useGetUsersWithScheduleQuery,
+    useGetProfileQuery
 } = usersApiSlice

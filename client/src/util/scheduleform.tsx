@@ -5,9 +5,14 @@ import { Log, IUserRow } from '@/pages/admin/users/columns';
 import { useGetUserQuery, useGetUsersQuery } from '@/slices/usersApiSlice';
 import { useAttachScheduleMutation } from '@/slices/usersApiSlice';
 import { toast } from 'react-toastify';
-import { IErrorResponse } from '@/types';
+import { IErrorResponse, IUserSelect } from '@/types';
 import { BsFillTrashFill } from 'react-icons/bs';
 import { useParams } from 'react-router-dom';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CaretSortIcon } from '@radix-ui/react-icons';
+import { CheckIcon } from 'lucide-react';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { cn } from '@/lib/utils';
 
 const defaultData = {
     monday: [],
@@ -18,28 +23,28 @@ const defaultData = {
     saturday: [],
 }
 
-const ScheduleForm = ({isEdit}) => {
+const ScheduleForm = ({ isEdit }) => {
 
-    const {id} = useParams();
+    const { id } = useParams();
 
     const [usersList, setUsersList] = useState<Log[]>([]);
     const [scheduleList, setScheduleList] = useState({ ...defaultData });
-
     const [selectedUser, setSelectedUser] = useState<string>('');
+
     const { data: users, refetch: refetchUsers } = useGetUsersQuery(null);
-    const {data: user, refetch: refetchUser} = useGetUserQuery(id);
+    const { data: user, refetch: refetchUser } = useGetUserQuery(id);
 
     const [attachSchedule, { isLoading: loadingAttach }] = useAttachScheduleMutation();
 
     useEffect(() => {
-        if(!isEdit) return;
+        if (!isEdit) return;
 
-        if(user) {
+        if (user) {
             setSelectedUser(user._id);
             setScheduleList(user.schedule);
         }
-        
-     }, [user, refetchUser]);
+
+    }, [user, refetchUser]);
 
     useEffect(() => {
         if (users) {
@@ -60,14 +65,14 @@ const ScheduleForm = ({isEdit}) => {
     }
 
     const deleteCell = (day: string | number, row: string | number) => {
-        setScheduleList(prev => ({...prev, [day]: prev[day].filter((_: object, index: number) => row != index)}));
+        setScheduleList(prev => ({ ...prev, [day]: prev[day].filter((_: object, index: number) => row != index) }));
     }
 
     const updateCell = (day: string, rowIndex: number, cellValues: object) => {
         const dayArray = scheduleList[day].map((schedule) => schedule);
         dayArray[rowIndex] = cellValues;
 
-        setScheduleList((prev) => ({...prev, [day]: dayArray}));
+        setScheduleList((prev) => ({ ...prev, [day]: dayArray }));
     }
 
     const handleSaveSchedule = async () => {
@@ -83,9 +88,9 @@ const ScheduleForm = ({isEdit}) => {
         }
     }
 
-    const scheduleColumns = []; 
-    for(const day in scheduleList) {
-        scheduleColumns.push(<ScheduleColumn key={day} day={day} updateCell={updateCell} addCell={addCell} deleteCell={deleteCell} scheduleList={scheduleList} />)    
+    const scheduleColumns = [];
+    for (const day in scheduleList) {
+        scheduleColumns.push(<ScheduleColumn key={day} day={day} updateCell={updateCell} addCell={addCell} deleteCell={deleteCell} scheduleList={scheduleList} />)
     }
 
     return (
@@ -93,17 +98,19 @@ const ScheduleForm = ({isEdit}) => {
 
             <div className="flex flex-col">
                 {!isEdit &&
-                <Select value={selectedUser} onValueChange={(value) => setSelectedUser(value)}>
-                    <SelectTrigger className='w-1/2'>
-                        <SelectValue placeholder="Select Faculty" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {usersList && usersList.map((user, index) =>
-                            <SelectItem key={index} value={user.id}>{user.name}</SelectItem>
-                        )}
+                    <UserSelect selectedUser={selectedUser} setSelectedUser={setSelectedUser} users={usersList} />
 
-                    </SelectContent>
-                </Select>
+                    // <Select value={selectedUser} onValueChange={(value) => setSelectedUser(value)}>
+                    //     <SelectTrigger className='w-1/2'>
+                    //         <SelectValue placeholder="Select Faculty" />
+                    //     </SelectTrigger>
+                    //     <SelectContent>
+                    //         {usersList && usersList.map((user, index) =>
+                    //             <SelectItem key={index} value={user.id}>{user.name}</SelectItem>
+                    //         )}
+
+                    //     </SelectContent>
+                    // </Select>
                 }
             </div>
 
@@ -118,25 +125,25 @@ const ScheduleForm = ({isEdit}) => {
     )
 }
 
-const ScheduleColumn = ({...props}) => {
-    const {day, updateCell, addCell, deleteCell, scheduleList} = props;
+const ScheduleColumn = ({ ...props }) => {
+    const { day, updateCell, addCell, deleteCell, scheduleList } = props;
 
-    return(
+    return (
         <div className="flex flex-col gap-3 flex-1">
-        <Cell className='font-bold' allowDelete={false}>
-            <h2>{capitalizeFirstLetter(day)}</h2>
-        </Cell>
+            <Cell className='font-bold' allowDelete={false}>
+                <h2>{capitalizeFirstLetter(day)}</h2>
+            </Cell>
 
-        {scheduleList[day] && scheduleList[day].map((_: object, index: number) =>
+            {scheduleList[day] && scheduleList[day].map((_: object, index: number) =>
             (
                 <Cell key={index} deleteCell={() => deleteCell(day, index)}>
                     <ScheduleCell day={day} rowIndex={index} updateCell={updateCell} scheduleList={scheduleList} />
                 </Cell>
             )
-        )}
+            )}
 
-        <Button onClick={() => { addCell(day) }}>Add Cell</Button>
-    </div>
+            <Button onClick={() => { addCell(day) }}>Add Cell</Button>
+        </div>
     )
 }
 
@@ -175,16 +182,92 @@ const ScheduleCell = ({ ...props }) => {
 }
 
 const Cell = ({ children, ...props }) => {
-    const { className, deleteCell, allowDelete=true } = props;
+    const { className, deleteCell, allowDelete = true } = props;
     return (
         <div className={`relative flex items-center justify-center rounded-lg p-3 bg-gray-100 ${className}`}>
-            {allowDelete && 
+            {allowDelete &&
                 <button className='absolute top-2 right-2 ' onClick={() => deleteCell()}>
-                    <BsFillTrashFill className="fill-black/20 hover:fill-red-400"/>
+                    <BsFillTrashFill className="fill-black/20 hover:fill-red-400" />
                 </button>
             }
             {children}
         </div>
+    )
+}
+
+const UserSelect = ({ selectedUser, setSelectedUser, users }) => {
+    type UserSelect = {
+        id: string,
+        name: string,
+    }
+
+    const usersArray = users
+    ? users.map((user: UserSelect) => ({
+        key: user.id,
+        value: user.name,
+        label: user.name,
+    }))
+    : [];
+
+    const [selectUsers, setSelectUsers] = useState([]);
+    
+    useEffect(() => {
+        setSelectUsers(users.map((user: UserSelect) => ({
+            key: user.id,
+            value: user.name,
+            label: user.name,
+        })))
+    }, [users])
+
+    const [open, setOpen] = useState(false)
+
+    function handleSearch(e: Event) {
+        setSelectUsers(usersArray.filter((user) => user.value.toLowerCase().trim().includes(e.target.value.toLowerCase()))); 
+    }
+    return (
+        <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+                <Button
+                    variant='outline'
+                    role='combobox'
+                    aria-expanded={open}
+                    className='w-[200px] justify-between'>
+                    {selectedUser
+                        ? selectUsers.find((user: IUserSelect) => user.key === selectedUser)?.label
+                        : 'Select user'}
+                    <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className='w-[200px] p-0'>
+                <Command shouldFilter={false}>
+                    <CommandInput onInput={handleSearch} placeholder='Search user...' className='h-9' />
+                    <CommandList>
+                        <CommandEmpty>No user found.</CommandEmpty>
+                        <CommandGroup>
+                            {selectUsers &&
+                                selectUsers.map((user: IUserSelect) => (
+                                    <CommandItem
+                                        key={user.key}
+                                        value={user.key}
+                                        onSelect={(currentValue) => {
+                                            setSelectedUser(currentValue === selectedUser ? '' : currentValue)
+                                            setOpen(false)
+                                        }}
+                                    >
+                                        {user.label}
+                                        <CheckIcon
+                                            className={cn(
+                                                'ml-auto h-4 w-4',
+                                                selectedUser === user.key ? 'opacity-100' : 'opacity-0'
+                                            )}
+                                        />
+                                    </CommandItem>
+                                ))}
+                        </CommandGroup>
+                    </CommandList>
+                </Command>
+            </PopoverContent>
+        </Popover>
     )
 }
 

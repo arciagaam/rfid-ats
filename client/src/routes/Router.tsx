@@ -32,6 +32,7 @@ import UserShowAccomplishmentReport from '@/pages/user/accomplishment_reports/sh
 import CreateRFID from '@/pages/admin/users/rfid'
 import AccomplishmentReport from '@/pages/admin/accomplishment_reports'
 import ShowSchedule from '@/pages/admin/faculty_schedule/show'
+import Schedule from '@/pages/user/schedule'
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -46,6 +47,8 @@ const router = createBrowserRouter(
                     <Route index element={<UserAccomplishmentReport />} />
                     <Route path=':id' element={<UserShowAccomplishmentReport />} />
                 </Route>
+
+                <Route path='/schedule' element={<Schedule />}/>
             </Route>
 
             {/* admin only route */}

@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import AccomplishmentReportForm from '@/pages/admin/accomplishment_reports/accomplishmentReportForm';
 import { useGetAccomplishmentReportsPerUserQuery } from '@/slices/accomplishmentReportApiSlice';
 import { Dialog, DialogTrigger } from '@radix-ui/react-dialog';
@@ -24,6 +25,10 @@ const AccomplishmentReport = ({ isAdmin=false }) => {
 
     refetch()
   }, [reports, refetch]);
+
+  const handleSearch = (e) => {
+    setData(reports.filter(report => report.title.toLowerCase().trim().includes(e.target.value)))
+  }
 
   return (
     <div className='flex flex-col gap-10 text-[#1e1e1e]'>
@@ -51,10 +56,9 @@ const AccomplishmentReport = ({ isAdmin=false }) => {
         }
       </div>
 
+      <Input placeholder='Search for reports' onInput={handleSearch}/>
+
       <div className="grid grid-cols-4 gap-5">
-
-        
-
         {data.length ? data.map((report, index) => <ReportItem key={index} report={report} />) : "No records found."}
       </div>
     </div>

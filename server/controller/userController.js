@@ -1,7 +1,8 @@
 import asyncHandler from '../middleware/asyncHandler.js'
 import User from '../models/User.js'
 import generateToken from '../utils/generateToken.js'
-import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
@@ -125,6 +126,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
             email: user.email,
             role: user.role,
             status: user.status,
+            schedule: user.schedule,
         })
     } else {
         res.status(404)
@@ -220,8 +222,11 @@ const getUsers = asyncHandler(async (req, res) => {
 // @route   GET /api/users/:id
 // @access  Private/Admin
 const getUserByID = asyncHandler(async (req, res) => {
+    const token = req.cookies.jwt;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const { id } = req.params
-    const user = await User.findOne({ _id: id })
+
+    const user = await User.findOne({ _id: id ?? decoded.userId })
     res.status(200).json(user)
 })
 
