@@ -1,6 +1,13 @@
 import express from 'express'
 
-import { getRfids, storeRfid, deleteRfid, getRfidFromReader, changeWindowState } from '../controller/rfidController.js'
+import {
+    getRfids,
+    storeRfid,
+    deleteRfid,
+    getRfidFromReader,
+    changeWindowState,
+    assignRfidToUser,
+} from '../controller/rfidController.js'
 
 import { protect, admin } from '../middleware/authMiddleware.js'
 
@@ -14,5 +21,6 @@ router
 
 router.route('/window').post(protect, admin, changeWindowState)
 router.route('/:id').delete(protect, admin, deleteRfid)
+router.route('/assign').put(protect, admin, assignRfidToUser)
 
 export default router

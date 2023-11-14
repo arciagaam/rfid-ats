@@ -1,5 +1,5 @@
-import { RFID_URL } from "@/constants/constants";
-import { apiSlice } from "./apiSlice";
+import { RFID_URL } from '@/constants/constants'
+import { apiSlice } from './apiSlice'
 
 export const rfidApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -12,13 +12,18 @@ export const rfidApiSlice = apiSlice.injectEndpoints({
             query: (data: object) => ({
                 url: `${RFID_URL}/window`,
                 method: 'POST',
-                body: data
+                body: data,
             }),
-        })
-    } )
-});
+        }),
+        assignRfidToUser: builder.mutation({
+            query: (data: object) => ({
+                url: `${RFID_URL}/assign`,
+                method: 'PUT',
+                body: data,
+            }),
+        }),
+    }),
+})
 
-export const {
-    useGetRfidsQuery,
-    useWindowStateMutation
-} = rfidApiSlice;
+export const { useGetRfidsQuery, useWindowStateMutation, useAssignRfidToUserMutation } =
+    rfidApiSlice

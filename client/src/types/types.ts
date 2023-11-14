@@ -18,6 +18,7 @@ export interface IUserSelect extends IUser {
     key: string
     label: string
     value: string
+    status: string
 }
 
 export interface IUserProfile {

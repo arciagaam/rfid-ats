@@ -1,4 +1,5 @@
 import Rfid from './../models/Rfid.js'
+import User from './../models/User.js'
 import asyncHandler from '../middleware/asyncHandler.js'
 import { compareUIDToDatabase, getAttendanceLog } from '../utils/logApi.js'
 
@@ -14,7 +15,7 @@ import {
 let storingActive = false
 let windowTimeout
 
-const changeWindowState = asyncHandler(async (req, res) => {
+const changeWindowState = asyncHandler(async(req, res) => {
     const { windowState } = req.body
     clearTimeout(windowTimeout)
     if (windowState == 'open') {
@@ -33,15 +34,15 @@ const changeWindowState = asyncHandler(async (req, res) => {
 // @desc    Get rfids
 // @route   GET /api/rfid
 // @access  Public
-const getRfids = asyncHandler(async (req, res) => {
-    const rfids = await Rfid.find({}).sort({ _id: -1 })
+const getRfids = asyncHandler(async(req, res) => {
+    const rfids = await Rfid.find({}).sort({ status: 1 })
     res.status(200).json(rfids)
 })
 
 // @desc    Store new rfid
 // @route   PUT /api/rfid
 // @access  Public
-const storeRfid = asyncHandler(async (req, res) => {
+const storeRfid = asyncHandler(async(req, res) => {
     if (storingActive == false) {
         res.status(400)
         throw new Error('Add RFID window is not opened.')
@@ -94,7 +95,7 @@ const deleteRfid = asyncHandler((req, res) => {
 // @desc    Reads rfid from reader
 // @route   POST /api/rfid
 // @access  Public
-const getRfidFromReader = asyncHandler(async (req, res) => {
+const getRfidFromReader = asyncHandler(async(req, res) => {
     const { rfidData } = req.body
 
     if (!rfidData) {
@@ -122,4 +123,38 @@ const getRfidFromReader = asyncHandler(async (req, res) => {
     }
 })
 
-export { changeWindowState, getRfids, storeRfid, deleteRfid, getRfidFromReader }
+// @desc    Assign RFID to a user
+// @route   PUT /api/rfid/assign
+// @access  Private
+const assignRfidToUser = asyncHandler(async(req, res) => {
+    const { rfidTag, userId } = req.body
+
+    const rfid = await Rfid.findOne({ rfidTag })
+
+    if (!rfid) {
+        res.status(404)
+        throw new Error('Rfid not found')
+    }
+
+    if (userId) {
+        const user = await User.findById(userId)
+
+        if (!user) {
+            res.status(404)
+            throw new Error('User not found')
+        }
+
+        rfid.user = userId
+        rfid.status = 'active'
+    } else {
+        rfid.user = null
+        rfid.status = 'not assigned'
+    }
+
+    await rfid.save()
+
+    req.io.emit('rfid_assigned', { rfidTag, userId })
+    res.status(200).json({ message: 'Rfid assigned to user' })
+})
+
+export { changeWindowState, getRfids, storeRfid, deleteRfid, getRfidFromReader, assignRfidToUser }

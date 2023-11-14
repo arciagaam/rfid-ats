@@ -26,7 +26,7 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 import { Input } from '@/components/ui/input'
-import { format, set } from 'date-fns'
+import { format } from 'date-fns'
 import { toast } from 'react-toastify'
 import { IErrorResponse } from '@/types/index'
 
@@ -35,7 +35,7 @@ import { Calendar } from '@/components/ui/calendar'
 import { Calendar as CalendarIcon } from 'lucide-react'
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { FormStepper } from '@/components/ui/formstepper'
+// import { FormStepper } from '@/components/ui/formstepper'
 
 import {
     useRegisterMutation,

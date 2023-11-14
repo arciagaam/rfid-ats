@@ -3,6 +3,9 @@ import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { toast } from 'react-toastify'
+import { IErrorResponse } from '@/types/index'
+
 import {
     Command,
     CommandEmpty,
@@ -13,22 +16,42 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
 import { useGetUsersQuery } from '@/slices/usersApiSlice'
+import { useAssignRfidToUserMutation } from '@/slices/rfidApiSlice'
 import { IUserSelect } from '@/types'
 
-export function ComboboxDemo() {
+export function SelectUserComboBox({ userId, rfidTag }: { userId?: string; rfidTag?: string }) {
     const [open, setOpen] = React.useState(false)
-    const [value, setValue] = React.useState('')
+    const [value, setValue] = React.useState(userId ?? null)
 
-    const { data: users } = useGetUsersQuery('')
-    // console.log(users)
+    const { data: users, refetch } = useGetUsersQuery('')
+    const [assignRfid] = useAssignRfidToUserMutation()
 
     const selectUsers = users
         ? users.map((user: IUserSelect) => ({
               key: user._id,
               value: `${user.firstName} ${user.middleName ?? ''} ${user.lastName}`,
-              label: `${user.firstName} ${user.middleName ?? ''} ${user.lastName}`,
           }))
         : []
+
+    const handleSelect = async (currentValue: string) => {
+        try {
+            if (value === currentValue) {
+                await assignRfid({ rfidTag: rfidTag, userId: null }).unwrap()
+
+                toast.warning(`RFID Tag: ${rfidTag} unassigned to user.`)
+                return
+            }
+
+            await assignRfid({ rfidTag: rfidTag, userId: currentValue }).unwrap()
+            refetch()
+            toast.success(`RFID Tag: ${rfidTag} assigned to user.`)
+        } catch (error) {
+            toast.error((error as IErrorResponse)?.data?.message || (error as IErrorResponse).error)
+        } finally {
+            setValue(currentValue === value ? null : currentValue)
+            setOpen(false)
+        }
+    }
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -37,37 +60,30 @@ export function ComboboxDemo() {
                     variant='outline'
                     role='combobox'
                     aria-expanded={open}
-                    className='w-[200px] justify-between'>
+                    className='w-[250px] justify-between'>
                     {value
-                        ? selectUsers.find((user: IUserSelect) => user.key === value)?.label
-                        : 'Select user'}
+                        ? // this line finds the label of the selected value
+                          selectUsers.find((user: IUserSelect) => user.key === value)?.value
+                        : 'Select user...'}
                     <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className='w-[200px] p-0'>
+            <PopoverContent className='w-[250px] p-0'>
                 <Command>
                     <CommandInput placeholder='Search user...' className='h-9' />
                     <CommandEmpty>No user found.</CommandEmpty>
                     <CommandGroup>
-                        {selectUsers &&
-                            selectUsers.map((user: IUserSelect) => (
-                                <CommandItem
-                                    key={user.key}
-                                    value={user.key}
-                                    onSelect={(currentValue) => {
-                                        setValue(currentValue === value ? '' : currentValue)
-                                        console.log(currentValue)
-                                        setOpen(false)
-                                    }}>
-                                    {user.label}
-                                    <CheckIcon
-                                        className={cn(
-                                            'ml-auto h-4 w-4',
-                                            value === user.key ? 'opacity-100' : 'opacity-0'
-                                        )}
-                                    />
-                                </CommandItem>
-                            ))}
+                        {selectUsers.map((user: IUserSelect) => (
+                            <CommandItem key={user.key} value={user.key} onSelect={handleSelect}>
+                                {user.value}
+                                <CheckIcon
+                                    className={cn(
+                                        'ml-auto h-4 w-4',
+                                        value === user.key ? 'opacity-100' : 'opacity-0'
+                                    )}
+                                />
+                            </CommandItem>
+                        ))}
                     </CommandGroup>
                 </Command>
             </PopoverContent>

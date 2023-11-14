@@ -34,10 +34,12 @@ export const columns: ColumnDef<Log>[] = [
                 </Button>
             )
         },
+        size: 200,
     },
     {
         accessorKey: 'email',
         header: 'Email',
+        size: 200,
     },
     {
         accessorKey: 'role',
@@ -79,5 +81,6 @@ export const columns: ColumnDef<Log>[] = [
 
             return <UserActions userId={log.id} />
         },
+        size: 100,
     },
 ]
