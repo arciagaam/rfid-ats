@@ -58,6 +58,23 @@ export const usersApiSlice = apiSlice.injectEndpoints({
                 method: 'DELETE',
             }),
         }),
+        attachSchedule: builder.mutation({
+            query: (data) => ({
+                url: `${USERS_URL}/schedule`,
+                method: 'POST',
+                body: data
+            })
+        }),
+        getUsersWithSchedule: builder.query({
+            query: () => ({
+                url: `${USERS_URL}/schedule`,
+            })
+        }),
+        getProfile: builder.query({
+            query: () => ({
+                url: `${USERS_URL}/profile`,
+            })
+        })
     }),
 })
 
@@ -71,4 +88,7 @@ export const {
     useGetUserLogsByIDQuery,
     useUpdateUserByIDMutation,
     useDeleteUserMutation,
+    useAttachScheduleMutation,
+    useGetUsersWithScheduleQuery,
+    useGetProfileQuery
 } = usersApiSlice

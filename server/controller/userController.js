@@ -1,7 +1,8 @@
 import asyncHandler from '../middleware/asyncHandler.js'
 import User from '../models/User.js'
 import generateToken from '../utils/generateToken.js'
-import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
@@ -12,7 +13,7 @@ const authUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email })
 
     if (user && (await user.matchPassword(password))) {
-        generateToken(res, user._id)
+        generateToken(res, user)
 
         res.status(200).json({
             _id: user._id,
@@ -125,6 +126,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
             email: user.email,
             role: user.role,
             status: user.status,
+            schedule: user.schedule,
         })
     } else {
         res.status(404)
@@ -183,9 +185,10 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-    const { role, search } = req.query
-    if (role) {
-        console.log(search)
+    const { role, search, status } = req.query
+
+    
+    if (search) {
         const users = await User.find({
             role: role,
             $expr: {
@@ -201,6 +204,16 @@ const getUsers = asyncHandler(async (req, res) => {
         return
     }
 
+    if(status) {
+        const users = await User
+        .where('role').eq(role)
+        .where('status').eq(status)
+        .sort({ _id: -1 })
+
+        res.status(200).json(users)
+        return
+    }
+
     const users = await User.find({}).sort({ _id: -1 })
     res.status(200).json(users)
 })
@@ -209,8 +222,11 @@ const getUsers = asyncHandler(async (req, res) => {
 // @route   GET /api/users/:id
 // @access  Private/Admin
 const getUserByID = asyncHandler(async (req, res) => {
+    const token = req.cookies.jwt;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const { id } = req.params
-    const user = await User.findOne({ _id: id })
+
+    const user = await User.findOne({ _id: id ?? decoded.userId })
     res.status(200).json(user)
 })
 
@@ -238,8 +254,6 @@ const updateUserByID = asyncHandler(async (req, res) => {
         if (req.body.password) {
             user.password = req.body.password
         }
-
-        console.log(user)
 
         const updatedUser = await user.save()
 
@@ -280,6 +294,49 @@ const deleteUser = asyncHandler(async (req, res) => {
     }
 })
 
+const attachUserSchedule = asyncHandler(async (req, res) => {
+    const { userId, schedule } = req.body;
+    
+    const user = await User.findById(userId);
+    if(user) {
+        user.schedule = schedule;
+
+        const updatedUser = await user.save();
+
+        res.status(200).json({
+            _id: updatedUser._id,
+            firstName: updatedUser.firstName,
+            middleName: updatedUser.middleName,
+            lastName: updatedUser.lastName,
+            email: updatedUser.email,
+            contactNumber: updatedUser.contactNumber,
+            role: updatedUser.role,
+            department: updatedUser.department,
+            idNumber: updatedUser.idNumber,
+            rfid: updatedUser.rfid,
+            birthdate: updatedUser.birthdate,
+            sex: updatedUser.sex,
+            address: updatedUser.address,
+            status: updatedUser.status,
+        });
+    } else {
+        res.status(404)
+        throw new Error('User not found')
+    }
+
+});
+
+const getUsersWithSchedule = asyncHandler(async (req, res) => {
+    const user = await User.find({schedule: {"$ne" : null}}).select('-password');
+
+    if(user) {
+        res.status(200).json(user);
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
+})
+
 export {
     authUser,
     registerUser,
@@ -290,4 +347,6 @@ export {
     getUserByID,
     updateUserByID,
     deleteUser,
+    attachUserSchedule,
+    getUsersWithSchedule
 }

@@ -9,6 +9,8 @@ import accomplishmentReportRoutes from './routes/accomplishmentReportRoutes.js'
 import dotenv from 'dotenv'
 import { Server } from 'socket.io'
 import { createServer } from 'node:http'
+import fileUpload from 'express-fileupload'
+
 
 dotenv.config()
 
@@ -38,10 +40,16 @@ app.use((req, res, next) => {
     return next()
 })
 
+app.use(express.static('public'));
+app.use('/images', express.static('images'));
+
 // Body parser middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors())
+
+app.use(fileUpload());
+
 
 // Cookie parser middleware
 app.use(cookieParser())

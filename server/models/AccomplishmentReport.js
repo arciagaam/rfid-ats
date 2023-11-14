@@ -4,8 +4,9 @@ import mongoose, { Schema } from 'mongoose'
 const accomplishmentReportSchema = new mongoose.Schema(
     {
         title: { type: String, required: true },
-        users: [{type: Schema.ObjectId, ref: 'User'}],
-        deadline: {type: Date, required: true},
+        user: {type: Schema.ObjectId, ref: 'User'},
+        file: {type: Object},
+        link: { type: String },
         type: {type: String, required: true}
     },
     { timestamps: true }

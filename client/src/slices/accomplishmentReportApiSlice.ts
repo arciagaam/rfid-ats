@@ -9,15 +9,20 @@ export const accomplishmentReportApiSlice = apiSlice.injectEndpoints({
             }),
         }),
         getAccomplishmentReportsPerUser: builder.query({
-            query: () => ({
-                url: `${AR_URL}/per-user`
+            query: (id: string) => ({
+                url: `${AR_URL}/per-user${id ? (`?user=${id}`) : ''}`
+            })
+        }),
+        getAccomplishmentReportById: builder.query({
+            query: (id: string) => ({
+                url: `${AR_URL}/${id}`
             })
         }),
         storeAccomplishmentReport: builder.mutation({
-            query: (data: object) => ({
+            query: (body: FormData) => ({
                 url: `${AR_URL}`,
                 method: 'POST',
-                body: data
+                body,
             }),
         }),
     })
@@ -26,5 +31,6 @@ export const accomplishmentReportApiSlice = apiSlice.injectEndpoints({
 export const {
     useGetAccomplishmentReportsQuery,
     useGetAccomplishmentReportsPerUserQuery,
+    useGetAccomplishmentReportByIdQuery,
     useStoreAccomplishmentReportMutation
 } = accomplishmentReportApiSlice;

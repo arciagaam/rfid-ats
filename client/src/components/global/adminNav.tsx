@@ -90,7 +90,7 @@ const AdminNav = () => {
                         )}
                     </NavLink>
 
-                    <NavLink className='aria-[current]:bg-primary-purple-800 aria-[current]:text-white px-5 py-5 transition-all text-black/30 hover:bg-primary-purple-800 hover:text-white flex items-center gap-2' to='faculty'>
+                    <NavLink className='aria-[current]:bg-primary-purple-800 aria-[current]:text-white px-5 py-5 transition-all text-black/30 hover:bg-primary-purple-800 hover:text-white flex items-center gap-2' to='faculty-schedules'>
                         {({ isActive }) => (
                             isActive ?
                                 <>

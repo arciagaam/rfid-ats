@@ -26,7 +26,7 @@ const FormModalBtn: React.FC<IFormModalProps> = ({ btnLabel, dlgTitle, formCompo
             <DialogTrigger asChild>
                 <Button>{btnLabel}</Button>
             </DialogTrigger>
-            <DialogContent className='max-h-[80vh] min-w-[60%] overflow-scroll'>
+            <DialogContent className='max-h-[90vh] min-w-[60%] max-w-[90vw] overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>{dlgTitle}</DialogTitle>
                 </DialogHeader>
