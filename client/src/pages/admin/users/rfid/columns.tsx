@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown } from 'lucide-react'
 
 // import RfidActions from './actions/rfidactions'
-import { SelectUserComboBox } from './actions/assignedto'
+import { SelectUserComboBox } from './actions/combobox'
 
 export type Log = {
     id: string
@@ -18,7 +18,7 @@ export interface IRfidRow extends Log {
     _id: string
 }
 
-export const columns: ColumnDef<Log>[] = [
+export const columns = (loadingRfids: boolean): ColumnDef<Log>[] => [
     {
         accessorKey: 'rfidTag',
         header: 'RFID Tag',
@@ -30,7 +30,8 @@ export const columns: ColumnDef<Log>[] = [
         cell: ({ row }) => {
             const id = row.original.user
             const rfidTag = row.original.rfidTag
-            return <SelectUserComboBox userId={id} rfidTag={rfidTag} />
+
+            return <SelectUserComboBox userId={id} rfidTag={rfidTag} loadingRfids={loadingRfids} />
         },
         size: 200,
     },

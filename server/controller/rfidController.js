@@ -144,6 +144,9 @@ const assignRfidToUser = asyncHandler(async(req, res) => {
             throw new Error('User not found')
         }
 
+        user.rfid = rfidTag
+        await user.save()
+
         rfid.user = userId
         rfid.status = 'active'
     } else {

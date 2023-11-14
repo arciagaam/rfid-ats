@@ -9,7 +9,7 @@ import { io } from 'socket.io-client'
 
 const CreateRFID = () => {
     const [data, setData] = useState<Log[]>([])
-    const { data: rfids, refetch } = useGetRfidsQuery(null)
+    const { data: rfids, isLoading: loadingRfids, refetch } = useGetRfidsQuery(null)
     console.log(data)
 
     useEffect(() => {
@@ -51,6 +51,8 @@ const CreateRFID = () => {
         }
     }, [data, refetch])
 
+    const columnsDefinition = columns(loadingRfids)
+
     return (
         <div className='flex flex-col gap-10 text-[#1e1e1e]'>
             <div className='flex w-full justify-between'>
@@ -60,7 +62,7 @@ const CreateRFID = () => {
             <Card>
                 <CardContent>
                     <DataTable
-                        columns={columns}
+                        columns={columnsDefinition}
                         data={data}
                         columnSearch='rfidTag'
                         component={<AddRfidModal />}

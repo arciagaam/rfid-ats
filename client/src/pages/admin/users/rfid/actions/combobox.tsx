@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { toast } from 'react-toastify'
 import { IErrorResponse } from '@/types/index'
+import { PulseLoader } from 'react-spinners'
 
 import {
     Command,
@@ -19,7 +20,15 @@ import { useGetUsersQuery } from '@/slices/usersApiSlice'
 import { useAssignRfidToUserMutation } from '@/slices/rfidApiSlice'
 import { IUserSelect } from '@/types'
 
-export function SelectUserComboBox({ userId, rfidTag }: { userId?: string; rfidTag?: string }) {
+export function SelectUserComboBox({
+    userId,
+    rfidTag,
+    loadingRfids,
+}: {
+    userId?: string
+    rfidTag?: string
+    loadingRfids?: boolean
+}) {
     const [open, setOpen] = React.useState(false)
     const [value, setValue] = React.useState(userId ?? null)
 
@@ -61,10 +70,14 @@ export function SelectUserComboBox({ userId, rfidTag }: { userId?: string; rfidT
                     role='combobox'
                     aria-expanded={open}
                     className='w-[250px] justify-between'>
-                    {value
-                        ? // this line finds the label of the selected value
-                          selectUsers.find((user: IUserSelect) => user.key === value)?.value
-                        : 'Select user...'}
+                    {loadingRfids ? (
+                        <PulseLoader size={6} color='#1e1e1e50' />
+                    ) : value ? (
+                        // this line finds the label of the selected value
+                        selectUsers.find((user: IUserSelect) => user.key === value)?.value
+                    ) : (
+                        'Select user...'
+                    )}
                     <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                 </Button>
             </PopoverTrigger>
