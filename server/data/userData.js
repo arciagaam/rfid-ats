@@ -10,7 +10,7 @@ const users = [
         email: 'admin@email.com',
         password: defaultPassword,
         role: 'admin',
-        status: 'active',
+        status: 'not registered',
         birthdate: '1995-01-01',
     },
     {

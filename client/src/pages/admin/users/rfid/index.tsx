@@ -20,9 +20,10 @@ const CreateRFID = () => {
                 user: data.user,
                 status: data.status,
             }))
+            refetch()
             setData(tableData)
         }
-    }, [rfids])
+    }, [rfids, refetch])
 
     useEffect(() => {
         const socket = io('http://127.0.0.1:3001')

@@ -15,7 +15,7 @@ import {
 let storingActive = false
 let windowTimeout
 
-const changeWindowState = asyncHandler(async(req, res) => {
+const changeWindowState = asyncHandler(async (req, res) => {
     const { windowState } = req.body
     clearTimeout(windowTimeout)
     if (windowState == 'open') {
@@ -34,7 +34,7 @@ const changeWindowState = asyncHandler(async(req, res) => {
 // @desc    Get rfids
 // @route   GET /api/rfid
 // @access  Public
-const getRfids = asyncHandler(async(req, res) => {
+const getRfids = asyncHandler(async (req, res) => {
     const rfids = await Rfid.find({}).sort({ status: 1 })
     res.status(200).json(rfids)
 })
@@ -42,7 +42,7 @@ const getRfids = asyncHandler(async(req, res) => {
 // @desc    Store new rfid
 // @route   PUT /api/rfid
 // @access  Public
-const storeRfid = asyncHandler(async(req, res) => {
+const storeRfid = asyncHandler(async (req, res) => {
     if (storingActive == false) {
         res.status(400)
         throw new Error('Add RFID window is not opened.')
@@ -95,7 +95,7 @@ const deleteRfid = asyncHandler((req, res) => {
 // @desc    Reads rfid from reader
 // @route   POST /api/rfid
 // @access  Public
-const getRfidFromReader = asyncHandler(async(req, res) => {
+const getRfidFromReader = asyncHandler(async (req, res) => {
     const { rfidData } = req.body
 
     if (!rfidData) {
@@ -126,7 +126,7 @@ const getRfidFromReader = asyncHandler(async(req, res) => {
 // @desc    Assign RFID to a user
 // @route   PUT /api/rfid/assign
 // @access  Private
-const assignRfidToUser = asyncHandler(async(req, res) => {
+const assignRfidToUser = asyncHandler(async (req, res) => {
     const { rfidTag, userId } = req.body
 
     const rfid = await Rfid.findOne({ rfidTag })
@@ -151,6 +151,12 @@ const assignRfidToUser = asyncHandler(async(req, res) => {
         rfid.user = userId
         rfid.status = 'active'
     } else {
+        const user = await User.findById(rfid.user)
+
+        user.rfid = null
+        user.status = 'not registered'
+        await user.save()
+
         rfid.user = null
         rfid.status = 'not assigned'
     }
