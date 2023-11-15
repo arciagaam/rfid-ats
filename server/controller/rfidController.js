@@ -145,6 +145,7 @@ const assignRfidToUser = asyncHandler(async(req, res) => {
         }
 
         user.rfid = rfidTag
+        user.status = 'active'
         await user.save()
 
         rfid.user = userId

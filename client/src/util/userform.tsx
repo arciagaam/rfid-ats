@@ -41,38 +41,53 @@ import {
     useRegisterMutation,
     useGetUserQuery,
     useUpdateUserByIDMutation,
+    useUpdateUserProfileMutation,
+    useGetProfileQuery,
 } from '@/slices/usersApiSlice'
 
 type IUserFormProps = {
     isEdit?: boolean
     closeDialog?: () => void
+    userId?: string
 }
 
-const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog }) => {
+const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => {
     const [register, { isLoading: loadingRegister }] = useRegisterMutation()
     const [updateUser, { isLoading: loadingEditUser }] = useUpdateUserByIDMutation()
+    const [updateUserProfile, { isLoading: loadingEditUserProfile }] =
+        useUpdateUserProfileMutation()
 
-    const { id } = useParams()
-    const { data: user, refetch } = useGetUserQuery(id as string)
+    const { id } = useParams() as { id: string }
+
+    const { data: user, refetch } = useGetUserQuery(id)
+    const { data: userProfile, refetch: refetchProfile } = useGetProfileQuery(userId)
     const [selectedRole, setSelectedRole] = useState<string>(user?.role)
     const [selectedSex, setSelectedSex] = useState<string>(user?.sex)
 
     const form = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
-            firstName: isEdit ? user?.firstName : '',
-            middleName: isEdit ? user?.middleName : '',
-            lastName: isEdit ? user?.lastName : '',
-            email: isEdit ? user?.email : '',
-            password: isEdit ? user?.password : '',
-            role: isEdit ? user?.role : selectedRole,
-            idNumber: isEdit ? user?.idNumber : '',
-            rfid: isEdit ? user?.rfid : '',
-            birthdate: isEdit ? new Date(user!.birthdate!) : undefined,
-            sex: isEdit ? user?.sex : selectedSex,
-            contactNumber: isEdit ? user?.contactNumber : '',
-            address: isEdit ? user?.address : '',
-            status: isEdit ? user?.status : '',
+            firstName: isEdit ? (userProfile ? userProfile?.firstName : user?.firstName) : '',
+            middleName: isEdit ? (userProfile ? userProfile?.middleName : user?.middleName) : '',
+            lastName: isEdit ? (userProfile ? userProfile?.lastName : user?.lastName) : '',
+            email: isEdit ? (userProfile ? userProfile?.email : user?.email) : '',
+            password: isEdit ? (userProfile ? userProfile?.password : user?.password) : '',
+            role: isEdit ? (userProfile ? userProfile?.role : user?.role) : selectedRole,
+            idNumber: isEdit ? (userProfile ? userProfile?.idNumber : user?.idNumber) : '',
+            rfid: isEdit ? (userProfile ? userProfile?.rfid : user?.rfid) : '',
+            birthdate: isEdit
+                ? userProfile
+                    ? new Date(userProfile.birthdate!)
+                    : new Date(user!.birthdate!)
+                : undefined,
+            sex: isEdit ? (userProfile ? userProfile?.sex : user?.sex) : selectedSex,
+            contactNumber: isEdit
+                ? userProfile
+                    ? userProfile?.contactNumber
+                    : user?.contactNumber
+                : '',
+            address: isEdit ? (userProfile ? userProfile?.address : user?.address) : '',
+            status: isEdit ? (userProfile ? userProfile?.status : user?.status) : '',
         },
     })
 
@@ -117,24 +132,46 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog }) => {
 
                 toast.success('User successfully registered')
             } else {
-                await updateUser({
-                    userId: id as string,
-                    firstName,
-                    middleName,
-                    lastName,
-                    email,
-                    role,
-                    status,
-                    idNumber,
-                    rfid,
-                    birthdate: birthdateISO,
-                    sex,
-                    contactNumber,
-                    address,
-                    password,
-                }).unwrap()
+                if (userProfile) {
+                    await updateUserProfile({
+                        userId: id as string,
+                        firstName,
+                        middleName,
+                        lastName,
+                        email,
+                        role,
+                        status,
+                        idNumber,
+                        rfid,
+                        birthdate: birthdateISO,
+                        sex,
+                        contactNumber,
+                        address,
+                        password,
+                    }).unwrap()
 
-                refetch()
+                    refetchProfile()
+                } else {
+                    await updateUser({
+                        userId: id as string,
+                        firstName,
+                        middleName,
+                        lastName,
+                        email,
+                        role,
+                        status,
+                        idNumber,
+                        rfid,
+                        birthdate: birthdateISO,
+                        sex,
+                        contactNumber,
+                        address,
+                        password,
+                    }).unwrap()
+
+                    refetch()
+                }
+
                 toast.success('User successfully updated')
             }
 
@@ -214,14 +251,27 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog }) => {
             toast.success('Password successfully reset')
             refetch()
         } else {
-            const formattedBirthdate = format(new Date(user!.birthdate!), 'yyyy-MM-dd')
+            if (userProfile) {
+                const formattedBirthdate = format(new Date(userProfile!.birthdate!), 'yyyy-MM-dd')
 
-            await updateUser({
-                userId: id as string,
-                password: formattedBirthdate,
-            }).unwrap()
+                await updateUserProfile({
+                    userId: id as string,
+                    password: formattedBirthdate,
+                }).unwrap()
+
+                refetchProfile()
+            } else {
+                const formattedBirthdate = format(new Date(user!.birthdate!), 'yyyy-MM-dd')
+
+                await updateUser({
+                    userId: id as string,
+                    password: formattedBirthdate,
+                }).unwrap()
+
+                refetch()
+            }
+
             toast.success('Password successfully reset')
-            refetch()
         }
     }
 
@@ -526,7 +576,13 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog }) => {
 
                     <Button
                         type='submit'
-                        disabled={isEdit ? loadingEditUser : loadingRegister}
+                        disabled={
+                            isEdit
+                                ? userProfile
+                                    ? loadingEditUserProfile
+                                    : loadingEditUser
+                                : loadingRegister
+                        }
                         className='self-end w-fit'>
                         {isEdit ? 'Update User' : 'Register User'}
                     </Button>

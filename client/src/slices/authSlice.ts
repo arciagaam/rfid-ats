@@ -13,7 +13,7 @@ interface IAuthState {
 
 const initialState: IAuthState = {
     userInfo: localStorage.getItem('userInfo')
-        ? JSON.parse(localStorage.getItem('userInfo')!) //! might get an error, titing typescript
+        ? JSON.parse(localStorage.getItem('userInfo')!)
         : null,
 }
 

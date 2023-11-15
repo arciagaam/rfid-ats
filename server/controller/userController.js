@@ -3,11 +3,10 @@ import User from '../models/User.js'
 import generateToken from '../utils/generateToken.js'
 import jwt from 'jsonwebtoken'
 
-
 // @desc    Auth user & get token
 // @route   POST /api/users/login
 // @access  Public
-const authUser = asyncHandler(async (req, res) => {
+const authUser = asyncHandler(async(req, res) => {
     const { email, password } = req.body
 
     const user = await User.findOne({ email })
@@ -33,7 +32,7 @@ const authUser = asyncHandler(async (req, res) => {
 // @desc    Register user
 // @route   POST /api/users
 // @access  Private/Admin
-const registerUser = asyncHandler(async (req, res) => {
+const registerUser = asyncHandler(async(req, res) => {
     const {
         firstName,
         middleName,
@@ -102,7 +101,7 @@ const registerUser = asyncHandler(async (req, res) => {
 // @desc    Logout user / clear cookie
 // @route   POST /api/users/logout
 // @access  Private
-const logoutUser = asyncHandler(async (req, res) => {
+const logoutUser = asyncHandler(async(req, res) => {
     res.cookie('jwt', '', {
         httpOnly: true,
         expires: new Date(0),
@@ -114,7 +113,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 // @desc    Get user profile
 // @route   GET /api/users/profile
 // @access  Private
-const getUserProfile = asyncHandler(async (req, res) => {
+const getUserProfile = asyncHandler(async(req, res) => {
     const user = await User.findById(req.user._id)
 
     if (user) {
@@ -124,8 +123,15 @@ const getUserProfile = asyncHandler(async (req, res) => {
             middleName: user.middleName,
             lastName: user.lastName,
             email: user.email,
+            password: user.password,
             role: user.role,
             status: user.status,
+            idNumber: user.idNumber,
+            rfid: user.rfid,
+            birthdate: user.birthdate,
+            sex: user.sex,
+            contactNumber: user.contactNumber,
+            address: user.address,
             schedule: user.schedule,
         })
     } else {
@@ -137,7 +143,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // @desc    Update user profile
 // @route   PUT /api/users/profile
 // @access  Private
-const updateUserProfile = asyncHandler(async (req, res) => {
+const updateUserProfile = asyncHandler(async(req, res) => {
     const user = await User.findById(req.user._id)
 
     if (user) {
@@ -184,10 +190,9 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @desc    Get users
 // @route   GET /api/users
 // @access  Private/Admin
-const getUsers = asyncHandler(async (req, res) => {
+const getUsers = asyncHandler(async(req, res) => {
     const { role, search, status } = req.query
 
-    
     if (search) {
         const users = await User.find({
             role: role,
@@ -204,11 +209,8 @@ const getUsers = asyncHandler(async (req, res) => {
         return
     }
 
-    if(status) {
-        const users = await User
-        .where('role').eq(role)
-        .where('status').eq(status)
-        .sort({ _id: -1 })
+    if (status) {
+        const users = await User.where('role').eq(role).where('status').eq(status).sort({ _id: -1 })
 
         res.status(200).json(users)
         return
@@ -221,9 +223,9 @@ const getUsers = asyncHandler(async (req, res) => {
 // @desc    Get user by ID
 // @route   GET /api/users/:id
 // @access  Private/Admin
-const getUserByID = asyncHandler(async (req, res) => {
-    const token = req.cookies.jwt;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+const getUserByID = asyncHandler(async(req, res) => {
+    const token = req.cookies.jwt
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
     const { id } = req.params
 
     const user = await User.findOne({ _id: id ?? decoded.userId })
@@ -233,7 +235,7 @@ const getUserByID = asyncHandler(async (req, res) => {
 // @desc    Update user by ID
 // @route   PUT /api/users/:id
 // @access  Private/Admin
-const updateUserByID = asyncHandler(async (req, res) => {
+const updateUserByID = asyncHandler(async(req, res) => {
     const user = await User.findById(req.params.id)
 
     if (user) {
@@ -282,7 +284,7 @@ const updateUserByID = asyncHandler(async (req, res) => {
 // @desc    Delete user
 // @route   DELETE /api/users/:id
 // @access  Private/Admin
-const deleteUser = asyncHandler(async (req, res) => {
+const deleteUser = asyncHandler(async(req, res) => {
     const user = await User.findById(req.params.id)
 
     if (user) {
@@ -294,14 +296,14 @@ const deleteUser = asyncHandler(async (req, res) => {
     }
 })
 
-const attachUserSchedule = asyncHandler(async (req, res) => {
-    const { userId, schedule } = req.body;
-    
-    const user = await User.findById(userId);
-    if(user) {
-        user.schedule = schedule;
+const attachUserSchedule = asyncHandler(async(req, res) => {
+    const { userId, schedule } = req.body
 
-        const updatedUser = await user.save();
+    const user = await User.findById(userId)
+    if (user) {
+        user.schedule = schedule
+
+        const updatedUser = await user.save()
 
         res.status(200).json({
             _id: updatedUser._id,
@@ -318,22 +320,21 @@ const attachUserSchedule = asyncHandler(async (req, res) => {
             sex: updatedUser.sex,
             address: updatedUser.address,
             status: updatedUser.status,
-        });
+        })
     } else {
         res.status(404)
         throw new Error('User not found')
     }
+})
 
-});
+const getUsersWithSchedule = asyncHandler(async(req, res) => {
+    const user = await User.find({ schedule: { $ne: null } }).select('-password')
 
-const getUsersWithSchedule = asyncHandler(async (req, res) => {
-    const user = await User.find({schedule: {"$ne" : null}}).select('-password');
-
-    if(user) {
-        res.status(200).json(user);
+    if (user) {
+        res.status(200).json(user)
     } else {
-        res.status(404);
-        throw new Error('User not found');
+        res.status(404)
+        throw new Error('User not found')
     }
 })
 
@@ -348,5 +349,5 @@ export {
     updateUserByID,
     deleteUser,
     attachUserSchedule,
-    getUsersWithSchedule
+    getUsersWithSchedule,
 }

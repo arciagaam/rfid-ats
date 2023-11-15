@@ -20,15 +20,17 @@ import { useGetUsersQuery } from '@/slices/usersApiSlice'
 import { useAssignRfidToUserMutation } from '@/slices/rfidApiSlice'
 import { IUserSelect } from '@/types'
 
-export function SelectUserComboBox({
-    userId,
-    rfidTag,
-    loadingRfids,
-}: {
+type SelectUserComboBoxProps = {
     userId?: string
     rfidTag?: string
     loadingRfids?: boolean
-}) {
+}
+
+const SelectUserComboBox: React.FC<SelectUserComboBoxProps> = ({
+    userId,
+    rfidTag,
+    loadingRfids,
+}) => {
     const [open, setOpen] = React.useState(false)
     const [value, setValue] = React.useState(userId ?? null)
 
@@ -103,3 +105,5 @@ export function SelectUserComboBox({
         </Popover>
     )
 }
+
+export { SelectUserComboBox }
