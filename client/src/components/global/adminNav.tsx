@@ -50,7 +50,7 @@ const AdminNav = () => {
     return (
         <>
             <Navbar>
-                <div className="flex flex-col items-center gap-3 px-5">
+                <div className="flex flex-col items-center gap-3">
                     <div className='h-20 rounded-full min-h-5 aspect-square'>
                         <img src={logo} alt="" className='h-full' />
                     </div>
@@ -59,8 +59,8 @@ const AdminNav = () => {
 
                 </div>
 
-                <div className='flex flex-col w-full h-full'>
-                    <NavLink className='aria-[current]:bg-primary-purple-800 aria-[current]:text-white px-5 py-5 transition-all text-black/30 hover:bg-primary-purple-800 hover:text-white flex items-center gap-2' to='home'>
+                <div className='flex flex-col w-full h-full gap-3'>
+                    <NavLink className='aria-[current]:bg-primary-blue-500 aria-[current]:text-white py-4 px-3 rounded-lg transition-all text-primary-blue-900/50 hover:bg-primary-blue-500 hover:text-white flex items-center gap-2' to='home'>
                         {({ isActive }) => (
                             isActive ?
                                 <>
@@ -75,7 +75,7 @@ const AdminNav = () => {
                         )}
                     </NavLink>
 
-                    <NavLink className='aria-[current]:bg-primary-purple-800 aria-[current]:text-white px-5 py-5 transition-all text-black/30 hover:bg-primary-purple-800 hover:text-white flex items-center gap-2' to='users'>
+                    <NavLink className='aria-[current]:bg-primary-blue-500 aria-[current]:text-white py-4 px-3 rounded-lg transition-all text-primary-blue-900/50 hover:bg-primary-blue-500 hover:text-white flex items-center gap-2' to='users'>
                         {({ isActive }) => (
                             isActive ?
                                 <>
@@ -90,7 +90,7 @@ const AdminNav = () => {
                         )}
                     </NavLink>
 
-                    <NavLink className='aria-[current]:bg-primary-purple-800 aria-[current]:text-white px-5 py-5 transition-all text-black/30 hover:bg-primary-purple-800 hover:text-white flex items-center gap-2' to='faculty-schedules'>
+                    <NavLink className='aria-[current]:bg-primary-blue-500 aria-[current]:text-white py-4 px-3 rounded-lg transition-all text-primary-blue-900/50 hover:bg-primary-blue-500 hover:text-white flex items-center gap-2' to='faculty-schedules'>
                         {({ isActive }) => (
                             isActive ?
                                 <>
@@ -111,17 +111,17 @@ const AdminNav = () => {
                         active={location.pathname.includes('admin/accomplishment-reports')}
                         
                     >
-                            <Link to="accomplishment-reports/regular" className='hover:bg-primary-purple-800 hover:text-white py-5 px-5 bg-white'>Regular Faculty</Link>
-                            <Link to="accomplishment-reports/part-time" className='hover:bg-primary-purple-800 hover:text-white py-5 px-5 bg-white'>Part Time Faculty</Link>
+                            <Link to="accomplishment-reports/regular" className='hover:bg-primary-blue-500 hover:text-white py-5 px-5 bg-white'>Regular Faculty</Link>
+                            <Link to="accomplishment-reports/part-time" className='hover:bg-primary-blue-500 hover:text-white py-5 px-5 bg-white'>Part Time Faculty</Link>
                     </SubNav>
 
-                    <button onClick={logoutHandler} className='px-5 py-5 mt-auto text-red-500 transition-all hover:bg-red-500 hover:text-white text-left flex gap-2 items-center'>
+                    <button onClick={logoutHandler} className='rounded-lg px-5 py-5 mt-auto text-red-500 transition-all hover:bg-red-500 hover:text-white text-left flex gap-2 items-center'>
                         <RiLogoutBoxLine size={20} /> Logout
                     </button>
                 </div>
             </Navbar>
 
-            <div className='flex flex-col ml-[14rem] p-6 bg-[#FAFAFA] min-h-screen'>
+            <div className='flex flex-col ml-[14rem] p-6 bg-white min-h-screen'>
                 <Outlet />
             </div>
         </>

@@ -11,6 +11,9 @@ import Rfid from '../models/Rfid.js'
 import attendanceLogs from '../data/logData.js'
 import AttendanceLog from '../models/AttendanceLog.js'
 
+import AccomplishmentReport from '../models/AccomplishmentReport.js'
+
+
 import connectDB from '../db/connect.js'
 
 dotenv.config()
@@ -21,6 +24,8 @@ const importData = async () => {
     try {
         await User.deleteMany()
         await Rfid.deleteMany()
+        await AccomplishmentReport.deleteMany()
+        await AttendanceLog.deleteMany()
 
         const createdUsers = await User.insertMany(users)
 
@@ -52,7 +57,9 @@ const importData = async () => {
 const destroyData = async () => {
     try {
         await User.deleteMany()
-        // await AttendanceLog.deleteMany()
+        await Rfid.deleteMany()
+        await AccomplishmentReport.deleteMany()
+        await AttendanceLog.deleteMany()
 
         console.log('Data Destroyed!'.red.bold)
         process.exit()

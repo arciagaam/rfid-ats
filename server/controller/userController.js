@@ -21,6 +21,7 @@ const authUser = asyncHandler(async (req, res) => {
             middleName: user.middleName,
             lastName: user.lastName,
             email: user.email,
+            department: user.department,
             role: user.role,
             status: user.status,
         })
@@ -185,10 +186,9 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-    const { role, search, status } = req.query
-
+    const { role, search } = req.query
     
-    if (search) {
+    if (search && role) {
         const users = await User.find({
             role: role,
             $expr: {
@@ -198,23 +198,29 @@ const getUsers = asyncHandler(async (req, res) => {
                     options: 'im',
                 },
             },
-        }).sort({ _id: -1 })
-
-        res.status(200).json(users)
-        return
-    }
-
-    if(status) {
-        const users = await User
-        .where('role').eq(role)
-        .where('status').eq(status)
+        })
+        .where('department').eq(req.user.department)
         .sort({ _id: -1 })
 
         res.status(200).json(users)
         return
     }
 
-    const users = await User.find({}).sort({ _id: -1 })
+    if(role) {
+        const users = await User
+        .where('role').eq(role)
+        .where('department').eq(req.user.department)
+        .sort({ _id: -1 })
+
+        res.status(200).json(users)
+        return
+    }
+
+    const users = await User
+    .find({})
+    .where('department').eq(req.user.department)
+    .sort({ _id: -1 })
+    
     res.status(200).json(users)
 })
 

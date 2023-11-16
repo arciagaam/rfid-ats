@@ -165,17 +165,17 @@ const ScheduleCell = ({ ...props }) => {
         <div className="flex flex-col text-sm gap-3">
             <div className="flex flex-col gap-1">
                 <label htmlFor={`${day}-${rowIndex}-subject`}>Subject</label>
-                <input onChange={(e) => { handleChange('subject', e.target.value) }} name={`${day}-${rowIndex}-subject`} id={`${day}-${rowIndex}-subject`} type="text" value={scheduleList[day][rowIndex].subject} />
+                <input className='bg-transparent p-2 focus-visible:outline-none focus-visible:border-primary-blue-950/50 border-b border-primary-blue-950/10' onChange={(e) => { handleChange('subject', e.target.value) }} name={`${day}-${rowIndex}-subject`} id={`${day}-${rowIndex}-subject`} type="text" value={scheduleList[day][rowIndex].subject} />
             </div>
 
             <div className="flex flex-col gap-1">
                 <label htmlFor={`${day}-${rowIndex}-timeStart`}>Time Start</label>
-                <input onChange={(e) => { handleChange('timeStart', e.target.value) }} name={`${day}-${rowIndex}-timeStart`} id={`${day}-${rowIndex}-subject`} type="time" value={scheduleList[day][rowIndex].timeStart} />
+                <input className='bg-transparent p-2 focus-visible:outline-none focus-visible:border-primary-blue-950/50 border-b border-primary-blue-950/10' onChange={(e) => { handleChange('timeStart', e.target.value) }} name={`${day}-${rowIndex}-timeStart`} id={`${day}-${rowIndex}-subject`} type="time" value={scheduleList[day][rowIndex].timeStart} />
             </div>
 
             <div className="flex flex-col gap-1">
                 <label htmlFor={`${day}-${rowIndex}-timeEnd`}>Time End</label>
-                <input onChange={(e) => { handleChange('timeEnd', e.target.value) }} name={`${day}-${rowIndex}-timeEnd`} id={`${day}-${rowIndex}-subject`} type="time" value={scheduleList[day][rowIndex].timeEnd} />
+                <input className='bg-transparent p-2 focus-visible:outline-none focus-visible:border-primary-blue-950/50 border-b border-primary-blue-950/10' onChange={(e) => { handleChange('timeEnd', e.target.value) }} name={`${day}-${rowIndex}-timeEnd`} id={`${day}-${rowIndex}-subject`} type="time" value={scheduleList[day][rowIndex].timeEnd} />
             </div>
         </div>
     )
@@ -184,7 +184,7 @@ const ScheduleCell = ({ ...props }) => {
 const Cell = ({ children, ...props }) => {
     const { className, deleteCell, allowDelete = true } = props;
     return (
-        <div className={`relative flex items-center justify-center rounded-lg p-3 bg-gray-100 ${className}`}>
+        <div className={`relative flex items-center justify-center rounded-lg p-3 bg-primary-blue-50/20 ring-1 ring-primary-blue-950/10 ${className}`}>
             {allowDelete &&
                 <button className='absolute top-2 right-2 ' onClick={() => deleteCell()}>
                     <BsFillTrashFill className="fill-black/20 hover:fill-red-400" />

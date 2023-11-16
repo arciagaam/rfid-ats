@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 
 const generateToken = (res, user) => {
-    const token = jwt.sign({ userId: user._id, userRole: user.role }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id, userRole: user.role, userDepartment: user.department }, process.env.JWT_SECRET, {
         expiresIn: '30d', //! change to 3d in production
     })
 

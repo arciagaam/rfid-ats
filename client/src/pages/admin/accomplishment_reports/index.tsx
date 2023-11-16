@@ -47,9 +47,9 @@ const AccomplishmentReport = () => {
   return (
     <div className='flex flex-col gap-10 text-[#1e1e1e]'>
       <div className='flex w-full justify-between'>
-        <h1 className='text-xl font-bold'>Users</h1>
+        <h1 className='text-xl font-bold'>Accomplishment Reports</h1>
       </div>
-      <Card>
+      <Card className='bg-primary-blue-50/20 border-0 shadow-md'>
         <CardContent>
           <DataTable
             columns={columns}

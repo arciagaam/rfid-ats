@@ -14,12 +14,12 @@ const ShowSchedule = ({data, isAdmin}) => {
     }
 
     return (
-        <div className='flex flex-col gap-10 text-[#1e1e1e]'>
+        <div className='flex flex-col gap-10'>
             <div className='flex w-full justify-between'>
                 <h1 className='text-xl font-bold'>Faculty Schedule</h1>
             </div>
 
-            <Card>
+            <Card className='bg-primary-blue-50/20 border-0 shadow-md'>
                 <CardContent>
 
                     <div className="flex flex-col gap-3 py-5">
@@ -90,17 +90,17 @@ const ScheduleCell = ({ ...props }) => {
         <div className="flex flex-col text-sm gap-3">
             <div className="flex flex-col gap-1">
                 <label htmlFor={`${day}-${rowIndex}-subject`}>Subject</label>
-                <input readOnly disabled name={`${day}-${rowIndex}-subject`} id={`${day}-${rowIndex}-subject`} type="text" value={scheduleList[day][rowIndex].subject} />
+                <input className='bg-white border-b border-primary-blue-950/10' readOnly disabled name={`${day}-${rowIndex}-subject`} id={`${day}-${rowIndex}-subject`} type="text" value={scheduleList[day][rowIndex].subject} />
             </div>
 
             <div className="flex flex-col gap-1">
                 <label htmlFor={`${day}-${rowIndex}-timeStart`}>Time Start</label>
-                <input readOnly disabled name={`${day}-${rowIndex}-timeStart`} id={`${day}-${rowIndex}-subject`} type="time" value={scheduleList[day][rowIndex].timeStart} />
+                <input className='bg-white border-b border-primary-blue-950/10' readOnly disabled name={`${day}-${rowIndex}-timeStart`} id={`${day}-${rowIndex}-subject`} type="time" value={scheduleList[day][rowIndex].timeStart} />
             </div>
 
             <div className="flex flex-col gap-1">
                 <label htmlFor={`${day}-${rowIndex}-timeEnd`}>Time End</label>
-                <input readOnly disabled name={`${day}-${rowIndex}-timeEnd`} id={`${day}-${rowIndex}-subject`} type="time" value={scheduleList[day][rowIndex].timeEnd} />
+                <input className='bg-white border-b border-primary-blue-950/10' readOnly disabled name={`${day}-${rowIndex}-timeEnd`} id={`${day}-${rowIndex}-subject`} type="time" value={scheduleList[day][rowIndex].timeEnd} />
             </div>
         </div>
     )
@@ -109,7 +109,7 @@ const ScheduleCell = ({ ...props }) => {
 const Cell = ({ children, ...props }) => {
     const { className } = props;
     return (
-        <div className={`relative flex items-center justify-center rounded-lg p-3 bg-gray-100 ${className}`}>
+        <div className={`relative flex items-center justify-center rounded-lg p-3 bg-white ring-1 ring-primary-blue-950/10 ${className}`}>
             {children}
         </div>
     )

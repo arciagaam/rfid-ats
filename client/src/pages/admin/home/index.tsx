@@ -117,26 +117,10 @@ const Home = () => {
                 </Card>
             </div>
 
-            <div className='flex'>
-                {/* <Card>
-                    <CardContent>
-                        <DataTable
-                            columns={columns}
-                            data={data}
-                            component={[
-                                <Button asChild className='mr-2'>
-                                    <Link to='register'>Add User</Link>
-                                </Button>,
-
-                                <Button asChild className='ml-2'>
-                                    <Link to='rfid'>Add RFID</Link>
-                                </Button>,
-                            ]}
-                        />
-                    </CardContent>
-                </Card> */}
-            </div>
-            <Card>
+            <Card className='bg-primary-blue-50/20 border-0 shadow-md'>
+                <CardHeader>
+                    <p className='font-bold text-lg'>Realtime Attendance Monitoring</p>
+                </CardHeader>
                 <CardContent>
                     <DataTable
                         columns={columns}

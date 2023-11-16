@@ -89,7 +89,7 @@ export function DataTable<TData, TValue>({
                 </div>
             </CardHeader>
 
-            <div className='border rounded-md'>
+            <div className='border rounded-md bg-white'>
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (

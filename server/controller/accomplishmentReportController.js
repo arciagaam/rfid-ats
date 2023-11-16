@@ -13,7 +13,6 @@ const imagesFolder = path.resolve("public/images");
 
 const getAccomplishmentReports = asyncHandler(async (req, res) => {
     const { type } = req.query;
-    
     if(type) {
         const accomplishmentReports = await AccomplishmentReport.find({type: type}).sort({_id: -1});
         res.status(200).json(accomplishmentReports)
@@ -76,8 +75,7 @@ const getAccomplishmentReportsPerUser = asyncHandler(async (req, res) => {
 
     const token = req.cookies.jwt;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    console.log(user);
+
     try {
         const accomplishmentReports = await AccomplishmentReport.find({user: user ?? decoded.userId}).sort({_id: -1});
         res.status(201).json(accomplishmentReports);
