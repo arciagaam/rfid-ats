@@ -19,7 +19,7 @@ import UserForm from '../../../util/userform'
 const Users = () => {
     const [data, setData] = useState<Log[]>([])
 
-    const { data: users, refetch } = useGetUsersQuery(null)
+    const { data: users, refetch } = useGetUsersQuery('')
 
     useEffect(() => {
         if (users) {

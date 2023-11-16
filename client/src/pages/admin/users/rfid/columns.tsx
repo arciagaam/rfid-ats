@@ -3,50 +3,40 @@ import { Button } from '@/components/ui/button'
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown } from 'lucide-react'
 
-import RfidActions from './actions/rfidactions'
-import { ComboboxDemo } from './actions/assignedto'
+// import RfidActions from './actions/rfidactions'
+import { SelectUserComboBox } from './actions/combobox'
 
 export type Log = {
     id: string
     rfidTag: string
+    user: string
     assignedTo: string
     status: string
 }
 
 export interface IRfidRow extends Log {
     _id: string
-    rfidTag: string
-    status: string
 }
 
-export const columns: ColumnDef<Log>[] = [
+export const columns = (loadingRfids: boolean): ColumnDef<Log>[] => [
     {
         accessorKey: 'rfidTag',
         header: 'RFID Tag',
+        size: 200,
     },
     {
         accessorKey: 'assignedTo',
-        header: 'Assigned to',
+        header: 'Assigned To',
         cell: ({ row }) => {
-            return <ComboboxDemo />
+            const id = row.original.user
+            const rfidTag = row.original.rfidTag
+
+            return <SelectUserComboBox userId={id} rfidTag={rfidTag} loadingRfids={loadingRfids} />
         },
+        size: 200,
     },
     {
         accessorKey: 'status',
-        cell: ({ row }) => {
-            const status: string = row.getValue('status')
-            return (
-                <Badge
-                    className={`${
-                        status == 'unused'
-                            ? 'border-yellow-300 text-gray-500'
-                            : 'border-red-500 text-red-500'
-                    } bg-yellow-300 font-thin hover:bg-transparent`}>
-                    {status}
-                </Badge>
-            )
-        },
-
         header: ({ column }) => {
             return (
                 <Button
@@ -58,13 +48,18 @@ export const columns: ColumnDef<Log>[] = [
                 </Button>
             )
         },
+        cell: ({ row }) => {
+            const status: string = row.getValue('status')
+            return (
+                <Badge
+                    className={`${
+                        status == 'not assigned'
+                            ? 'border-yellow-300 text-yellow-500'
+                            : 'border-green-500 text-green-500'
+                    } bg-transparent font-thin hover:bg-transparent`}>
+                    {status}
+                </Badge>
+            )
+        },
     },
-    // {
-    //     id: 'actions',
-    //     cell: ({ row }) => {
-    //         const log = row.original
-
-    //         return <RfidActions userId={log.id} />
-    //     },
-    // },
 ]

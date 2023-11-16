@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/store/store'
 
 import { Card, CardContent } from '@/components/ui/card'
 
@@ -11,21 +11,20 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-import { useGetUserQuery } from '@/slices/usersApiSlice'
+import { useState, useEffect } from 'react'
+import { useGetProfileQuery } from '@/slices/usersApiSlice'
 import { IUserProfile } from '@/types/index'
 
 import { formatDate } from '@/util/formatter'
 
 import UserForm from '../../../util/userform'
-
 import ClipLoader from 'react-spinners/ClipLoader'
 
 export function ProfileCard() {
     const [profile, setProfile] = useState<IUserProfile>()
 
-    const { id } = useParams()
-
-    const { data: user, refetch } = useGetUserQuery(id as string)
+    const { userInfo } = useSelector((state: RootState) => state.auth)
+    const { data: user } = useGetProfileQuery(userInfo!._id as string)
 
     useEffect(() => {
         if (user) {
@@ -42,10 +41,9 @@ export function ProfileCard() {
                 contactNumber: user.contactNumber ?? 'N/A',
                 address: user.address ?? 'N/A',
             }
-            refetch()
             setProfile(data)
         }
-    }, [user, refetch])
+    }, [user])
 
     return (
         <Card>
@@ -79,9 +77,9 @@ export function ProfileCard() {
                             )}
                         </div>
                         <FormModalBtn
-                            btnLabel='Edit User Details'
-                            dlgTitle='Edit User Details'
-                            formComponent={<UserForm isEdit={true} />}
+                            btnLabel='Edit Profile'
+                            dlgTitle='Edit Profile'
+                            formComponent={<UserForm isEdit={true} userId={userInfo!._id} />}
                         />
                     </div>
 

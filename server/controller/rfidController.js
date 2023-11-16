@@ -1,4 +1,5 @@
 import Rfid from './../models/Rfid.js'
+import User from './../models/User.js'
 import asyncHandler from '../middleware/asyncHandler.js'
 import { compareUIDToDatabase, getAttendanceLog } from '../utils/logApi.js'
 
@@ -34,7 +35,7 @@ const changeWindowState = asyncHandler(async (req, res) => {
 // @route   GET /api/rfid
 // @access  Public
 const getRfids = asyncHandler(async (req, res) => {
-    const rfids = await Rfid.find({}).sort({ _id: -1 })
+    const rfids = await Rfid.find({}).sort({ status: 1 })
     res.status(200).json(rfids)
 })
 
@@ -122,4 +123,48 @@ const getRfidFromReader = asyncHandler(async (req, res) => {
     }
 })
 
-export { changeWindowState, getRfids, storeRfid, deleteRfid, getRfidFromReader }
+// @desc    Assign RFID to a user
+// @route   PUT /api/rfid/assign
+// @access  Private
+const assignRfidToUser = asyncHandler(async (req, res) => {
+    const { rfidTag, userId } = req.body
+
+    const rfid = await Rfid.findOne({ rfidTag })
+
+    if (!rfid) {
+        res.status(404)
+        throw new Error('Rfid not found')
+    }
+
+    if (userId) {
+        const user = await User.findById(userId)
+
+        if (!user) {
+            res.status(404)
+            throw new Error('User not found')
+        }
+
+        user.rfid = rfidTag
+        user.status = 'active'
+        await user.save()
+
+        rfid.user = userId
+        rfid.status = 'active'
+    } else {
+        const user = await User.findById(rfid.user)
+
+        user.rfid = null
+        user.status = 'not registered'
+        await user.save()
+
+        rfid.user = null
+        rfid.status = 'not assigned'
+    }
+
+    await rfid.save()
+
+    req.io.emit('rfid_assigned', { rfidTag, userId })
+    res.status(200).json({ message: 'Rfid assigned to user' })
+})
+
+export { changeWindowState, getRfids, storeRfid, deleteRfid, getRfidFromReader, assignRfidToUser }
