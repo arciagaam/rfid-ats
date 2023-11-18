@@ -14,13 +14,16 @@ import {
     getUsersWithSchedule,
 } from '../controller/userController.js'
 
-import { getLogs, getAllLogs } from '../controller/logController.js'
+import { getLogs, getAllLogs, getAllLogsByDate } from '../controller/logController.js'
 
 import { protect, admin } from '../middleware/authMiddleware.js'
 
 const router = express.Router()
 
-router.route('/logs').get(protect, admin, getAllLogs)
+router.route('/logs')
+.get(protect, admin, getAllLogs)
+.post(protect, admin, getAllLogsByDate)
+
 router.route('/logs/:id').get(protect, getLogs)
 
 router.route('/').post(registerUser).get(protect, admin, getUsers)

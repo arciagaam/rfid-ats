@@ -33,10 +33,12 @@ import CreateRFID from '@/pages/admin/users/rfid'
 import AccomplishmentReport from '@/pages/admin/accomplishment_reports'
 import ShowSchedule from '@/pages/admin/faculty_schedule/show'
 import Schedule from '@/pages/user/schedule'
+import AttendanceTablePrint from '@/pages/print/attendance'
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path='/'>
+            <Route path='attendance/print' element={<AttendanceTablePrint/>}/>
             <Route path="/login" element={<Login />} />
 
             {/* users only route */}
@@ -54,7 +56,6 @@ const router = createBrowserRouter(
             {/* admin only route */}
             <Route path='/admin' element={<AdminNav />}>
                 <Route path='home' element={<AdminHome />} />
-
                 <Route path='faculty-schedules'>
                     <Route index element={<FacultySchedule />} />
                     <Route path=':id' element={<ShowSchedule />} />

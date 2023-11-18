@@ -30,25 +30,63 @@ const getAllLogs = asyncHandler(async (req, res) => {
                     userId: "$user"
                 },
                 "pipeline": [
-                    { 
+                    {
                         "$match": {
                             "$expr": {
                                 "$and": [
-                                    {"$eq": ['$department', req.user.department]},
-                                    {"$eq": ['$$userId', '$_id']}
+                                    { "$eq": ['$department', req.user.department] },
+                                    { "$eq": ['$$userId', '$_id'] }
                                 ]
                             }
                         }
-                     }
+                    }
                 ],
                 "as": 'user'
             }
         },
         { "$match": { "user": { "$ne": [] } } },
-        {"$unwind":"$user"},
+        { "$unwind": "$user" },
     ]);
-    
+
     res.status(200).json(logs)
 })
 
-export { getLogs, getAllLogs }
+const getAllLogsByDate = asyncHandler(async (req, res) => {
+    const { date } = req.body.date;
+
+    const _date = new Date(date).toLocaleDateString()
+    const start = new Date(_date)
+    const end = new Date(new Date(_date).setHours(23, 59, 59));
+
+    const logs = await AttendanceLog.aggregate([
+        {"$match": {"createdAt": { "$gte": start, "$lt": end }}},
+        {
+            "$lookup": {
+                "from": 'users',
+                "let": {
+                    userId: "$user"
+                },
+                "pipeline": [
+                    {
+                        "$match": {
+                            "$expr": {
+                                "$and": [
+                                    { "$eq": ['$department', req.user.department] },
+                                    { "$eq": ['$$userId', '$_id'] }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "as": 'user'
+            }
+        },
+        { "$match": { "user": { "$ne": [] } } },
+        { "$unwind": "$user" },
+
+    ]);
+
+    res.status(200).json(logs)
+})
+
+export { getLogs, getAllLogs, getAllLogsByDate }

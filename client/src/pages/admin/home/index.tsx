@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useGetUsersLogsQuery } from '@/slices/usersApiSlice'
 
 import { formatDate, formatTime } from '@/util/formatter'
+import AttendancePrintForm from '@/util/attendanceprintform'
+import { FormModalBtn } from '@/components/global/formModalBtn'
 
 const Home = () => {
     const [data, setData] = useState<Log[]>([])
@@ -117,7 +119,7 @@ const Home = () => {
                 </Card>
             </div>
 
-            <Card className='bg-primary-blue-50/20 border-0 shadow-md'>
+            <Card >
                 <CardHeader>
                     <p className='font-bold text-lg'>Realtime Attendance Monitoring</p>
                 </CardHeader>
@@ -126,7 +128,16 @@ const Home = () => {
                         columns={columns}
                         initialPageSize={5}
                         data={data}
-                        columnSearch='date'></DataTable>
+                        columnSearch='date'
+                        component={
+                            <FormModalBtn
+                                btnLabel='Print Attendance'
+                                dlgTitle='Print Attendance'
+                                formComponent={<AttendancePrintForm />}
+                            />
+                        }
+                    >
+                    </DataTable>
                 </CardContent>
             </Card>
         </div>

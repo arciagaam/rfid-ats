@@ -33,7 +33,7 @@ const FacultySchedule = () => {
         <h1 className='text-xl font-bold'>Faculty Schedule</h1>
       </div>
 
-      <Card className='bg-primary-blue-50/20 border-0 shadow-md'>
+      <Card >
         <CardContent>
           <DataTable
             columns={columns}
