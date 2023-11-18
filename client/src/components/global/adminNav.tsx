@@ -15,8 +15,9 @@ import { useEffect } from 'react'
 
 const AdminNav = () => {
     const location = useLocation();
-    
+
     const { userInfo } = useSelector((state: RootState) => state.auth)
+    const { role, department } = userInfo
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -32,21 +33,19 @@ const AdminNav = () => {
             console.log(error)
         }
     }
-    
+
     useEffect(() => {
 
-        if(!userInfo) {
+        if (!userInfo) {
             navigate('/login');
         }
 
-        const { role } = userInfo;
-
-        if(role !== 'admin') {
+        if (role !== 'admin') {
             navigate('/')
         }
 
     }, [])
-    
+
     return (
         <>
             <Navbar>
@@ -55,7 +54,11 @@ const AdminNav = () => {
                         <img src={logo} alt="" className='h-full' />
                     </div>
 
-                    <h2 className='text-center'>College of Computer Studies</h2>
+                    <h2 className='text-center'>
+                        {
+                            department == 'ccs' ? 'College of Computer Studies' : 'College of Engineering'
+                        }
+                    </h2>
 
                 </div>
 
@@ -105,14 +108,14 @@ const AdminNav = () => {
                         )}
                     </NavLink>
 
-                    <SubNav 
+                    <SubNav
                         label="Accomplishment Report"
-                        icon={{active: <MdAnalytics size={25}/>, inactive:  <MdOutlineAnalytics size={25}/>}}
+                        icon={{ active: <MdAnalytics size={25} />, inactive: <MdOutlineAnalytics size={25} /> }}
                         active={location.pathname.includes('admin/accomplishment-reports')}
-                        
+
                     >
-                            <Link to="accomplishment-reports/regular" className='hover:bg-primary-blue-500 hover:text-white py-5 px-5 bg-white'>Regular Faculty</Link>
-                            <Link to="accomplishment-reports/part-time" className='hover:bg-primary-blue-500 hover:text-white py-5 px-5 bg-white'>Part Time Faculty</Link>
+                        <Link to="accomplishment-reports/regular" className='hover:bg-primary-blue-500 hover:text-white py-5 px-5 bg-white'>Regular Faculty</Link>
+                        <Link to="accomplishment-reports/part-time" className='hover:bg-primary-blue-500 hover:text-white py-5 px-5 bg-white'>Part Time Faculty</Link>
                     </SubNav>
 
                     <button onClick={logoutHandler} className='rounded-lg px-5 py-5 mt-auto text-red-500 transition-all hover:bg-red-500 hover:text-white text-left flex gap-2 items-center'>

@@ -12,7 +12,7 @@ const AttendanceTablePrint = () => {
     }, [])
 
     const data = localStorage.getItem('print') ?? null;
-    
+
     if(!data) {
         return false;
     }

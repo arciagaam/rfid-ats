@@ -16,7 +16,7 @@ const UserNav = () => {
   const location = useLocation();
 
   const { userInfo } = useSelector((state: RootState) => state.auth)
-
+  const { role, department } = userInfo
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -37,8 +37,6 @@ const UserNav = () => {
       navigate('/login');
     }
 
-    const { role } = userInfo;
-
     if (role === 'admin') {
       navigate('/admin')
     }
@@ -53,7 +51,11 @@ const UserNav = () => {
             <img src={logo} alt="" className='h-full' />
           </div>
 
-          <h2 className='text-center'>College of Computer Studies</h2>
+          <h2 className='text-center'>
+            {
+              department == 'ccs' ? 'College of Computer Studies' : 'College of Engineering'
+            }
+            </h2>
         </div>
 
         <div className='flex flex-col w-full h-full gap-3'>
