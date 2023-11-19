@@ -10,16 +10,19 @@ import {
     handleTimeIn,
     handleTimeOut,
     handleRfidNotFound,
+    handleInvalidRequest,
 } from '../utils/rfidHelpers.js'
 
 let storingActive = false
 let windowTimeout
+let temporaryRfidData = []
 
 const changeWindowState = asyncHandler(async (req, res) => {
     const { windowState } = req.body
     clearTimeout(windowTimeout)
     if (windowState == 'open') {
         storingActive = true
+        console.log('window is open')
         res.status(200).json({ message: 'window is open' })
 
         windowTimeout = setTimeout(() => {
@@ -27,6 +30,7 @@ const changeWindowState = asyncHandler(async (req, res) => {
         }, 13000)
     } else {
         storingActive = false
+        console.log('window is closed')
         res.status(200).json({ message: 'window is closed' })
     }
 })
@@ -40,41 +44,31 @@ const getRfids = asyncHandler(async (req, res) => {
 })
 
 // @desc    Store new rfid
-// @route   PUT /api/rfid
-// @access  Public
+// @route   POST /api/rfid/add
+// @access  Private
 const storeRfid = asyncHandler(async (req, res) => {
     if (storingActive == false) {
         res.status(400)
         throw new Error('Add RFID window is not opened.')
     }
 
-    const { rfidTag } = req.body
+    const { rfidData } = req.body
 
-    const rfidExists = await Rfid.findOne({ rfidTag })
+    const formattedUID = formatRfidData(rfidData)
+    const rfidExists = await Rfid.findOne({ rfidTag: formattedUID })
 
     if (rfidExists) {
-        res.status(400)
+        res.status(404)
         throw new Error('Rfid ID already exists.')
     }
 
-    const rfid = await Rfid.create({
-        rfidTag,
-        status: 'inactive',
+    temporaryRfidData.push({
+        rfidTag: formattedUID,
     })
 
-    if (rfid) {
-        const newRfid = {
-            _id: rfid._id,
-            rfidTag: rfid.rfidTag,
-            status: rfid.status,
-        }
-        req.io.emit('new_rfid', { message: 'New RFID card added.', ...newRfid })
+    console.log('RFID added:', temporaryRfidData)
 
-        res.status(201).json(newRfid)
-    } else {
-        res.status(400)
-        throw new Error('Invalid rfid data')
-    }
+    res.json({ temporaryRfidData })
 })
 
 // @desc    Delete rfid
@@ -167,4 +161,12 @@ const assignRfidToUser = asyncHandler(async (req, res) => {
     res.status(200).json({ message: 'Rfid assigned to user' })
 })
 
-export { changeWindowState, getRfids, storeRfid, deleteRfid, getRfidFromReader, assignRfidToUser }
+export {
+    changeWindowState,
+    getRfids,
+    storeRfid,
+    deleteRfid,
+    getRfidFromReader,
+    assignRfidToUser,
+    temporaryRfidData,
+}

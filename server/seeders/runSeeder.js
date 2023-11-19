@@ -13,7 +13,6 @@ import AttendanceLog from '../models/AttendanceLog.js'
 
 import AccomplishmentReport from '../models/AccomplishmentReport.js'
 
-
 import connectDB from '../db/connect.js'
 
 dotenv.config()
@@ -27,24 +26,8 @@ const importData = async () => {
         await AccomplishmentReport.deleteMany()
         await AttendanceLog.deleteMany()
 
-        const createdUsers = await User.insertMany(users)
-
-        const populatedRfids = rfids.map((rfid, index) => {
-            return {
-                ...rfid,
-                user: createdUsers[index]._id,
-            }
-        })
-
-        const populatedAttendanceLogs = attendanceLogs.map((attendanceLog, index) => {
-            return {
-                ...attendanceLog,
-                user: createdUsers[index]._id,
-            }
-        })
-
-        await AttendanceLog.insertMany(populatedAttendanceLogs)
-        await Rfid.insertMany(populatedRfids)
+        await User.insertMany(users)
+        await Rfid.insertMany(rfids)
 
         console.log('Data Imported!'.green.bold)
         process.exit()

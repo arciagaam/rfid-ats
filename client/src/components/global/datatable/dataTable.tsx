@@ -32,9 +32,10 @@ import { CardHeader } from '../../ui/card'
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    noPagination?: boolean
     initialPageSize?: number
     component?: React.ReactNode
-    columnSearch: string
+    columnSearch?: string
     searchPlaceholder?: string
 }
 
@@ -42,6 +43,7 @@ export function DataTable<TData, TValue>({
     columns,
     data,
     component,
+    noPagination,
     initialPageSize,
     columnSearch,
     searchPlaceholder,
@@ -76,14 +78,18 @@ export function DataTable<TData, TValue>({
         <div className='flex flex-col gap-3'>
             <CardHeader className='px-0 pb-3'>
                 <div className='flex justify-between'>
-                    <Input
-                        placeholder={`${searchPlaceholder ?? 'Search'}`}
-                        value={(table.getColumn(columnSearch)?.getFilterValue() as string) ?? ''}
-                        onChange={(event) =>
-                            table.getColumn(columnSearch)?.setFilterValue(event.target.value)
-                        }
-                        className='max-w-sm'
-                    />
+                    {columnSearch && (
+                        <Input
+                            placeholder={`${searchPlaceholder ?? 'Search'}`}
+                            value={
+                                (table.getColumn(columnSearch)?.getFilterValue() as string) ?? ''
+                            }
+                            onChange={(event) =>
+                                table.getColumn(columnSearch)?.setFilterValue(event.target.value)
+                            }
+                            className='max-w-sm'
+                        />
+                    )}
 
                     <div>{component}</div>
                 </div>
@@ -141,7 +147,7 @@ export function DataTable<TData, TValue>({
                     </TableBody>
                 </Table>
             </div>
-            <DataTablePagination table={table} />
+            {!noPagination && <DataTablePagination table={table} />}
         </div>
     )
 }

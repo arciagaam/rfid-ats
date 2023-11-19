@@ -1,5 +1,10 @@
 const rfids = [
     {
+        rfidTag: 'CDCECE2C',
+        user: null,
+        status: 'not assigned',
+    },
+    {
         rfidTag: '83CDFCF4',
         user: null,
         status: 'not assigned',

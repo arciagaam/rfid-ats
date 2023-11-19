@@ -11,10 +11,13 @@ import { useWindowStateMutation } from '@/slices/rfidApiSlice'
 import { useEffect, useRef, useState } from 'react'
 import { BsPersonVcardFill } from 'react-icons/bs'
 
-const AddRfidModal = () => {
-    const dialogRef = useRef(null)
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+import { DataTable } from '@/components/global/datatable/dataTable'
+import { columns, Log, IRfidRow } from './columns'
 
+const AddRfidModal = () => {
+    const [data, setData] = useState<Log[]>([])
+
+    const dialogRef = useRef(null)
     const [windowState] = useWindowStateMutation()
     let timeout: ReturnType<typeof setTimeout>
 
@@ -43,6 +46,7 @@ const AddRfidModal = () => {
             return
         } else {
             await windowState({ windowState: 'closed' })
+            setData([])
         }
     }
 
@@ -56,11 +60,26 @@ const AddRfidModal = () => {
                     <DialogTitle>Add Rfid/s</DialogTitle>
                 </DialogHeader>
 
-                <div className='flex flex-col w-full items-center justify-center'>
+                {/* <div className='flex flex-col w-full items-center justify-center'>
                     <div className='relative flex flex-col  w-fit items-center p-20'>
                         <BsPersonVcardFill size={150} color='#8d2ed1' />
                         <h2 className='text-base'>Tap the RFID card to add.</h2>
                     </div>
+                </div> */}
+                <div className='flex flex-col w-full mt-[-20px]'>
+                    <DataTable columns={columns()} data={data} noPagination={true} />
+                    <Button
+                        type='submit'
+                        // disabled={
+                        //     isEdit
+                        //         ? userProfile
+                        //             ? loadingEditUserProfile
+                        //             : loadingEditUser
+                        //         : loadingRegister
+                        // }
+                        className='self-end mt-10 w-24'>
+                        Save
+                    </Button>
                 </div>
             </DialogContent>
         </Dialog>

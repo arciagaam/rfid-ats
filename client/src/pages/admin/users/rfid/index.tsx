@@ -3,14 +3,13 @@ import { useEffect, useState } from 'react'
 import { useGetRfidsQuery } from '@/slices/rfidApiSlice'
 import { DataTable } from '@/components/global/datatable/dataTable'
 import { columns, Log, IRfidRow } from './columns'
-import AddRfidModal from './addrfids'
+import AddRfidModal from './addRfid/addrfids'
 import { toast } from 'react-toastify'
 import { io } from 'socket.io-client'
 
 const CreateRFID = () => {
     const [data, setData] = useState<Log[]>([])
     const { data: rfids, isLoading: loadingRfids, refetch } = useGetRfidsQuery(null)
-    console.log(data)
 
     useEffect(() => {
         if (rfids) {
