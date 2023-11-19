@@ -77,7 +77,11 @@ const Login = () => {
                 </div>
 
                 <div className="flex flex-col bg-primary-blue-500 rounded-lg p-10 gap-10 text-white">
-                    <h2 className='font-normal text-2xl text-white/70'>Attendance monitoring is now easier with <span className='text-7xl text-white font-black'>RFIDTrack Web</span></h2>
+                    <div className="flex flex-col">
+                        <h2 className='font-normal text-2xl text-white/70'>Attendance monitoring is now easier with </h2>
+                        <p className='text-7xl text-white font-black'>RFIDTrack Web</p>
+                    </div>
+
                     <div className="flex flex-col gap-5">
                         <div className="min-h-[1px] h-[1px] w-full bg-white"></div>
                         <p>An attendance monitoring system with the use of RFID technology.</p>
@@ -101,7 +105,7 @@ const Login = () => {
                     <Form {...form}>
                         <form
                             onSubmit={form.handleSubmit(onSubmit)}
-                            className='flex flex-col w-full flex-1 gap-5 justify-around'>
+                            className='flex flex-col w-full flex-1 gap-5'>
                             <FormField
                                 control={form.control}
                                 name='email'

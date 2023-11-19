@@ -6,6 +6,7 @@ import { columns, Log, IRfidRow } from './columns'
 import AddRfidModal from './addRfid/addrfids'
 import { toast } from 'react-toastify'
 import { io } from 'socket.io-client'
+import { API_BASE_URL } from '@/constants/constants'
 
 const CreateRFID = () => {
     const [data, setData] = useState<Log[]>([])
@@ -25,7 +26,7 @@ const CreateRFID = () => {
     }, [rfids, refetch])
 
     useEffect(() => {
-        const socket = io('http://127.0.0.1:3001')
+        const socket = io(API_BASE_URL)
 
         socket.on('new_rfid', (content) => {
             refetch()

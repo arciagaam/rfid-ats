@@ -26,7 +26,7 @@ router.route('/logs')
 
 router.route('/logs/:id').get(protect, getLogs)
 
-router.route('/').post(registerUser).get(protect, admin, getUsers)
+router.route('/').post(protect, registerUser).get(protect, admin, getUsers)
 router.post('/logout', logoutUser)
 router.post('/auth', authUser)
 

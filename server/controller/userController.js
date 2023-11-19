@@ -57,7 +57,7 @@ const registerUser = asyncHandler(async(req, res) => {
         res.status(400)
         throw new Error('User already exists')
     }
-
+    
     const user = await User.create({
         firstName,
         middleName,
@@ -65,7 +65,7 @@ const registerUser = asyncHandler(async(req, res) => {
         email,
         password,
         role,
-        department,
+        department: req.user.department,
         status,
         idNumber,
         rfid,

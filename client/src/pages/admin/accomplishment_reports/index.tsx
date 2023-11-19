@@ -10,6 +10,7 @@ import { useGetUsersQuery } from '@/slices/usersApiSlice'
 import { IUserRow } from '../users/columns'
 import { io } from 'socket.io-client'
 import { ArUsers, columns } from './columns'
+import { API_BASE_URL } from '@/constants/constants'
 
 const AccomplishmentReport = () => {
     const location = useLocation()
@@ -34,7 +35,7 @@ const AccomplishmentReport = () => {
     }, [users, refetch])
 
     useEffect(() => {
-        const socket = io('http://127.0.0.1:3001')
+        const socket = io(API_BASE_URL)
         socket.on('new_user', (content) => {
             refetch()
         })

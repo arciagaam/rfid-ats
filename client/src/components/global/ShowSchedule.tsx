@@ -94,13 +94,18 @@ const ScheduleCell = ({ ...props }) => {
             </div>
 
             <div className="flex flex-col gap-1">
+                <label htmlFor={`${day}-${rowIndex}-subject`}>Subject</label>
+                <input className='bg-white border-b border-primary-blue-950/10' readOnly disabled name={`${day}-${rowIndex}-yearSection`} id={`${day}-${rowIndex}-yearSection`} type="text" value={scheduleList[day][rowIndex].yearSection} />
+            </div>
+
+            <div className="flex flex-col gap-1">
                 <label htmlFor={`${day}-${rowIndex}-timeStart`}>Time Start</label>
-                <input className='bg-white border-b border-primary-blue-950/10' readOnly disabled name={`${day}-${rowIndex}-timeStart`} id={`${day}-${rowIndex}-subject`} type="time" value={scheduleList[day][rowIndex].timeStart} />
+                <input className='bg-white border-b border-primary-blue-950/10' readOnly disabled name={`${day}-${rowIndex}-timeStart`} id={`${day}-${rowIndex}-timeStart`} type="time" value={scheduleList[day][rowIndex].timeStart} />
             </div>
 
             <div className="flex flex-col gap-1">
                 <label htmlFor={`${day}-${rowIndex}-timeEnd`}>Time End</label>
-                <input className='bg-white border-b border-primary-blue-950/10' readOnly disabled name={`${day}-${rowIndex}-timeEnd`} id={`${day}-${rowIndex}-subject`} type="time" value={scheduleList[day][rowIndex].timeEnd} />
+                <input className='bg-white border-b border-primary-blue-950/10' readOnly disabled name={`${day}-${rowIndex}-timeEnd`} id={`${day}-${rowIndex}-timeEnd`} type="time" value={scheduleList[day][rowIndex].timeEnd} />
             </div>
         </div>
     )

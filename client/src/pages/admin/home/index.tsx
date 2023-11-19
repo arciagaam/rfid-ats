@@ -7,16 +7,21 @@ import io from 'socket.io-client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
-import { useGetUsersLogsQuery } from '@/slices/usersApiSlice'
+import { useGetUsersLogsQuery, useGetUsersQuery } from '@/slices/usersApiSlice'
 
 import { formatDate, formatTime } from '@/util/formatter'
 import AttendancePrintForm from '@/util/attendanceprintform'
 import { FormModalBtn } from '@/components/global/formModalBtn'
+import { useGetAccomplishmentReportsQuery } from '@/slices/accomplishmentReportApiSlice'
+import { API_BASE_URL } from '@/constants/constants'
 
 const Home = () => {
     const [data, setData] = useState<Log[]>([])
+    const [cardData, setCardData] = useState({});
 
-    const { data: userLogs, refetch } = useGetUsersLogsQuery(null)
+    const { data: userLogs, refetch: logsRefetch} = useGetUsersLogsQuery(null)
+    const { data: users, refetch: usersRefetch} = useGetUsersQuery('')
+    const { data: ars, refetch: arRefetch } = useGetAccomplishmentReportsQuery('');
 
     useEffect(() => {
         if (userLogs) {
@@ -40,11 +45,21 @@ const Home = () => {
 
             setData(tableData)
         }
-        refetch()
-    }, [userLogs, refetch])
+        logsRefetch()
+    }, [userLogs, logsRefetch])
 
     useEffect(() => {
-        const socket = io('http://127.0.0.1:3001')
+        if(users) {
+            setCardData(prev =>({...prev, userCount: users.length}));
+        }
+
+        if(ars) {
+            setCardData(prev =>({...prev, arsCount: ars.length}));
+        }
+    }, [users, ars, usersRefetch, arRefetch])
+
+    useEffect(() => {
+        const socket = io(API_BASE_URL)
 
         socket.on('newLog', (newLogData) => {
             const isTimeIn = newLogData.timeOut === null
@@ -60,8 +75,6 @@ const Home = () => {
             newLogData.name = newLogData.userName
 
             newLogData.updatedAt = new Date().toISOString()
-
-            console.log(newLogData)
 
             setData((prevData) => {
                 if (isTimeIn) {
@@ -96,7 +109,7 @@ const Home = () => {
                         <CardTitle>Number of Users</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p>Card Content</p>
+                        <p>{cardData.userCount}</p>
                     </CardContent>
                 </Card>
 
@@ -105,7 +118,7 @@ const Home = () => {
                         <CardTitle>Pending AR</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p>Card Content</p>
+                        <p>0</p>
                     </CardContent>
                 </Card>
 
@@ -114,7 +127,7 @@ const Home = () => {
                         <CardTitle>Accomplished AR</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p>Card Content</p>
+                    <p>{cardData.arsCount}</p>
                     </CardContent>
                 </Card>
             </div>

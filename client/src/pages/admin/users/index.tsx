@@ -15,6 +15,7 @@ import { useGetUsersQuery } from '@/slices/usersApiSlice'
 import { Card, CardContent } from '@/components/ui/card'
 import { FormModalBtn } from '@/components/global/formModalBtn'
 import UserForm from '../../../util/userform'
+import { API_BASE_URL } from '@/constants/constants'
 
 const Users = () => {
     const [data, setData] = useState<Log[]>([])
@@ -36,7 +37,7 @@ const Users = () => {
     }, [users, refetch])
 
     useEffect(() => {
-        const socket = io('http://127.0.0.1:3001')
+        const socket = io(API_BASE_URL)
         socket.on('new_user', (content) => {
             refetch()
         })

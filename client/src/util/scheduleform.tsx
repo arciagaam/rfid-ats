@@ -31,8 +31,8 @@ const ScheduleForm = ({ isEdit }) => {
     const [scheduleList, setScheduleList] = useState({ ...defaultData });
     const [selectedUser, setSelectedUser] = useState<string>('');
 
-    const { data: users, refetch: refetchUsers } = useGetUsersQuery(null);
-    const { data: user, refetch: refetchUser } = useGetUserQuery(id);
+    const { data: users, refetch: refetchUsers } = useGetUsersQuery('');
+    const { data: user, refetch: refetchUser } = useGetUserQuery(id as string);
 
     const [attachSchedule, { isLoading: loadingAttach }] = useAttachScheduleMutation();
 
@@ -61,7 +61,7 @@ const ScheduleForm = ({ isEdit }) => {
     }, [users, refetchUsers]);
 
     const addCell = (day: string) => {
-        setScheduleList((prev) => ({ ...prev, [day]: [...prev[day], { subject: '', timeStart: '', timeEnd: '' }] }));
+        setScheduleList((prev) => ({ ...prev, [day]: [...prev[day], { subject: '', yearSection: '', timeStart: '', timeEnd: '' }] }));
     }
 
     const deleteCell = (day: string | number, row: string | number) => {
@@ -154,6 +154,7 @@ const ScheduleCell = ({ ...props }) => {
         subject: scheduleList[day][rowIndex].subject,
         timeStart: scheduleList[day][rowIndex].timeStart,
         timeEnd: scheduleList[day][rowIndex].timeEnd,
+        yearSection: scheduleList[day][rowIndex].yearSection
     }
 
     const handleChange = (key, value) => {
@@ -169,13 +170,18 @@ const ScheduleCell = ({ ...props }) => {
             </div>
 
             <div className="flex flex-col gap-1">
+                <label htmlFor={`${day}-${rowIndex}-subject`}>Year and Section</label>
+                <input className='bg-transparent p-2 focus-visible:outline-none focus-visible:border-primary-blue-950/50 border-b border-primary-blue-950/10' onChange={(e) => { handleChange('yearSection', e.target.value) }} name={`${day}-${rowIndex}-subject`} id={`${day}-${rowIndex}-yearSection`} type="text" value={scheduleList[day][rowIndex].yearSection} />
+            </div>
+
+            <div className="flex flex-col gap-1">
                 <label htmlFor={`${day}-${rowIndex}-timeStart`}>Time Start</label>
-                <input className='bg-transparent p-2 focus-visible:outline-none focus-visible:border-primary-blue-950/50 border-b border-primary-blue-950/10' onChange={(e) => { handleChange('timeStart', e.target.value) }} name={`${day}-${rowIndex}-timeStart`} id={`${day}-${rowIndex}-subject`} type="time" value={scheduleList[day][rowIndex].timeStart} />
+                <input className='bg-transparent p-2 focus-visible:outline-none focus-visible:border-primary-blue-950/50 border-b border-primary-blue-950/10' onChange={(e) => { handleChange('timeStart', e.target.value) }} name={`${day}-${rowIndex}-timeStart`} id={`${day}-${rowIndex}-timeStart`} type="time" value={scheduleList[day][rowIndex].timeStart} />
             </div>
 
             <div className="flex flex-col gap-1">
                 <label htmlFor={`${day}-${rowIndex}-timeEnd`}>Time End</label>
-                <input className='bg-transparent p-2 focus-visible:outline-none focus-visible:border-primary-blue-950/50 border-b border-primary-blue-950/10' onChange={(e) => { handleChange('timeEnd', e.target.value) }} name={`${day}-${rowIndex}-timeEnd`} id={`${day}-${rowIndex}-subject`} type="time" value={scheduleList[day][rowIndex].timeEnd} />
+                <input className='bg-transparent p-2 focus-visible:outline-none focus-visible:border-primary-blue-950/50 border-b border-primary-blue-950/10' onChange={(e) => { handleChange('timeEnd', e.target.value) }} name={`${day}-${rowIndex}-timeEnd`} id={`${day}-${rowIndex}-timeEnd`} type="time" value={scheduleList[day][rowIndex].timeEnd} />
             </div>
         </div>
     )

@@ -13,6 +13,7 @@ import { useGetUserLogsByIDQuery } from '@/slices/usersApiSlice'
 import io from 'socket.io-client'
 
 import { formatDate, formatTime } from '@/util/formatter'
+import { API_BASE_URL } from '@/constants/constants'
 
 const ShowUser = () => {
     const { id: userId } = useParams()
@@ -46,7 +47,7 @@ const ShowUser = () => {
     }, [userLogs, refetch])
 
     useEffect(() => {
-        const socket = io('http://127.0.0.1:3001')
+        const socket = io(API_BASE_URL)
 
         socket.on('newLog', (newLogData) => {
             const isTimeIn = newLogData.timeOut === null
