@@ -21,6 +21,19 @@ export interface IUserSelect extends IUser {
     status: string
 }
 
+export interface IRfid {
+    _id: string
+    rfidTag: string
+    user?: IUser
+    status: string
+}
+
+export interface IRfidSelect extends IRfid {
+    key: string
+    label: string
+    value: string
+}
+
 export interface IUserProfile {
     fullname: string
     email: string

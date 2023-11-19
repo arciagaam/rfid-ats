@@ -44,6 +44,7 @@ import {
     useUpdateUserProfileMutation,
     useGetProfileQuery,
 } from '@/slices/usersApiSlice'
+import { SelectRfidComboBox } from '@/pages/admin/users/adduser/rfidcombobox'
 
 type IUserFormProps = {
     isEdit?: boolean
@@ -439,10 +440,10 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                                     )}
                                 />
 
-                                <FormField
+                                {/* <FormField
                                     control={form.control}
                                     name='rfid'
-                                    render={({ field }) => (
+                                    render={() => (
                                         <FormItem>
                                             <FormLabel className='text-base'>
                                                 RFID{' '}
@@ -450,13 +451,20 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                                                     Optional
                                                 </span>
                                             </FormLabel>
-                                            <FormControl>
-                                                <Input placeholder='Tap or Enter RFID' {...field} />
-                                            </FormControl>
-                                            <FormMessage />
+                                            <SelectRfidComboBox />
                                         </FormItem>
                                     )}
-                                />
+                                /> */}
+
+                                <div className='flex flex-col gap-2'>
+                                    <div>
+                                        <label htmlFor=''>RFID</label>
+                                        <span className='text-slate-400 text-xs ml-1'>
+                                            Optional
+                                        </span>
+                                    </div>
+                                    <SelectRfidComboBox />
+                                </div>
 
                                 <FormField
                                     control={form.control}
