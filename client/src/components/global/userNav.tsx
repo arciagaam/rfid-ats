@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '@/store/store'
 import { useLogoutMutation } from '@/slices/usersApiSlice'
 import { logout } from '@/slices/authSlice'
-import ccslogo from './../../assets/images/ccs.png'
+import ccslogo from './../../assets/images/ccs.jpg'
 import coelogo from './../../assets/images/coe.jpg'
 
 import { RiLogoutBoxLine } from 'react-icons/ri'
