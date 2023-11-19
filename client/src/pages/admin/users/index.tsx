@@ -50,7 +50,7 @@ const Users = () => {
             <div className='flex w-full justify-between'>
                 <h1 className='text-xl font-bold'>Users</h1>
             </div>
-            <Card > 
+            <Card>
                 <CardContent>
                     <DataTable
                         columns={columns}

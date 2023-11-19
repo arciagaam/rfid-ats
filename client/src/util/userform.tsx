@@ -112,7 +112,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                 const formattedBirthdate = format(birthdate!, 'yyyy-MM-dd')
                 birthdateISO = new Date(formattedBirthdate).toISOString()
             }
-            const status = rfid === null ? 'not registered' : 'active'
+            const status = rfid === null ? 'no assigned RFID' : 'active'
 
             if (!isEdit) {
                 await register({
