@@ -9,7 +9,8 @@ import { PiUsersFill, PiUsersBold } from 'react-icons/pi'
 import { RiLogoutBoxLine } from 'react-icons/ri'
 import { AiOutlineSchedule, AiFillSchedule } from 'react-icons/ai'
 
-import logo from './../../assets/images/logo.png'
+import ccslogo from './../../assets/images/logo.png'
+import coelogo from './../../assets/images/coe.jpg'
 import SubNav from './subNav'
 import { useEffect } from 'react'
 
@@ -50,8 +51,12 @@ const AdminNav = () => {
         <>
             <Navbar>
                 <div className="flex flex-col items-center gap-3">
-                    <div className='h-20 rounded-full min-h-5 aspect-square'>
-                        <img src={logo} alt="" className='h-full' />
+                    <div className='h-20 rounded-full min-h-5 aspect-square overflow-clip'>
+                        {
+                    department == 'ccs' ?
+                    <img src={ccslogo} alt="" className='h-full' /> :
+                    <img src={coelogo} alt="" className='h-full' />
+                    }
                     </div>
 
                     <h2 className='text-center'>
