@@ -34,7 +34,7 @@ const SelectUserComboBox: React.FC<SelectUserComboBoxProps> = ({
     const [open, setOpen] = React.useState(false)
     const [value, setValue] = React.useState(userId ?? null)
 
-    const { data: users, refetch } = useGetUsersQuery('')
+    const { data: users } = useGetUsersQuery('')
     const [assignRfid] = useAssignRfidToUserMutation()
 
     const selectUsers = users
@@ -53,8 +53,8 @@ const SelectUserComboBox: React.FC<SelectUserComboBoxProps> = ({
                 return
             }
 
+            console.log('success toast')
             await assignRfid({ rfidTag: rfidTag, userId: currentValue }).unwrap()
-            refetch()
             toast.success(`RFID Tag: ${rfidTag} assigned to user.`)
         } catch (error) {
             toast.error((error as IErrorResponse)?.data?.message || (error as IErrorResponse).error)

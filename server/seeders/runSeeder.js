@@ -28,6 +28,7 @@ const importData = async () => {
 
         await User.insertMany(users)
         await Rfid.insertMany(rfids)
+        // await AttendanceLog.insertMany()
 
         console.log('Data Imported!'.green.bold)
         process.exit()

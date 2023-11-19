@@ -11,8 +11,8 @@ import { Server } from 'socket.io'
 import { createServer } from 'node:http'
 import fileUpload from 'express-fileupload'
 
-
 dotenv.config()
+let connectionLogged = false
 
 const port = process.env.PORT || 5000
 connectDB()
@@ -28,10 +28,14 @@ const io = new Server(socketServer, {
 })
 
 io.on('connection', (socket) => {
-    console.log('Socket connection initialized'.blue.bold)
+    if (!connectionLogged) {
+        console.log('Socket connection initialized'.blue.bold)
+        connectionLogged = true
+    }
 
     socket.on('disconnect', () => {
         console.log('Socket connection disconnected'.red.bold)
+        connectionLogged = false
     })
 })
 
@@ -40,16 +44,15 @@ app.use((req, res, next) => {
     return next()
 })
 
-app.use(express.static('public'));
-app.use('/images', express.static('images'));
+app.use(express.static('public'))
+app.use('/images', express.static('images'))
 
 // Body parser middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 
-app.use(fileUpload());
-
+app.use(fileUpload())
 
 // Cookie parser middleware
 app.use(cookieParser())
