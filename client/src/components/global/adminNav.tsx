@@ -9,7 +9,7 @@ import { PiUsersFill, PiUsersBold } from 'react-icons/pi'
 import { RiLogoutBoxLine } from 'react-icons/ri'
 import { AiOutlineSchedule, AiFillSchedule } from 'react-icons/ai'
 
-import ccslogo from './../../assets/images/logo.png'
+import ccslogo from './../../assets/images/ccs.png'
 import coelogo from './../../assets/images/coe.jpg'
 import SubNav from './subNav'
 import { useEffect } from 'react'
