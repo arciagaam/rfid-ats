@@ -338,7 +338,7 @@ const attachUserSchedule = asyncHandler(async(req, res) => {
 })
 
 const getUsersWithSchedule = asyncHandler(async(req, res) => {
-    const user = await User.find({ schedule: { $ne: null } }).select('-password')
+    const user = await User.find({ schedule: { $ne: null } }).where('department').eq(req.user.department).select('-password')
 
     if (user) {
         res.status(200).json(user)
