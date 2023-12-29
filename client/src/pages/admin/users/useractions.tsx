@@ -31,7 +31,7 @@ const UserActions = ({ userId }: { userId: string }) => {
 
     const [deleteUser, { isLoading: loadingDelete }] = useDeleteUserMutation()
 
-    const { refetch } = useGetUsersQuery(null)
+    const { refetch } = useGetUsersQuery('')
 
     const handleDeleteUser = async (userId: string) => {
         try {

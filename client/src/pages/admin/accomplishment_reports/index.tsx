@@ -44,23 +44,23 @@ const AccomplishmentReport = () => {
         }
     }, [])
 
-  return (
-    <div className='flex flex-col gap-10 text-[#1e1e1e]'>
-      <div className='flex w-full justify-between'>
-        <h1 className='text-xl font-bold'>Accomplishment Reports</h1>
-      </div>
-      <Card >
-        <CardContent>
-          <DataTable
-            columns={columns}
-            data={data}
-            columnSearch='name'
-          />
-        </CardContent>
-      </Card>
-    </div>
-  )
-
+    return (
+        <div className='flex flex-col gap-10 text-[#1e1e1e]'>
+            <div className='flex w-full justify-between'>
+                <h1 className='text-xl font-bold'>Accomplishment Reports</h1>
+            </div>
+            <Card>
+                <CardContent>
+                    <DataTable
+                        columns={columns}
+                        data={data}
+                        columnSearch='name'
+                        searchPlaceholder='Search name...'
+                    />
+                </CardContent>
+            </Card>
+        </div>
+    )
 
     // const location = useLocation();
     // const type = Array.from(location.pathname.split('/')).at(-1);

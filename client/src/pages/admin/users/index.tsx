@@ -56,6 +56,7 @@ const Users = () => {
                     <DataTable
                         columns={columns}
                         data={data}
+                        searchPlaceholder='Search name...'
                         component={[
                             <FormModalBtn
                                 btnLabel='Add User'

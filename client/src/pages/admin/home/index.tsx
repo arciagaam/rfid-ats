@@ -17,11 +17,11 @@ import { API_BASE_URL } from '@/constants/constants'
 
 const Home = () => {
     const [data, setData] = useState<Log[]>([])
-    const [cardData, setCardData] = useState({});
+    const [cardData, setCardData] = useState({})
 
-    const { data: userLogs, refetch: logsRefetch} = useGetUsersLogsQuery(null)
-    const { data: users, refetch: usersRefetch} = useGetUsersQuery('')
-    const { data: ars, refetch: arRefetch } = useGetAccomplishmentReportsQuery('');
+    const { data: userLogs, refetch: logsRefetch } = useGetUsersLogsQuery(null)
+    const { data: users, refetch: usersRefetch } = useGetUsersQuery('')
+    const { data: ars, refetch: arRefetch } = useGetAccomplishmentReportsQuery('')
 
     useEffect(() => {
         if (userLogs) {
@@ -49,12 +49,12 @@ const Home = () => {
     }, [userLogs, logsRefetch])
 
     useEffect(() => {
-        if(users) {
-            setCardData(prev =>({...prev, userCount: users.length}));
+        if (users) {
+            setCardData((prev) => ({ ...prev, userCount: users.length }))
         }
 
-        if(ars) {
-            setCardData(prev =>({...prev, arsCount: ars.length}));
+        if (ars) {
+            setCardData((prev) => ({ ...prev, arsCount: ars.length }))
         }
     }, [users, ars, usersRefetch, arRefetch])
 
@@ -127,12 +127,12 @@ const Home = () => {
                         <CardTitle>Accomplished AR</CardTitle>
                     </CardHeader>
                     <CardContent>
-                    <p>{cardData.arsCount}</p>
+                        <p>{cardData.arsCount}</p>
                     </CardContent>
                 </Card>
             </div>
 
-            <Card >
+            <Card>
                 <CardHeader>
                     <p className='font-bold text-lg'>Realtime Attendance Monitoring</p>
                 </CardHeader>
@@ -142,15 +142,14 @@ const Home = () => {
                         initialPageSize={5}
                         data={data}
                         columnSearch='date'
+                        searchPlaceholder='Search date eg. mm-dd-yyyy...'
                         component={
                             <FormModalBtn
                                 btnLabel='Print Attendance'
                                 dlgTitle='Print Attendance'
                                 formComponent={<AttendancePrintForm />}
                             />
-                        }
-                    >
-                    </DataTable>
+                        }></DataTable>
                 </CardContent>
             </Card>
         </div>

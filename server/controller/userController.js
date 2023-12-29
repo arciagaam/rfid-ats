@@ -1,5 +1,6 @@
 import asyncHandler from '../middleware/asyncHandler.js'
 import User from '../models/User.js'
+import Rfid from './../models/Rfid.js'
 import generateToken from '../utils/generateToken.js'
 import jwt from 'jsonwebtoken'
 
@@ -57,7 +58,7 @@ const registerUser = asyncHandler(async(req, res) => {
         res.status(400)
         throw new Error('User already exists')
     }
-    
+
     const user = await User.create({
         firstName,
         middleName,
@@ -191,42 +192,42 @@ const updateUserProfile = asyncHandler(async(req, res) => {
 // @desc    Get users
 // @route   GET /api/users
 // @access  Private/Admin
-const getUsers = asyncHandler(async (req, res) => {
+const getUsers = asyncHandler(async(req, res) => {
     const { role, search } = req.query
-    
+
     if (search && role) {
         const users = await User.find({
-            role: role,
-            $expr: {
-                $regexMatch: {
-                    input: { $concat: ['$firstName', ' ', '$middleName', ' ', '$lastName'] },
-                    regex: search, //Your text search here
-                    options: 'im',
+                role: role,
+                $expr: {
+                    $regexMatch: {
+                        input: { $concat: ['$firstName', ' ', '$middleName', ' ', '$lastName'] },
+                        regex: search, //Your text search here
+                        options: 'im',
+                    },
                 },
-            },
-        })
-        .where('department').eq(req.user.department)
-        .sort({ _id: -1 })
+            })
+            .where('department').eq(req.user.department)
+            .sort({ _id: -1 })
 
         res.status(200).json(users)
         return
     }
 
-    if(role) {
+    if (role) {
         const users = await User
-        .where('role').eq(role)
-        .where('department').eq(req.user.department)
-        .sort({ _id: -1 })
+            .where('role').eq(role)
+            .where('department').eq(req.user.department)
+            .sort({ _id: -1 })
 
         res.status(200).json(users)
         return
     }
 
     const users = await User
-    .find({})
-    .where('department').eq(req.user.department)
-    .sort({ _id: -1 })
-    
+        .find({})
+        .where('department').eq(req.user.department)
+        .sort({ _id: -1 })
+
     res.status(200).json(users)
 })
 
@@ -298,6 +299,14 @@ const deleteUser = asyncHandler(async(req, res) => {
     const user = await User.findById(req.params.id)
 
     if (user) {
+        const rfid = await Rfid.findOne({ rfidTag: user.rfid })
+
+        if (rfid) {
+            rfid.status = 'not assigned'
+            rfid.user = null
+            await rfid.save()
+        }
+
         await User.deleteOne({ _id: user._id })
         res.status(200).json({ message: 'User deleted' })
     } else {

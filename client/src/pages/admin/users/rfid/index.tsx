@@ -64,6 +64,7 @@ const CreateRFID = () => {
                 <CardContent>
                     <DataTable
                         columns={columnsDefinition}
+                        searchPlaceholder='Search RFID Tag...'
                         data={data}
                         columnSearch='rfidTag'
                         component={<AddRfidModal />}
