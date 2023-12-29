@@ -3,6 +3,7 @@ import express from 'express'
 import {
     getRfids,
     storeRfid,
+    saveRfid,
     deleteRfid,
     getRfidFromReader,
     changeWindowState,
@@ -15,6 +16,7 @@ const router = express.Router()
 
 router.route('/window').post(changeWindowState)
 router.post('/add', storeRfid)
+router.post('/save', saveRfid)
 
 router.route('/').get(protect, admin, getRfids).post(getRfidFromReader)
 

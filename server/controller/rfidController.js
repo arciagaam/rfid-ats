@@ -23,6 +23,9 @@ const changeWindowState = asyncHandler(async (req, res) => {
     if (windowState == 'open') {
         storingActive = true
         console.log('window is open')
+
+        req.io.emit('temporary_rfid_data', { temporaryRfidData })
+
         res.status(200).json({ message: 'window is open' })
 
         windowTimeout = setTimeout(() => {
@@ -31,6 +34,10 @@ const changeWindowState = asyncHandler(async (req, res) => {
     } else {
         storingActive = false
         console.log('window is closed')
+
+        temporaryRfidData = []
+
+        req.io.emit('temporary_rfid_data', { temporaryRfidData })
         res.status(200).json({ message: 'window is closed' })
     }
 })
@@ -43,9 +50,9 @@ const getRfids = asyncHandler(async (req, res) => {
     res.status(200).json(rfids)
 })
 
-// @desc    Store new rfid
+// @desc    Store temporary rfid/s
 // @route   POST /api/rfid/add
-// @access  Private
+// @access  Private/Admin
 const storeRfid = asyncHandler(async (req, res) => {
     if (storingActive == false) {
         res.status(400)
@@ -58,17 +65,67 @@ const storeRfid = asyncHandler(async (req, res) => {
     const rfidExists = await Rfid.findOne({ rfidTag: formattedUID })
 
     if (rfidExists) {
+        req.io.emit('error', { message: `Rfid Tag: ${formattedUID} already exists.` })
+
         res.status(404)
-        throw new Error('Rfid ID already exists.')
+        throw new Error(`Rfid Tag: ${formattedUID} already exists.`)
     }
 
-    temporaryRfidData.push({
-        rfidTag: formattedUID,
-    })
+    // checks if rfid is already in temporaryRfidData
+    const rfidInTemporaryRfidData = temporaryRfidData.find((rfid) => rfid.rfidTag === formattedUID)
 
-    console.log('RFID added:', temporaryRfidData)
+    if (rfidInTemporaryRfidData) {
+        req.io.emit('warning', { message: `Rfid Tag: ${formattedUID} already added.` })
 
+        res.status(404)
+        throw new Error(`Rfid Tag: ${formattedUID} already added.`)
+    } else {
+        temporaryRfidData.push({
+            rfidTag: formattedUID,
+        })
+
+        console.log('RFID added:', temporaryRfidData)
+    }
+
+    req.io.emit('temporary_rfid_data', { temporaryRfidData })
     res.json({ temporaryRfidData })
+})
+
+// @desc    Save rfid/s
+// @route   POST /api/rfid/add
+// @access  Private/Admin
+const saveRfid = asyncHandler(async (req, res) => {
+    const { rfidData } = req.body
+
+    const responses = []
+
+    for (const rfid of rfidData) {
+        const formattedUID = formatRfidData(rfid.rfidTag)
+        const rfidExists = await Rfid.findOne({ rfidTag: formattedUID })
+
+        if (rfidExists) {
+            responses.push(`Rfid Tag: ${formattedUID} already exists.`)
+            continue // Skip to the next RFID
+        }
+
+        const savedRfid = await Rfid.create({
+            rfidTag: formattedUID,
+            user: null,
+            status: 'not assigned',
+        })
+
+        if (savedRfid) {
+            responses.push('Rfid added')
+        } else {
+            responses.push('Invalid rfid data')
+        }
+    }
+
+    // Emit all errors at once
+    req.io.emit('error', { message: responses.filter((r) => r.startsWith('Rfid Tag')) })
+
+    // Send a single response with all messages
+    res.status(200).json({ messages: responses })
 })
 
 // @desc    Delete rfid
@@ -165,6 +222,7 @@ export {
     changeWindowState,
     getRfids,
     storeRfid,
+    saveRfid,
     deleteRfid,
     getRfidFromReader,
     assignRfidToUser,
