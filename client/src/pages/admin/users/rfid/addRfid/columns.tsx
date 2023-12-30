@@ -3,10 +3,10 @@ import { Button } from '@/components/ui/button'
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown } from 'lucide-react'
 
-// import RfidActions from './actions/rfidactions'
 import { SelectUserComboBox } from '../actions/combobox'
 
 export interface IRfidItem {
+    id: string
     rfidTag: string
 }
 

@@ -29,6 +29,12 @@ export const rfidApiSlice = apiSlice.injectEndpoints({
                 body: data,
             }),
         }),
+        deleteRfid: builder.mutation({
+            query: (rfidId: string) => ({
+                url: `${RFID_URL}/${rfidId}`,
+                method: 'DELETE',
+            }),
+        }),
     }),
 })
 
@@ -37,4 +43,5 @@ export const {
     useWindowStateMutation,
     useAssignRfidToUserMutation,
     useSaveRfidMutation,
+    useDeleteRfidMutation,
 } = rfidApiSlice

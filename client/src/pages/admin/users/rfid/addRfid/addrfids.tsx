@@ -17,17 +17,19 @@ import { columns, IRfidItem } from './columns'
 import { toast } from 'react-toastify'
 import { PropagateLoader } from 'react-spinners'
 
+import { useGetRfidsQuery } from '@/slices/rfidApiSlice'
 import { useSaveRfidMutation } from '@/slices/rfidApiSlice'
 
 import { io } from 'socket.io-client'
 import { API_BASE_URL } from '@/constants/constants'
 
 const AddRfidModal = () => {
+    const { refetch } = useGetRfidsQuery(null)
+
     const [saveRfid, { isLoading: loadingSaveRfid }] = useSaveRfidMutation()
     const [rfidData, setRfidData] = useState<{ temporaryRfidData: IRfidItem[] }>({
         temporaryRfidData: [],
     })
-    // const [loading, setLoading] = useState(true)
 
     const dialogRef = useRef(null)
     const [windowState] = useWindowStateMutation()
@@ -82,14 +84,14 @@ const AddRfidModal = () => {
         }
     }, [])
 
-    // console.log(rfidData)
-
     const handleSubmit = async (rfidData: IRfidItem[]) => {
         try {
             await saveRfid({ rfidData }).unwrap()
 
             toast.success('Rfid/s added successfully')
             openModal(false)
+
+            refetch()
         } catch (error) {
             console.log(error)
             toast.error('Something went wrong!')
@@ -116,15 +118,9 @@ const AddRfidModal = () => {
                         <Button
                             type='submit'
                             onClick={() => handleSubmit(rfidData.temporaryRfidData)}
-                            // disabled={
-                            //     isEdit
-                            //         ? userProfile
-                            //             ? loadingEditUserProfile
-                            //             : loadingEditUser
-                            //         : loadingRegister
-                            // }
+                            disabled={loadingSaveRfid}
                             className='self-end mt-10 w-24'>
-                            Save
+                            {loadingSaveRfid ? 'Saving...' : 'Save'}
                         </Button>
                     </div>
                 ) : (

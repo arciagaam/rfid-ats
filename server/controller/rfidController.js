@@ -129,13 +129,23 @@ const saveRfid = asyncHandler(async (req, res) => {
 })
 
 // @desc    Delete rfid
-// @route   DELETE /api/users/rfid
+// @route   DELETE /api/rfid/:id
 // @access  Private/Admin
-const deleteRfid = asyncHandler((req, res) => {
-    const rfid = Rfid.findById(req.params.id)
+const deleteRfid = asyncHandler(async (req, res) => {
+    const rfid = await Rfid.findById(req.params.id)
 
     if (rfid) {
-        Rfid.deleteOne({ _id: rfid._id })
+        const user = await User.findById(rfid.user)
+        console.log('User:', user)
+
+        if (user) {
+            user.rfid = null
+            user.status = 'no assigned RFID'
+            await user.save()
+        }
+
+        await Rfid.deleteOne({ _id: rfid._id })
+
         res.status(200).json({ message: 'Rfid deleted' })
     } else {
         res.status(404)
@@ -205,7 +215,7 @@ const assignRfidToUser = asyncHandler(async (req, res) => {
         const user = await User.findById(rfid.user)
 
         user.rfid = null
-        user.status = 'not registered'
+        user.status = 'no assigned RFID'
         await user.save()
 
         rfid.user = null

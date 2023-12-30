@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown } from 'lucide-react'
 
-// import RfidActions from './actions/rfidactions'
+import RfidActions from './rfidactions'
 import { SelectUserComboBox } from './actions/combobox'
 
 export type Log = {
@@ -61,5 +61,14 @@ export const columns = (loadingRfids: boolean): ColumnDef<Log>[] => [
                 </Badge>
             )
         },
+    },
+    {
+        id: 'actions',
+        cell: ({ row }) => {
+            const log = row.original
+
+            return <RfidActions rfidId={log.id} />
+        },
+        size: 100,
     },
 ]
