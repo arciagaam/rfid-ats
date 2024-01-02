@@ -59,7 +59,7 @@ const registerUser = asyncHandler(async(req, res) => {
         throw new Error('User already exists')
     }    
 
-    const userRfid = await Rfid.findById(rfid)
+    const userRfid = await Rfid.findOne({ rfidTag: rfid })
 
     const user = await User.create({
         firstName,

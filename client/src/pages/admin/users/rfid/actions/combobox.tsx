@@ -34,8 +34,6 @@ const SelectUserComboBox: React.FC<SelectUserComboBoxProps> = ({
     const [open, setOpen] = React.useState(false)
     const [value, setValue] = React.useState(userId ?? null)
 
-    console.log('value', value)
-
     const { data: users } = useGetUsersQuery('')
     const [assignRfid] = useAssignRfidToUserMutation()
 
@@ -47,24 +45,33 @@ const SelectUserComboBox: React.FC<SelectUserComboBoxProps> = ({
         : []
 
     const handleSelect = async (currentValue: string) => {
-        console.log('currentValue', currentValue)
+        const formattedCurrentValue = currentValue.trim().toLowerCase()
 
-        try {
-            if (value === currentValue) {
-                await assignRfid({ rfidTag: rfidTag, userId: null }).unwrap()
+        const selectedUser = selectUsers.find(
+            (user: IUserSelect) => user.value.trim().toLowerCase() === formattedCurrentValue
+        )
 
-                toast.warning(`RFID Tag: ${rfidTag} unassigned to user.`)
-                return
+        const userId = selectedUser?.key
+
+        if (userId) {
+            try {
+                if (value === userId) {
+                    await assignRfid({ rfidTag: rfidTag, userId: null }).unwrap()
+
+                    toast.warning(`RFID Tag: ${rfidTag} unassigned to user.`)
+                    return
+                }
+
+                await assignRfid({ rfidTag: rfidTag, userId: userId }).unwrap() // Use the extracted userId
+                toast.success(`RFID Tag: ${rfidTag} assigned to user.`)
+            } catch (error) {
+                toast.error(
+                    (error as IErrorResponse)?.data?.message || (error as IErrorResponse).error
+                )
+            } finally {
+                setValue(userId === value ? null : userId)
+                setOpen(false)
             }
-
-            console.log('success toast')
-            await assignRfid({ rfidTag: rfidTag, userId: currentValue }).unwrap()
-            toast.success(`RFID Tag: ${rfidTag} assigned to user.`)
-        } catch (error) {
-            toast.error((error as IErrorResponse)?.data?.message || (error as IErrorResponse).error)
-        } finally {
-            setValue(currentValue === value ? null : currentValue)
-            setOpen(false)
         }
     }
 
@@ -93,7 +100,7 @@ const SelectUserComboBox: React.FC<SelectUserComboBoxProps> = ({
                     <CommandEmpty>No user found.</CommandEmpty>
                     <CommandGroup>
                         {selectUsers.map((user: IUserSelect) => (
-                            <CommandItem key={user.key} value={user.key} onSelect={handleSelect}>
+                            <CommandItem key={user.key} value={user.value} onSelect={handleSelect}>
                                 {user.value}
                                 <CheckIcon
                                     className={cn(

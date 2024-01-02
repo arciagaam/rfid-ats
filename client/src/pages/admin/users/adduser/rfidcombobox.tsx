@@ -48,8 +48,7 @@ const SelectRfidComboBox: React.FC<SelectRfidComboBoxProps> = ({
 
     const handleSelect = async (currentValue: string) => {
         onSelect(currentValue)
-        setValue(currentValue)
-
+        setValue(currentValue.toUpperCase())
         setOpen(false)
     }
 
@@ -79,7 +78,7 @@ const SelectRfidComboBox: React.FC<SelectRfidComboBoxProps> = ({
                     <CommandEmpty>No RFID found.</CommandEmpty>
                     <CommandGroup className='max-h-[200px] overflow-auto'>
                         {selectRfids.map((user: IRfidSelect) => (
-                            <CommandItem key={user.key} value={user.key} onSelect={handleSelect}>
+                            <CommandItem key={user.key} value={user.value} onSelect={handleSelect}>
                                 {user.value}
                                 <CheckIcon
                                     className={cn(

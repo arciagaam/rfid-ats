@@ -74,6 +74,8 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
     const [selectedSex, setSelectedSex] = useState<string>(user?.sex)
     const [selectedRfid, setSelectedRfid] = useState<string>(user?.rfid || null)
 
+    console.log('Selected Rfid:', selectedRfid)
+
     // console.log('User Profile', userProfile)
     // console.log('User', user)
 
@@ -273,7 +275,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
     }
 
     const handleRfidSelection = (selectedValue: string) => {
-        setSelectedRfid(selectedValue)
+        setSelectedRfid(selectedValue.toUpperCase())
     }
 
     const onSubmit = async (data: z.infer<typeof registerSchema>) => {
