@@ -78,7 +78,7 @@ const Home = () => {
 
             newLogData.updatedAt = new Date().toISOString()
 
-            toast.success(`${newLogData.name} tapped ${isTimeIn ? 'in' : 'out'}`, {
+            toast.info(`${newLogData.name} tapped ${isTimeIn ? 'in' : 'out'}`, {
                 position: toast.POSITION.TOP_CENTER
             });
 
