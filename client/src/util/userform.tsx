@@ -69,7 +69,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
     const isAdmin = userInfo?.role === 'admin'
 
     const { data: user, refetch } = useGetUserQuery(id)
-    const { data: userLoggedInProfile, refetch: refetchProfile } = useGetProfileQuery(userId) //! change to userInfo
+    const { data: userLoggedInProfile, refetch: refetchProfile } = useGetProfileQuery(userId)
     const [selectedRole, setSelectedRole] = useState<string>(user?.role)
     const [selectedSex, setSelectedSex] = useState<string>(user?.sex)
     const [selectedRfid, setSelectedRfid] = useState<string>(user?.rfid || null)
@@ -286,18 +286,16 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
 
     const onResetPassword = async () => {
         if (user?.role === 'admin' && user?.birthdate === null) {
-            await updateUserProfile({
+            await updateUserById({
                 userId: id as string,
-                password: 'adminCCS',
+                password: 'password',
             }).unwrap()
+
             toast.success('Password successfully reset')
             refetch()
         } else {
-            if (userLoggedInProfile) {
-                const formattedBirthdate = format(
-                    new Date(userLoggedInProfile!.birthdate!),
-                    'yyyy-MM-dd'
-                )
+            if (user) {
+                const formattedBirthdate = format(new Date(user!.birthdate!), 'yyyy-MM-dd')
 
                 await updateUserById({
                     userId: id as string,
@@ -308,7 +306,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
             } else {
                 const formattedBirthdate = format(new Date(user!.birthdate!), 'yyyy-MM-dd')
 
-                await updateUserById({
+                await updateUserProfile({
                     userId: id as string,
                     password: formattedBirthdate,
                 }).unwrap()
@@ -416,7 +414,11 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                                                         </Button>
                                                     </TooltipTrigger>
                                                     <TooltipContent side='bottom'>
-                                                        <p>set to birthdate e.g. 1995-10-20</p>
+                                                        {isAdmin && user?.role !== 'admin' ? (
+                                                            <p>set to birthdate e.g. yyyy-mm-dd</p>
+                                                        ) : (
+                                                            <p>set to @dminp@55w0rd</p>
+                                                        )}
                                                     </TooltipContent>
                                                 </Tooltip>
                                             </TooltipProvider>
@@ -467,8 +469,6 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
 
                     {selectedRole != 'admin' ? (
                         <>
-                            <br />
-
                             <div className='grid grid-cols-3 gap-5 w-full'>
                                 <FormField
                                     control={form.control}

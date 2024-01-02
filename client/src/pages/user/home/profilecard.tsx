@@ -73,7 +73,7 @@ export function ProfileCard() {
                                     </span>
                                 </div>
                             ) : (
-                                <ClipLoader size={20} color='#8d2dd4' />
+                                <ClipLoader size={20} color='#3657ff' />
                             )}
                         </div>
                         <FormModalBtn

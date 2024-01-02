@@ -16,7 +16,6 @@ const getLogs = asyncHandler(async (req, res) => {
 // @route   GET /api/users/logs
 // @access  Private/Admin
 const getAllLogs = asyncHandler(async (req, res) => {
-
     // const logs = await AttendanceLog.find({})
     //     .populate('user')
     //     .populate('userName', 'firstName middleName lastName')
@@ -24,67 +23,66 @@ const getAllLogs = asyncHandler(async (req, res) => {
 
     const logs = await AttendanceLog.aggregate([
         {
-            "$lookup": {
-                "from": 'users',
-                "let": {
-                    userId: "$user"
+            $lookup: {
+                from: 'users',
+                let: {
+                    userId: '$user',
                 },
-                "pipeline": [
+                pipeline: [
                     {
-                        "$match": {
-                            "$expr": {
-                                "$and": [
-                                    { "$eq": ['$department', req.user.department] },
-                                    { "$eq": ['$$userId', '$_id'] }
-                                ]
-                            }
-                        }
-                    }
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ['$department', req.user.department] },
+                                    { $eq: ['$$userId', '$_id'] },
+                                ],
+                            },
+                        },
+                    },
                 ],
-                "as": 'user'
-            }
+                as: 'user',
+            },
         },
-        { "$match": { "user": { "$ne": [] } } },
-        { "$unwind": "$user" },
-    ]);
+        { $match: { user: { $ne: [] } } },
+        { $unwind: '$user' },
+    ])
 
     res.status(200).json(logs)
 })
 
 const getAllLogsByDate = asyncHandler(async (req, res) => {
-    const { date } = req.body.date;
+    const { date } = req.body.date
 
     const _date = new Date(date).toLocaleDateString()
     const start = new Date(_date)
-    const end = new Date(new Date(_date).setHours(23, 59, 59));
+    const end = new Date(new Date(_date).setHours(23, 59, 59))
 
     const logs = await AttendanceLog.aggregate([
-        {"$match": {"createdAt": { "$gte": start, "$lt": end }}},
+        { $match: { createdAt: { $gte: start, $lt: end } } },
         {
-            "$lookup": {
-                "from": 'users',
-                "let": {
-                    userId: "$user"
+            $lookup: {
+                from: 'users',
+                let: {
+                    userId: '$user',
                 },
-                "pipeline": [
+                pipeline: [
                     {
-                        "$match": {
-                            "$expr": {
-                                "$and": [
-                                    { "$eq": ['$department', req.user.department] },
-                                    { "$eq": ['$$userId', '$_id'] }
-                                ]
-                            }
-                        }
-                    }
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ['$department', req.user.department] },
+                                    { $eq: ['$$userId', '$_id'] },
+                                ],
+                            },
+                        },
+                    },
                 ],
-                "as": 'user'
-            }
+                as: 'user',
+            },
         },
-        { "$match": { "user": { "$ne": [] } } },
-        { "$unwind": "$user" },
-
-    ]);
+        { $match: { user: { $ne: [] } } },
+        { $unwind: '$user' },
+    ])
 
     res.status(200).json(logs)
 })

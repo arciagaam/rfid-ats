@@ -174,7 +174,8 @@ const updateUserProfile = asyncHandler(async(req, res) => {
 
     const user = await User.findById(req.user._id)
 
-    console.log("rfid", rfid)
+    console.log("user profile", user)
+    console.log("new password", password)
 
     if (user) {
         if (rfid) {
@@ -299,9 +300,8 @@ const updateUserByID = asyncHandler(async(req, res) => {
 
     const user = await User.findById(req.params.id)
 
-    console.log("rfid", rfid)
-
-    console.log("user by id", req.body)
+    console.log("update user by id", user)
+    console.log("new password", password)
 
     if (user) {
         if (rfid) {
