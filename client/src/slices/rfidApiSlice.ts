@@ -7,6 +7,8 @@ export const rfidApiSlice = apiSlice.injectEndpoints({
             query: () => ({
                 url: `${RFID_URL}`,
             }),
+            providesTags: ['Rfid'],
+            keepUnusedDataFor: 5,
         }),
         windowState: builder.mutation({
             query: (data: object) => ({

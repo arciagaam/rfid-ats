@@ -57,7 +57,9 @@ const registerUser = asyncHandler(async(req, res) => {
     if (userExists) {
         res.status(400)
         throw new Error('User already exists')
-    }
+    }    
+
+    const userRfid = await Rfid.findById(rfid)
 
     const user = await User.create({
         firstName,
@@ -69,12 +71,19 @@ const registerUser = asyncHandler(async(req, res) => {
         department: req.user.department,
         status,
         idNumber,
-        rfid,
+        rfid: userRfid ? userRfid.rfidTag : null,
         birthdate,
         sex,
         contactNumber,
         address,
     })
+
+    if (rfid) {
+        userRfid.user = user._id
+        userRfid.status = 'active'
+
+        await userRfid.save()
+    }
 
     if (user) {
         req.io.emit('new_user', { message: 'new user created' })
@@ -127,6 +136,7 @@ const getUserProfile = asyncHandler(async(req, res) => {
             email: user.email,
             password: user.password,
             role: user.role,
+            department: user.department,
             status: user.status,
             idNumber: user.idNumber,
             rfid: user.rfid,
@@ -146,23 +156,47 @@ const getUserProfile = asyncHandler(async(req, res) => {
 // @route   PUT /api/users/profile
 // @access  Private
 const updateUserProfile = asyncHandler(async(req, res) => {
+    const {
+        firstName,
+        middleName,
+        lastName,
+        email,
+        password,
+        role,
+        department,
+        idNumber,
+        rfid,
+        birthdate,
+        sex,
+        contactNumber,
+        address,
+    } = req.body
+
     const user = await User.findById(req.user._id)
 
-    if (user) {
-        user.firstName = req.body.firstName || user.firstName
-        user.middleName = req.body.middleName || user.middleName
-        user.lastName = req.body.lastName || user.lastName
-        user.email = req.body.email || user.email
-        user.contactNumber = req.body.contactNumber || user.contactNumber
-        user.department = req.body.department || user.department
-        user.idNumber = req.body.idNumber || user.idNumber
-        user.rfid = req.body.rfid || user.rfid
-        user.birthdate = req.body.birthdate || user.birthdate
-        user.sex = req.body.sex || user.sex
-        user.address = req.body.address || user.address
+    console.log("rfid", rfid)
 
-        if (req.body.password) {
-            user.password = req.body.password
+    if (user) {
+        if (rfid) {
+            const userRfid = await Rfid.findOne({ rfidTag: rfid })
+            user.rfid = userRfid.rfidTag
+        }
+
+        user.firstName = firstName || user.firstName
+        user.middleName = middleName || user.middleName
+        user.lastName = lastName || user.lastName
+        user.email = email || user.email
+        user.contactNumber = contactNumber || user.contactNumber
+        user.role = role || user.role
+        user.department = department || user.department
+        user.idNumber = idNumber || user.idNumber
+        user.birthdate = birthdate || user.birthdate
+        user.sex = sex || user.sex
+        user.contactNumber = contactNumber || user.contactNumber
+        user.address = address || user.address
+
+        if (password) {
+            user.password = password
         }
 
         const updatedUser = await user.save()
@@ -181,7 +215,6 @@ const updateUserProfile = asyncHandler(async(req, res) => {
             birthdate: updatedUser.birthdate,
             sex: updatedUser.sex,
             address: updatedUser.address,
-            status: updatedUser.status,
         })
     } else {
         res.status(404)
@@ -247,25 +280,51 @@ const getUserByID = asyncHandler(async(req, res) => {
 // @route   PUT /api/users/:id
 // @access  Private/Admin
 const updateUserByID = asyncHandler(async(req, res) => {
+    const {
+        firstName,
+        middleName,
+        lastName,
+        email,
+        password,
+        role,
+        department,
+        idNumber,
+        rfid,
+        birthdate,
+        sex,
+        contactNumber,
+        address,
+        status,
+    } = req.body
+
     const user = await User.findById(req.params.id)
 
-    if (user) {
-        user.firstName = req.body.firstName || user.firstName
-        user.middleName = req.body.middleName || user.middleName
-        user.lastName = req.body.lastName || user.lastName
-        user.email = req.body.email || user.email
-        user.contactNumber = req.body.contactNumber || user.contactNumber
-        user.role = req.body.role || user.role
-        user.department = req.body.department || user.department
-        user.idNumber = req.body.idNumber || user.idNumber
-        user.rfid = req.body.rfid || user.rfid
-        user.birthdate = req.body.birthdate || user.birthdate
-        user.sex = req.body.sex || user.sex
-        user.address = req.body.address || user.address
-        user.status = req.body.status || user.status
+    console.log("rfid", rfid)
 
-        if (req.body.password) {
-            user.password = req.body.password
+    console.log("user by id", req.body)
+
+    if (user) {
+        if (rfid) {
+            const userRfid = await Rfid.findOne({ rfidTag: rfid })
+            user.rfid = userRfid.rfidTag
+        }
+
+        user.firstName = firstName || user.firstName
+        user.middleName = middleName || user.middleName
+        user.lastName = lastName || user.lastName
+        user.email = email || user.email
+        user.contactNumber = contactNumber || user.contactNumber
+        user.role = role || user.role
+        user.department = department || user.department
+        user.idNumber = idNumber || user.idNumber
+        user.birthdate = birthdate || user.birthdate
+        user.sex = sex || user.sex
+        user.contactNumber = contactNumber || user.contactNumber
+        user.address = address || user.address
+        user.status = status || user.status
+
+        if (password) {
+            user.password = password
         }
 
         const updatedUser = await user.save()
@@ -304,6 +363,7 @@ const deleteUser = asyncHandler(async(req, res) => {
         if (rfid) {
             rfid.status = 'not assigned'
             rfid.user = null
+            
             await rfid.save()
         }
 

@@ -91,7 +91,7 @@ export function ProfileCard() {
                                     <Input
                                         id='name'
                                         type='text'
-                                        defaultValue={profile?.fullname}
+                                        value={profile?.fullname}
                                         readOnly
                                     />
                                 ) : (
@@ -104,7 +104,7 @@ export function ProfileCard() {
                                     <Input
                                         id='email'
                                         type='email'
-                                        defaultValue={profile?.email}
+                                        value={profile?.email}
                                         readOnly
                                     />
                                 ) : (
@@ -122,7 +122,7 @@ export function ProfileCard() {
                                             id='contactNumber'
                                             className='border-l-0 rounded-l-none w-full focus-visible:ring-0 focus-visible:ring-offset-0'
                                             type='text'
-                                            defaultValue={profile?.contactNumber}
+                                            value={profile?.contactNumber}
                                             readOnly
                                         />
                                     </div>
@@ -138,12 +138,7 @@ export function ProfileCard() {
                             <div>
                                 <Label htmlFor='role'>Role</Label>
                                 {profile ? (
-                                    <Input
-                                        id='role'
-                                        type='text'
-                                        defaultValue={profile?.role}
-                                        readOnly
-                                    />
+                                    <Input id='role' type='text' value={profile?.role} readOnly />
                                 ) : (
                                     <Skeleton className='h-10' />
                                 )}
@@ -154,7 +149,7 @@ export function ProfileCard() {
                                     <Input
                                         id='department'
                                         type='text'
-                                        defaultValue={profile?.department}
+                                        value={profile?.department}
                                         readOnly
                                     />
                                 ) : (
@@ -169,7 +164,7 @@ export function ProfileCard() {
                                     <Input
                                         id='idNumber'
                                         type='text'
-                                        defaultValue={profile?.idNumber}
+                                        value={profile?.idNumber}
                                         readOnly
                                     />
                                 ) : (
@@ -179,12 +174,7 @@ export function ProfileCard() {
                             <div>
                                 <Label htmlFor='rfid'>RFID</Label>
                                 {profile ? (
-                                    <Input
-                                        id='rfid'
-                                        type='text'
-                                        defaultValue={profile?.rfid}
-                                        readOnly
-                                    />
+                                    <Input id='rfid' type='text' value={profile?.rfid} readOnly />
                                 ) : (
                                     <Skeleton className='h-10' />
                                 )}
@@ -197,7 +187,7 @@ export function ProfileCard() {
                                     <Input
                                         id='birtdate'
                                         type='text'
-                                        defaultValue={profile?.birthdate}
+                                        value={profile?.birthdate}
                                         readOnly
                                     />
                                 ) : (
@@ -207,12 +197,7 @@ export function ProfileCard() {
                             <div>
                                 <Label htmlFor='sex'>Gender</Label>
                                 {profile ? (
-                                    <Input
-                                        id='sex'
-                                        type='text'
-                                        defaultValue={profile?.sex}
-                                        readOnly
-                                    />
+                                    <Input id='sex' type='text' value={profile?.sex} readOnly />
                                 ) : (
                                     <Skeleton className='h-10' />
                                 )}
@@ -221,12 +206,7 @@ export function ProfileCard() {
                         <div className='gap-6 mt-3'>
                             <Label htmlFor='address'>Address</Label>
                             {profile ? (
-                                <Input
-                                    id='address'
-                                    type='text'
-                                    defaultValue={profile?.address}
-                                    readOnly
-                                />
+                                <Input id='address' type='text' value={profile?.address} readOnly />
                             ) : (
                                 <Skeleton className='h-10' />
                             )}

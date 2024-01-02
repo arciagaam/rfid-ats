@@ -34,6 +34,8 @@ const SelectUserComboBox: React.FC<SelectUserComboBoxProps> = ({
     const [open, setOpen] = React.useState(false)
     const [value, setValue] = React.useState(userId ?? null)
 
+    console.log('value', value)
+
     const { data: users } = useGetUsersQuery('')
     const [assignRfid] = useAssignRfidToUserMutation()
 
@@ -45,6 +47,8 @@ const SelectUserComboBox: React.FC<SelectUserComboBoxProps> = ({
         : []
 
     const handleSelect = async (currentValue: string) => {
+        console.log('currentValue', currentValue)
+
         try {
             if (value === currentValue) {
                 await assignRfid({ rfidTag: rfidTag, userId: null }).unwrap()

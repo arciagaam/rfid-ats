@@ -25,6 +25,9 @@ import {
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
+import { useSelector } from 'react-redux'
+import { RootState } from '@/store/store'
+
 import { Input } from '@/components/ui/input'
 import { format } from 'date-fns'
 import { toast } from 'react-toastify'
@@ -54,41 +57,80 @@ type IUserFormProps = {
 
 const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => {
     const [register, { isLoading: loadingRegister }] = useRegisterMutation()
-    const [updateUser, { isLoading: loadingEditUser }] = useUpdateUserByIDMutation()
+    const [updateUserById, { isLoading: loadingEditUser }] = useUpdateUserByIDMutation()
     const [updateUserProfile, { isLoading: loadingEditUserProfile }] =
         useUpdateUserProfileMutation()
 
     const { id } = useParams() as { id: string }
 
+    const { userInfo } = useSelector((state: RootState) => state.auth)
+    // console.log('User Info:', userInfo)
+
+    const isAdmin = userInfo?.role === 'admin'
+
     const { data: user, refetch } = useGetUserQuery(id)
-    const { data: userProfile, refetch: refetchProfile } = useGetProfileQuery(userId)
+    const { data: userLoggedInProfile, refetch: refetchProfile } = useGetProfileQuery(userId) //! change to userInfo
     const [selectedRole, setSelectedRole] = useState<string>(user?.role)
     const [selectedSex, setSelectedSex] = useState<string>(user?.sex)
+    const [selectedRfid, setSelectedRfid] = useState<string>(user?.rfid || null)
+
+    // console.log('User Profile', userProfile)
+    // console.log('User', user)
+
+    // const form = useForm<z.infer<typeof registerSchema>>({
+    //     resolver: zodResolver(registerSchema),
+    //     defaultValues: {
+    //         firstName: isEdit ? (userProfile ? userProfile?.firstName : user?.firstName) : '',
+    //         middleName: isEdit ? (userProfile ? userProfile?.middleName : user?.middleName) : '',
+    //         lastName: isEdit ? (userProfile ? userProfile?.lastName : user?.lastName) : '',
+    //         email: isEdit ? (userProfile ? userProfile?.email : user?.email) : '',
+    //         password: isEdit ? (userProfile ? userProfile?.password : user?.password) : '',
+    //         role: isEdit ? (userProfile ? userProfile?.role : user?.role) : selectedRole,
+    //         idNumber: isEdit ? (userProfile ? userProfile?.idNumber : user?.idNumber) : '',
+    //         rfid: isEdit ? (userProfile ? userProfile?.rfid : user?.rfid) : '',
+    //         birthdate: isEdit
+    //             ? userProfile
+    //                 ? new Date(userProfile.birthdate!)
+    //                 : new Date(user!.birthdate!)
+    //             : undefined,
+    //         sex: isEdit ? (userProfile ? userProfile?.sex : user?.sex) : selectedSex,
+    //         contactNumber: isEdit
+    //             ? userProfile
+    //                 ? userProfile?.contactNumber
+    //                 : user?.contactNumber
+    //             : '',
+    //         address: isEdit ? (userProfile ? userProfile?.address : user?.address) : '',
+    //         status: isEdit ? (userProfile ? userProfile?.status : user?.status) : '',
+    //     },
+    // })
 
     const form = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
-            firstName: isEdit ? (userProfile ? userProfile?.firstName : user?.firstName) : '',
-            middleName: isEdit ? (userProfile ? userProfile?.middleName : user?.middleName) : '',
-            lastName: isEdit ? (userProfile ? userProfile?.lastName : user?.lastName) : '',
-            email: isEdit ? (userProfile ? userProfile?.email : user?.email) : '',
-            password: isEdit ? (userProfile ? userProfile?.password : user?.password) : '',
-            role: isEdit ? (userProfile ? userProfile?.role : user?.role) : selectedRole,
-            idNumber: isEdit ? (userProfile ? userProfile?.idNumber : user?.idNumber) : '',
-            rfid: isEdit ? (userProfile ? userProfile?.rfid : user?.rfid) : '',
-            birthdate: isEdit
-                ? userProfile
-                    ? new Date(userProfile.birthdate!)
-                    : new Date(user!.birthdate!)
-                : undefined,
-            sex: isEdit ? (userProfile ? userProfile?.sex : user?.sex) : selectedSex,
-            contactNumber: isEdit
-                ? userProfile
-                    ? userProfile?.contactNumber
-                    : user?.contactNumber
+            firstName: isEdit ? (isAdmin ? user?.firstName : userLoggedInProfile?.firstName) : '',
+            middleName: isEdit
+                ? isAdmin
+                    ? user?.middleName
+                    : userLoggedInProfile?.middleName
                 : '',
-            address: isEdit ? (userProfile ? userProfile?.address : user?.address) : '',
-            status: isEdit ? (userProfile ? userProfile?.status : user?.status) : '',
+            lastName: isEdit ? (isAdmin ? user?.lastName : userLoggedInProfile?.lastName) : '',
+            email: isEdit ? (isAdmin ? user?.email : userLoggedInProfile?.email) : '',
+            password: isEdit ? (isAdmin ? user?.password : userLoggedInProfile?.password) : '',
+            role: isEdit ? (isAdmin ? user?.role : userLoggedInProfile?.role) : selectedRole,
+            idNumber: isEdit ? (isAdmin ? user?.idNumber : userLoggedInProfile?.idNumber) : '',
+            birthdate: isEdit
+                ? isAdmin
+                    ? new Date(user.birthdate!)
+                    : new Date(userLoggedInProfile.birthdate!)
+                : undefined,
+            sex: isEdit ? (isAdmin ? user?.sex : userLoggedInProfile?.sex) : selectedSex,
+            contactNumber: isEdit
+                ? isAdmin
+                    ? user?.contactNumber
+                    : userLoggedInProfile?.contactNumber
+                : '',
+            address: isEdit ? (isAdmin ? user?.address : userLoggedInProfile?.address) : '',
+            status: isEdit ? (isAdmin ? user?.status : userLoggedInProfile?.status) : '',
         },
     })
 
@@ -99,7 +141,6 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
         email: string,
         role: string,
         idNumber: string | null,
-        rfid: string | null,
         birthdate: Date | null,
         sex: string | null,
         contactNumber: string | null,
@@ -112,7 +153,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                 const formattedBirthdate = format(birthdate!, 'yyyy-MM-dd')
                 birthdateISO = new Date(formattedBirthdate).toISOString()
             }
-            const status = rfid === null ? 'no assigned RFID' : 'active'
+            const status = selectedRfid ? 'active' : 'no assigned RFID'
 
             if (!isEdit) {
                 await register({
@@ -123,7 +164,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                     role,
                     status,
                     idNumber,
-                    rfid,
+                    rfid: selectedRfid || null,
                     birthdate: birthdateISO,
                     sex,
                     contactNumber,
@@ -133,7 +174,26 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
 
                 toast.success('User successfully registered')
             } else {
-                if (userProfile) {
+                if (userInfo?.role === 'admin') {
+                    await updateUserById({
+                        userId: id as string,
+                        firstName,
+                        middleName,
+                        lastName,
+                        email,
+                        role,
+                        status,
+                        idNumber,
+                        rfid: selectedRfid || null,
+                        birthdate: birthdateISO,
+                        sex,
+                        contactNumber,
+                        address,
+                        password,
+                    }).unwrap()
+
+                    refetch()
+                } else {
                     await updateUserProfile({
                         userId: id as string,
                         firstName,
@@ -143,7 +203,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                         role,
                         status,
                         idNumber,
-                        rfid,
+                        rfid: selectedRfid || null,
                         birthdate: birthdateISO,
                         sex,
                         contactNumber,
@@ -152,25 +212,6 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                     }).unwrap()
 
                     refetchProfile()
-                } else {
-                    await updateUser({
-                        userId: id as string,
-                        firstName,
-                        middleName,
-                        lastName,
-                        email,
-                        role,
-                        status,
-                        idNumber,
-                        rfid,
-                        birthdate: birthdateISO,
-                        sex,
-                        contactNumber,
-                        address,
-                        password,
-                    }).unwrap()
-
-                    refetch()
                 }
 
                 toast.success('User successfully updated')
@@ -191,7 +232,6 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
             email,
             role,
             idNumber,
-            rfid,
             birthdate,
             sex,
             contactNumber,
@@ -206,7 +246,6 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
             email,
             role,
             idNumber,
-            rfid || null,
             birthdate,
             sex,
             contactNumber,
@@ -224,18 +263,20 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
             lastName,
             email,
             'admin',
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
+            null, // idNumber
+            null, // birthdate
+            null, // sex
+            null, // contactNumber
+            null, // address
             password
         )
     }
 
+    const handleRfidSelection = (selectedValue: string) => {
+        setSelectedRfid(selectedValue)
+    }
+
     const onSubmit = async (data: z.infer<typeof registerSchema>) => {
-        console.log(data)
         if (data.role === 'admin') {
             await handleAdminSubmit(data)
         } else {
@@ -245,17 +286,20 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
 
     const onResetPassword = async () => {
         if (user?.role === 'admin' && user?.birthdate === null) {
-            await updateUser({
+            await updateUserProfile({
                 userId: id as string,
                 password: 'adminCCS',
             }).unwrap()
             toast.success('Password successfully reset')
             refetch()
         } else {
-            if (userProfile) {
-                const formattedBirthdate = format(new Date(userProfile!.birthdate!), 'yyyy-MM-dd')
+            if (userLoggedInProfile) {
+                const formattedBirthdate = format(
+                    new Date(userLoggedInProfile!.birthdate!),
+                    'yyyy-MM-dd'
+                )
 
-                await updateUserProfile({
+                await updateUserById({
                     userId: id as string,
                     password: formattedBirthdate,
                 }).unwrap()
@@ -264,7 +308,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
             } else {
                 const formattedBirthdate = format(new Date(user!.birthdate!), 'yyyy-MM-dd')
 
-                await updateUser({
+                await updateUserById({
                     userId: id as string,
                     password: formattedBirthdate,
                 }).unwrap()
@@ -360,7 +404,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                                 <FormItem>
                                     <FormLabel className='text-base'>Password</FormLabel>
                                     <FormControl>
-                                        {isEdit ? (
+                                        {isEdit && isAdmin ? (
                                             <TooltipProvider>
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
@@ -394,7 +438,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                             control={form.control}
                             name='role'
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className={isAdmin ? '' : 'hidden'}>
                                     <FormLabel className='text-base'>Role</FormLabel>
                                     <Select
                                         onValueChange={(value) => {
@@ -440,31 +484,25 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                                     )}
                                 />
 
-                                {/* <FormField
-                                    control={form.control}
-                                    name='rfid'
-                                    render={() => (
-                                        <FormItem>
-                                            <FormLabel className='text-base'>
-                                                RFID{' '}
+                                {isAdmin ? (
+                                    <div className='flex flex-col gap-2'>
+                                        <div>
+                                            <label htmlFor=''>RFID</label>
+                                            {isEdit ?? (
                                                 <span className='text-slate-400 text-xs ml-1'>
                                                     Optional
                                                 </span>
-                                            </FormLabel>
-                                            <SelectRfidComboBox />
-                                        </FormItem>
-                                    )}
-                                /> */}
-
-                                <div className='flex flex-col gap-2'>
-                                    <div>
-                                        <label htmlFor=''>RFID</label>
-                                        <span className='text-slate-400 text-xs ml-1'>
-                                            Optional
-                                        </span>
+                                            )}
+                                        </div>
+                                        <SelectRfidComboBox
+                                            onSelect={handleRfidSelection}
+                                            rfidTag={selectedRfid}
+                                            disabled={isEdit ? true : false}
+                                        />
                                     </div>
-                                    <SelectRfidComboBox />
-                                </div>
+                                ) : (
+                                    ''
+                                )}
 
                                 <FormField
                                     control={form.control}
@@ -512,6 +550,8 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                                         </FormItem>
                                     )}
                                 />
+
+                                {isAdmin ? '' : <div></div>}
 
                                 <FormField
                                     control={form.control}
@@ -586,7 +626,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                         type='submit'
                         disabled={
                             isEdit
-                                ? userProfile
+                                ? userLoggedInProfile
                                     ? loadingEditUserProfile
                                     : loadingEditUser
                                 : loadingRegister

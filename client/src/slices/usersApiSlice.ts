@@ -88,6 +88,8 @@ export const usersApiSlice = apiSlice.injectEndpoints({
             query: () => ({
                 url: `${USERS_URL}/profile`,
             }),
+            providesTags: ['Profile'],
+            keepUnusedDataFor: 5,
         }),
     }),
 })

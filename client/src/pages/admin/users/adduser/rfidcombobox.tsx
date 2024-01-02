@@ -3,8 +3,8 @@ import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { toast } from 'react-toastify'
-import { IErrorResponse, IRfidSelect } from '@/types/index'
+
+import { IRfidSelect } from '@/types/index'
 import { PulseLoader } from 'react-spinners'
 
 import {
@@ -16,48 +16,56 @@ import {
 } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
-import { useGetUsersQuery } from '@/slices/usersApiSlice'
 import { useGetRfidsQuery } from '@/slices/rfidApiSlice'
 
 type SelectRfidComboBoxProps = {
     userId?: string
-    rfidTag?: string
+    rfidTag: string
     loadingRfids?: boolean
+    onSelect: (selectedValue: string) => void
+    disabled?: boolean
 }
 
-const SelectRfidComboBox: React.FC<SelectRfidComboBoxProps> = ({ rfidTag, loadingRfids }) => {
+const SelectRfidComboBox: React.FC<SelectRfidComboBoxProps> = ({
+    onSelect,
+    disabled,
+    rfidTag,
+    loadingRfids,
+}) => {
     const [open, setOpen] = React.useState(false)
-    const [value, setValue] = React.useState(null)
+    const [value, setValue] = React.useState(rfidTag ?? null)
 
-    // const { data: users } = useGetUsersQuery('')
     const { data: rfids } = useGetRfidsQuery('')
 
-    console.log('rfids', rfids)
-
     const selectRfids = rfids
-        ? rfids.map((rfid: IRfidSelect) => ({
-              key: rfid._id,
-              value: rfid.rfidTag,
-          }))
+        ? rfids
+              .filter((rfid: IRfidSelect) => rfid.status === 'not assigned')
+              .map((rfid: IRfidSelect) => ({
+                  key: rfid._id,
+                  value: rfid.rfidTag,
+              }))
         : []
 
     const handleSelect = async (currentValue: string) => {
-        console.log('currentValue', currentValue)
+        onSelect(currentValue)
+        setValue(currentValue)
+
+        setOpen(false)
     }
 
     return (
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover open={open} modal={true} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button
                     variant='outline'
                     role='combobox'
                     aria-expanded={open}
-                    className='w-full justify-between'>
+                    className='w-full justify-between'
+                    disabled={disabled}>
                     {loadingRfids ? (
                         <PulseLoader size={6} color='#1e1e1e50' />
                     ) : value ? (
-                        // this line finds the label of the selected value
-                        selectRfids.find((rfid: IRfidSelect) => rfid._id === value)?.value
+                        selectRfids.find((rfid: IRfidSelect) => rfid.key === value)?.value ?? value
                     ) : (
                         'Select RFID...'
                     )}
@@ -67,14 +75,11 @@ const SelectRfidComboBox: React.FC<SelectRfidComboBoxProps> = ({ rfidTag, loadin
             <PopoverContent className='w-[320px] p-0'>
                 <Command>
                     <CommandInput placeholder='Search RFID...' className='h-9' />
+                    {/* <ScrollArea className='max-h-[200px] overflow-auto'> */}
                     <CommandEmpty>No RFID found.</CommandEmpty>
-                    <CommandGroup>
+                    <CommandGroup className='max-h-[200px] overflow-auto'>
                         {selectRfids.map((user: IRfidSelect) => (
-                            <CommandItem
-                                key={user.key}
-                                value={user.key}
-                                onSelect={handleSelect}
-                                disabled>
+                            <CommandItem key={user.key} value={user.key} onSelect={handleSelect}>
                                 {user.value}
                                 <CheckIcon
                                     className={cn(
@@ -85,6 +90,7 @@ const SelectRfidComboBox: React.FC<SelectRfidComboBoxProps> = ({ rfidTag, loadin
                             </CommandItem>
                         ))}
                     </CommandGroup>
+                    {/* </ScrollArea> */}
                 </Command>
             </PopoverContent>
         </Popover>

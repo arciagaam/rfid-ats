@@ -54,6 +54,7 @@ const Users = () => {
             <Card>
                 <CardContent>
                     <DataTable
+                        key={users?.length}
                         columns={columns}
                         data={data}
                         searchPlaceholder='Search name...'
