@@ -15,6 +15,8 @@ import { FormModalBtn } from '@/components/global/formModalBtn'
 import { useGetAccomplishmentReportsQuery } from '@/slices/accomplishmentReportApiSlice'
 import { API_BASE_URL } from '@/constants/constants'
 
+import { toast } from 'react-toastify'
+
 const Home = () => {
     const [data, setData] = useState<Log[]>([])
     const [cardData, setCardData] = useState({})
@@ -75,6 +77,10 @@ const Home = () => {
             newLogData.name = newLogData.userName
 
             newLogData.updatedAt = new Date().toISOString()
+
+            toast.info(`${newLogData.name} tapped ${isTimeIn ? 'in' : 'out'}`, {
+                position: toast.POSITION.TOP_CENTER
+            });
 
             setData((prevData) => {
                 if (isTimeIn) {
