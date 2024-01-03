@@ -45,6 +45,8 @@ const Home = () => {
                 }
             })
 
+            console.log(tableData)
+
             setData(tableData)
         }
         logsRefetch()
@@ -148,7 +150,7 @@ const Home = () => {
                         initialPageSize={5}
                         data={data}
                         columnSearch='date'
-                        searchPlaceholder='Search date eg. mm-dd-yyyy...'
+                        searchPlaceholder='Search date eg. yyyy-mm-dd...'
                         component={
                             <FormModalBtn
                                 btnLabel='Print Attendance'

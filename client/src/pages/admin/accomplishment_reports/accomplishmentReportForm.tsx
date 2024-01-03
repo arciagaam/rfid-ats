@@ -94,7 +94,6 @@ const AccomplishmentReportForm = ({...props}) => {
                                         type='file'
                                         value={value?.fileName}
                                         onChange={(e) => {
-                                            console.log(e.target.files)
                                             onChange(e.target.files[0]);
                                         }}
                                         />
