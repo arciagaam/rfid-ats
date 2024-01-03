@@ -16,11 +16,6 @@ const getLogs = asyncHandler(async (req, res) => {
 // @route   GET /api/users/logs
 // @access  Private/Admin
 const getAllLogs = asyncHandler(async (req, res) => {
-    // const logs = await AttendanceLog.find({})
-    //     .populate('user')
-    //     .populate('userName', 'firstName middleName lastName')
-    //     .sort({ updatedAt: -1 })
-
     const logs = await AttendanceLog.aggregate([
         {
             $lookup: {
@@ -45,6 +40,7 @@ const getAllLogs = asyncHandler(async (req, res) => {
         },
         { $match: { user: { $ne: [] } } },
         { $unwind: '$user' },
+        { $sort: { updatedAt: -1 } },
     ])
 
     res.status(200).json(logs)

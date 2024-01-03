@@ -53,8 +53,22 @@ const destroyData = async () => {
     }
 }
 
+const deleteAllLogs = async () => {
+    try {
+        await AttendanceLog.deleteMany()
+
+        console.log('Logs Deleted!'.red.bold)
+        process.exit()
+    } catch (error) {
+        console.error(`${error}`.red.bold)
+        process.exit(1)
+    }
+}
+
 if (process.argv[2] === '-d') {
     destroyData()
+} else if (process.argv[2] === '-l') {
+    deleteAllLogs()
 } else {
     importData()
 }

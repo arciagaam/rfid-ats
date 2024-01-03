@@ -10,7 +10,8 @@
         "client": "npm run dev --prefix ../client",
         "dev": "concurrently \"npm run server\" \"npm run client\"",
         "db:import": "node seeders/runSeeder.js",
-        "db:destroy": "node seeders/runSeeder.js -d"
+        "db:destroy": "node seeders/runSeeder.js -d",
+        "db:destroyLogs": "node seeders/runSeeder.js -l"
     },
     "keywords": [],
     "author": "",
