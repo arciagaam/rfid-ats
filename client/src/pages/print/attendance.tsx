@@ -54,7 +54,7 @@ const AttendanceTablePrint = () => {
                                     </td>
                                     <td>{formatTime(item.timeIn)}</td>
                                     <td>{formatTime(item.timeOut)}</td>
-                                    <td>{formatTime(item.totalTimeRendered)}</td>
+                                    <td>{item.totalTimeRendered}</td>
                                 </tr>
                             ))
                         }

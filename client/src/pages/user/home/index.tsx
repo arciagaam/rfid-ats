@@ -93,7 +93,7 @@ const Home = () => {
                             initialPageSize={5}
                             data={data}
                             columnSearch='date'
-                            searchPlaceholder='Search date eg. mm-dd-yyyy'></DataTable>
+                            searchPlaceholder='Search date eg. yyyy-mm-dd'></DataTable>
                     </CardContent>
                 </Card>
             </div>
