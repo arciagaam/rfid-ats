@@ -19,6 +19,7 @@ import { formatDate } from '@/util/formatter'
 
 import UserForm from '../../../util/userform'
 import ClipLoader from 'react-spinners/ClipLoader'
+import { API_BASE_URL } from '@/constants/constants'
 
 export function ProfileCard() {
     const [profile, setProfile] = useState<IUserProfile>()
@@ -40,6 +41,7 @@ export function ProfileCard() {
                 sex: user.sex ?? 'N/A',
                 contactNumber: user.contactNumber ?? 'N/A',
                 address: user.address ?? 'N/A',
+                profilePicture: user.profilePicture
             }
             setProfile(data)
         }
@@ -58,17 +60,15 @@ export function ProfileCard() {
                             {profile ? (
                                 <div className='flex items-center gap-2'>
                                     <div
-                                        className={`h-4 w-4 rounded-full ${
-                                            profile?.status === 'active'
-                                                ? 'bg-green-500'
-                                                : 'bg-red-500'
-                                        }`}></div>
+                                        className={`h-4 w-4 rounded-full ${profile?.status === 'active'
+                                            ? 'bg-green-500'
+                                            : 'bg-red-500'
+                                            }`}></div>
                                     <span
-                                        className={`text-sm font-medium ${
-                                            profile?.status === 'active'
-                                                ? 'text-green-500'
-                                                : 'text-red-500'
-                                        }`}>
+                                        className={`text-sm font-medium ${profile?.status === 'active'
+                                            ? 'text-green-500'
+                                            : 'text-red-500'
+                                            }`}>
                                         {profile?.status}
                                     </span>
                                 </div>
@@ -84,51 +84,60 @@ export function ProfileCard() {
                     </div>
 
                     <TabsContent value='basicInfo'>
-                        <div className='grid grid-cols-3 gap-6 mt-5'>
-                            <div>
-                                <Label htmlFor='name'>Name</Label>
-                                {profile ? (
-                                    <Input
-                                        id='name'
-                                        type='text'
-                                        value={profile?.fullname}
-                                        readOnly
-                                    />
-                                ) : (
-                                    <Skeleton className='h-10' />
-                                )}
+                        <div className="flex gap-3 mt-10">
+                            <div className="aspect-square h-48 overflow-clip">
+                                {
+                                    profile?.profilePicture ?
+                                        <img className='h-full object-cover' src={`${API_BASE_URL}/images/${profile?.profilePicture}`}></img>
+                                        : 'No Image'
+                                }
                             </div>
-                            <div>
-                                <Label htmlFor='email'>Email</Label>
-                                {profile ? (
-                                    <Input
-                                        id='email'
-                                        type='email'
-                                        value={profile?.email}
-                                        readOnly
-                                    />
-                                ) : (
-                                    <Skeleton className='h-10' />
-                                )}
-                            </div>
-                            <div>
-                                <Label htmlFor='contactNumber'>Contact Number</Label>
-                                {profile ? (
-                                    <div className='flex items-center bg-white rounded-md focus-within:ring-ring focus-within:ring-2 focus-within:ring-offset-2'>
-                                        <div className='text-[#1e1e1e80] flex items-center justify-center text-sm rounded-l-md pl-3 border border-input ring-offset-background h-10 border-r-0 py-2'>
-                                            +63
-                                        </div>
+                            <div className='grid grid-cols-3 gap-6 mt-5 w-full'>
+                                <div>
+                                    <Label htmlFor='name'>Name</Label>
+                                    {profile ? (
                                         <Input
-                                            id='contactNumber'
-                                            className='border-l-0 rounded-l-none w-full focus-visible:ring-0 focus-visible:ring-offset-0'
+                                            id='name'
                                             type='text'
-                                            value={profile?.contactNumber}
+                                            value={profile?.fullname}
                                             readOnly
                                         />
-                                    </div>
-                                ) : (
-                                    <Skeleton className='h-10' />
-                                )}
+                                    ) : (
+                                        <Skeleton className='h-10' />
+                                    )}
+                                </div>
+                                <div>
+                                    <Label htmlFor='email'>Email</Label>
+                                    {profile ? (
+                                        <Input
+                                            id='email'
+                                            type='email'
+                                            value={profile?.email}
+                                            readOnly
+                                        />
+                                    ) : (
+                                        <Skeleton className='h-10' />
+                                    )}
+                                </div>
+                                <div>
+                                    <Label htmlFor='contactNumber'>Contact Number</Label>
+                                    {profile ? (
+                                        <div className='flex items-center bg-white rounded-md focus-within:ring-ring focus-within:ring-2 focus-within:ring-offset-2'>
+                                            <div className='text-[#1e1e1e80] flex items-center justify-center text-sm rounded-l-md pl-3 border border-input ring-offset-background h-10 border-r-0 py-2'>
+                                                +63
+                                            </div>
+                                            <Input
+                                                id='contactNumber'
+                                                className='border-l-0 rounded-l-none w-full focus-visible:ring-0 focus-visible:ring-offset-0'
+                                                type='text'
+                                                value={profile?.contactNumber}
+                                                readOnly
+                                            />
+                                        </div>
+                                    ) : (
+                                        <Skeleton className='h-10' />
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </TabsContent>
