@@ -132,7 +132,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                 : '',
             address: isEdit ? (isAdmin ? user?.address : userLoggedInProfile?.address) : '',
             status: isEdit ? (isAdmin ? user?.status : userLoggedInProfile?.status) : '',
-            profilePicture: isEdit ? (isAdmin ? user?.profilePicture : userLoggedInProfile?.profilePicture) : ''
+            profilePicture: ''
         },
     })
 

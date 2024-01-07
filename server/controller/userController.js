@@ -200,7 +200,6 @@ const updateUserProfile = asyncHandler(async(req, res) => {
     // console.log("new password", password)
 
     let profilePicturePath = ''
-    console.log(profilePicture);
     if(profilePicture) {
         const base64 = profilePicture;
         if (base64 === undefined) return;
