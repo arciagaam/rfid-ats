@@ -35,11 +35,14 @@ import ShowSchedule from '@/pages/admin/faculty_schedule/show'
 import Schedule from '@/pages/user/schedule'
 import AttendanceTablePrint from '@/pages/print/attendance'
 import PrivateRoute from '@/components/global/PrivateRoute'
+import { Monitor } from '@/pages/admin/monitor'
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path='/'>
             <Route path="/login" element={<Login />} />
+
+            <Route path='/monitor' element={<Monitor/>}/>
 
             <Route element={<PrivateRoute />}>
             <Route path='attendance/print' element={<AttendanceTablePrint/>}/>

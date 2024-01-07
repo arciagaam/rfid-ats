@@ -45,5 +45,6 @@ export interface IUserProfile {
     birthdate: string
     sex: string
     contactNumber: string
-    address: string
+    address: string,
+    profilePicture: string,
 }

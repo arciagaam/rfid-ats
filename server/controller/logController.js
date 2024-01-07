@@ -1,6 +1,6 @@
 import asyncHandler from '../middleware/asyncHandler.js'
 import AttendanceLog from '../models/AttendanceLog.js'
-
+import mongoose from 'mongoose'
 // @desc    Get logs of a user
 // @route   GET /api/users/logs/:id
 // @access  Private/Admin
@@ -47,40 +47,76 @@ const getAllLogs = asyncHandler(async (req, res) => {
 })
 
 const getAllLogsByDate = asyncHandler(async (req, res) => {
-    const { date } = req.body.date
+    const { dateFrom, dateTo  } = req.body.values
+    const { userId } = req.body;
 
-    const _date = new Date(date).toLocaleDateString()
-    const start = new Date(_date)
-    const end = new Date(new Date(_date).setHours(23, 59, 59))
+    const start = new Date(new Date(dateFrom).toLocaleDateString())
+    const end = new Date(new Date(dateTo).setHours(23, 59, 59))
 
-    const logs = await AttendanceLog.aggregate([
-        { $match: { createdAt: { $gte: start, $lt: end } } },
-        {
-            $lookup: {
-                from: 'users',
-                let: {
-                    userId: '$user',
-                },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $and: [
-                                    { $eq: ['$department', req.user.department] },
-                                    { $eq: ['$$userId', '$_id'] },
-                                ],
+    console.log(userId)
+
+    if(!userId) {
+        const logs = await AttendanceLog.aggregate([
+            { $match: { createdAt: { $gte: start, $lt: end } } },
+            {
+                $lookup: {
+                    from: 'users',
+                    let: {
+                        userId: '$user',
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ['$department', req.user.department] },
+                                        { $eq: ['$$userId', '$_id'] },
+                                    ],
+                                },
                             },
                         },
-                    },
-                ],
-                as: 'user',
+                    ],
+                    as: 'user',
+                },
             },
-        },
-        { $match: { user: { $ne: [] } } },
-        { $unwind: '$user' },
-    ])
+            { $match: { user: { $ne: [] } } },
+            { $unwind: '$user' },
+        ])
+    
+        res.status(200).json(logs)
+    } else {
+        const ObjectId = mongoose.Types.ObjectId;
+        const logs = await AttendanceLog.aggregate([
+            { $match: { createdAt: { $gte: start, $lt: end }, user: {$eq: new ObjectId(userId)} } },
+            {
+                $lookup: {
+                    from: 'users',
+                    let: {
+                        userId: '$user',
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ['$department', req.user.department] },
+                                        { $eq: ['$$userId', '$_id'] },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    as: 'user',
+                },
+            },
+            { $match: { user: { $ne: [] } } },
+            { $unwind: '$user' },
+        ])
+    
+        res.status(200).json(logs) 
+    }
 
-    res.status(200).json(logs)
+
 })
 
 export { getLogs, getAllLogs, getAllLogsByDate }

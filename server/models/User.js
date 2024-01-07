@@ -46,6 +46,9 @@ export const userSchema = new mongoose.Schema(
         },
         schedule: {
             type: Map
+        },
+        profilePicture: {
+            type: String
         }
     },
     { timestamps: true }

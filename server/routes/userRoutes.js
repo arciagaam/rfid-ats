@@ -22,7 +22,7 @@ const router = express.Router()
 
 router.route('/logs')
 .get(protect, admin, getAllLogs)
-.post(protect, admin, getAllLogsByDate)
+.post(protect, getAllLogsByDate)
 
 router.route('/logs/:id').get(protect, getLogs)
 

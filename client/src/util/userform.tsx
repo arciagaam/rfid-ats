@@ -33,7 +33,7 @@ import { format } from 'date-fns'
 import { toast } from 'react-toastify'
 import { IErrorResponse } from '@/types/index'
 
-import { cn } from '@/lib/utils'
+import { cn, toBase64 } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
 import { Calendar as CalendarIcon } from 'lucide-react'
 
@@ -48,6 +48,7 @@ import {
     useGetProfileQuery,
 } from '@/slices/usersApiSlice'
 import { SelectRfidComboBox } from '@/pages/admin/users/adduser/rfidcombobox'
+import { Label } from '@radix-ui/react-label'
 
 type IUserFormProps = {
     isEdit?: boolean
@@ -58,8 +59,8 @@ type IUserFormProps = {
 const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => {
     const [register, { isLoading: loadingRegister }] = useRegisterMutation()
     const [updateUserById, { isLoading: loadingEditUser }] = useUpdateUserByIDMutation()
-    const [updateUserProfile, { isLoading: loadingEditUserProfile }] =
-        useUpdateUserProfileMutation()
+    const [updateUserProfile, { isLoading: loadingEditUserProfile }] = useUpdateUserProfileMutation()
+    const [image, setImage] = useState<File | null>(null);
 
     const { id } = useParams() as { id: string }
 
@@ -73,8 +74,6 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
     const [selectedRole, setSelectedRole] = useState<string>(user?.role)
     const [selectedSex, setSelectedSex] = useState<string>(user?.sex)
     const [selectedRfid, setSelectedRfid] = useState<string>(user?.rfid || null)
-
-    console.log('Selected Rfid:', selectedRfid)
 
     // console.log('User Profile', userProfile)
     // console.log('User', user)
@@ -133,6 +132,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                 : '',
             address: isEdit ? (isAdmin ? user?.address : userLoggedInProfile?.address) : '',
             status: isEdit ? (isAdmin ? user?.status : userLoggedInProfile?.status) : '',
+            profilePicture: isEdit ? (isAdmin ? user?.profilePicture : userLoggedInProfile?.profilePicture) : ''
         },
     })
 
@@ -147,10 +147,12 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
         sex: string | null,
         contactNumber: string | null,
         address: string | null,
-        password?: string
+        password?: string,
+        profilePicture?: string | null
     ) => {
         try {
             let birthdateISO = null
+
             if (birthdate) {
                 const formattedBirthdate = format(birthdate!, 'yyyy-MM-dd')
                 birthdateISO = new Date(formattedBirthdate).toISOString()
@@ -172,6 +174,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                     contactNumber,
                     address,
                     password,
+                    profilePicture
                 }).unwrap()
 
                 toast.success('User successfully registered')
@@ -192,6 +195,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                         contactNumber,
                         address,
                         password,
+                        profilePicture
                     }).unwrap()
 
                     refetch()
@@ -211,6 +215,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                         contactNumber,
                         address,
                         password,
+                        profilePicture
                     }).unwrap()
 
                     refetchProfile()
@@ -239,6 +244,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
             contactNumber,
             address,
             password,
+            profilePicture
         } = data
 
         await handleUserSubmit(
@@ -252,13 +258,14 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
             sex,
             contactNumber,
             address,
-            password
+            password,
+            profilePicture
         )
     }
 
     const handleAdminSubmit = async (data: z.infer<typeof adminUser>) => {
-        const { firstName, middleName, lastName, email, password } = data
-
+        const { firstName, middleName, lastName, email, password, profilePicture } = data
+        console.log(profilePicture);
         await handleUserSubmit(
             firstName,
             middleName || null,
@@ -270,7 +277,8 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
             null, // sex
             null, // contactNumber
             null, // address
-            password
+            password,
+            profilePicture
         )
     }
 
@@ -279,10 +287,16 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
     }
 
     const onSubmit = async (data: z.infer<typeof registerSchema>) => {
+        const payload = data;
+        if (image) {
+            const base64 = await toBase64(image);
+            Object.assign(payload, { profilePicture: base64 });
+        }
+
         if (data.role === 'admin') {
-            await handleAdminSubmit(data)
+            await handleAdminSubmit(payload)
         } else {
-            await handleFacultySubmit(data)
+            await handleFacultySubmit(payload)
         }
     }
 
@@ -320,8 +334,24 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
         }
     }
 
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+
+        const target = event.target;
+        const file = target.files?.[0];
+
+        if (file === undefined) return
+
+        setImage(file);
+    }
+
     return (
         <div className='flex flex-col gap-10'>
+            <div className='col-span-3'>
+                <Label>Profile Picture</Label>
+                <Input accept="image/jpg, image/jpeg, image/png, image/webp" type="file" className="w-full cursor-pointer" onChange={handleFileChange} />
+
+            </div>
+
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col gap-5'>
                     <div className='grid grid-cols-3 w-full gap-5'>
@@ -520,7 +550,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                                                             className={cn(
                                                                 'w-full justify-start text-left font-normal',
                                                                 !field.value &&
-                                                                    'text-muted-foreground'
+                                                                'text-muted-foreground'
                                                             )}>
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value ? (

@@ -6,6 +6,7 @@ const registerSchemaBase = z.object({
     lastName: z.string().nonempty('Required'),
     email: z.string().email().nonempty('Required'),
     password: z.string().nonempty('Required'),
+    profilePicture: z.string().optional().nullable()
 })
 
 const adminUser = z

@@ -3,6 +3,9 @@ import User from '../models/User.js'
 import Rfid from './../models/Rfid.js'
 import generateToken from '../utils/generateToken.js'
 import jwt from 'jsonwebtoken'
+import { v4 } from 'uuid'
+import fs from 'fs'
+
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
@@ -50,7 +53,22 @@ const registerUser = asyncHandler(async(req, res) => {
         sex,
         contactNumber,
         address,
+        profilePicture
     } = req.body
+
+    let profilePicturePath = ''
+
+    if(profilePicture) {
+        const base64 = profilePicture;
+        if (base64 === undefined) return;
+
+        const buffer = convertBase64toBuffer(base64);
+        const fileName = `${v4()}.${getBase64FileType(base64)}`;
+
+        storeFile('./public/images', fileName, buffer);
+
+        profilePicturePath = fileName;
+    }
 
     const userExists = await User.findOne({ email })
 
@@ -76,6 +94,7 @@ const registerUser = asyncHandler(async(req, res) => {
         sex,
         contactNumber,
         address,
+        profilePicture: profilePicturePath,
     })
 
     if (rfid) {
@@ -102,6 +121,7 @@ const registerUser = asyncHandler(async(req, res) => {
             sex: user.sex,
             contactNumber: user.contactNumber,
             address: user.address,
+            profilePicture: user.profilePicture
         })
     } else {
         res.status(400)
@@ -170,12 +190,27 @@ const updateUserProfile = asyncHandler(async(req, res) => {
         sex,
         contactNumber,
         address,
+        profilePicture
     } = req.body
 
     const user = await User.findById(req.user._id)
 
-    console.log("user profile", user)
-    console.log("new password", password)
+    // console.log("user profile", user)
+    // console.log("new password", password)
+
+    let profilePicturePath = ''
+
+    if(profilePicture) {
+        const base64 = profilePicture;
+        if (base64 === undefined) return;
+
+        const buffer = convertBase64toBuffer(base64);
+        const fileName = `${v4()}.${getBase64FileType(base64)}`;
+
+        storeFile('./public/images', fileName, buffer);
+
+        profilePicturePath = fileName;
+    }
 
     if (user) {
         if (rfid) {
@@ -195,6 +230,7 @@ const updateUserProfile = asyncHandler(async(req, res) => {
         user.sex = sex || user.sex
         user.contactNumber = contactNumber || user.contactNumber
         user.address = address || user.address
+        user.profilePicture = profilePicturePath || user.profilePicture
 
         if (password) {
             user.password = password
@@ -216,6 +252,7 @@ const updateUserProfile = asyncHandler(async(req, res) => {
             birthdate: updatedUser.birthdate,
             sex: updatedUser.sex,
             address: updatedUser.address,
+            profilePicture: updatedUser.profilePicture
         })
     } else {
         res.status(404)
@@ -296,12 +333,28 @@ const updateUserByID = asyncHandler(async(req, res) => {
         contactNumber,
         address,
         status,
+        profilePicture
     } = req.body
 
     const user = await User.findById(req.params.id)
 
     console.log("update user by id", user)
     console.log("new password", password)
+
+    
+    let profilePicturePath = ''
+
+    if(profilePicture) {
+        const base64 = profilePicture;
+        if (base64 === undefined) return;
+
+        const buffer = convertBase64toBuffer(base64);
+        const fileName = `${v4()}.${getBase64FileType(base64)}`;
+
+        storeFile('./public/images', fileName, buffer);
+
+        profilePicturePath = fileName;
+    }
 
     if (user) {
         if (rfid) {
@@ -322,6 +375,7 @@ const updateUserByID = asyncHandler(async(req, res) => {
         user.contactNumber = contactNumber || user.contactNumber
         user.address = address || user.address
         user.status = status || user.status
+        user.profilePicture = profilePicturePath || user.profilePicture
 
         if (password) {
             user.password = password
@@ -344,6 +398,7 @@ const updateUserByID = asyncHandler(async(req, res) => {
             sex: updatedUser.sex,
             address: updatedUser.address,
             status: updatedUser.status,
+            profilePicture: updatedUser.profilePicture,
         })
     } else {
         res.status(404)
@@ -416,6 +471,77 @@ const getUsersWithSchedule = asyncHandler(async(req, res) => {
         throw new Error('User not found')
     }
 })
+
+function convertObjectKeys(value) {
+    const _obj = new Object;
+
+    if (value instanceof Array) {
+        const arrOfObj = [];
+
+        for (const obj of value) {
+            arrOfObj.push(convertObjectKeys(obj));
+        }
+
+        return arrOfObj;
+    } else {
+        for (const key in value) {
+            const _key = convertKeyToCamelCase(key);
+            let _val = value[key];
+
+            if (value[key] instanceof Array) {
+                _val = convertObjectKeys(_val);
+            }
+
+            Object.assign(_obj, { [_key]: _val })
+        }
+    }
+
+    return _obj;
+}
+
+function convertBase64toBlob(base64Data) {
+    const parts = base64Data.split(',');
+    const contentType = parts[0].split(':')[1].split(';')[0];
+    const base64 = parts[1];
+    const decodedData = atob(base64);
+    const arrayBuffer = new ArrayBuffer(decodedData.length);
+    const uint8Array = new Uint8Array(arrayBuffer);
+
+    for (let i = 0; i < decodedData.length; i++) {
+        uint8Array[i] = decodedData.charCodeAt(i);
+    }
+
+    return new Blob([arrayBuffer], { type: contentType });
+}
+
+function storeFile(dest, name, buffer) {
+    if (!fs.existsSync(dest)) {
+        fs.mkdirSync(dest, { recursive: true });
+    }
+
+    try {
+        fs.writeFileSync(`${dest}/${name}`, buffer);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+function getBase64FileType(base64) {
+    try {
+        return base64.substring("data:image/".length, base64.indexOf(";base64"));
+    } catch (error) {
+        return "";
+    }
+}
+
+export function mimeToExtension(mime) {
+    return "." + mime.split('/')[1];
+}
+
+export function convertBase64toBuffer(base64Value) {
+    const base64 = base64Value.split(',')[1];
+    return Buffer.from(base64, "base64");
+}
 
 export {
     authUser,

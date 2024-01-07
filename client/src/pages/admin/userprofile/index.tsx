@@ -14,6 +14,8 @@ import io from 'socket.io-client'
 
 import { formatDate, formatTime } from '@/util/formatter'
 import { API_BASE_URL } from '@/constants/constants'
+import { FormModalBtn } from '@/components/global/formModalBtn'
+import AttendancePrintForm from '@/util/attendanceprintform'
 
 const ShowUser = () => {
     const { id: userId } = useParams()
@@ -107,7 +109,16 @@ const ShowUser = () => {
                             initialPageSize={5}
                             data={data}
                             columnSearch='date'
-                            searchPlaceholder='Search date eg. yyyy-mm-dd...'></DataTable>
+                            searchPlaceholder='Search date eg. yyyy-mm-dd...'
+                            component={
+                                <FormModalBtn
+                                    btnLabel='Print Attendance'
+                                    dlgTitle='Print Attendance'
+                                    formComponent={<AttendancePrintForm userId={userId} />}
+                                />
+                            }
+
+                        ></DataTable>
                     </CardContent>
                 </Card>
             </div>

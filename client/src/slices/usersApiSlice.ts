@@ -1,5 +1,7 @@
 import { USERS_URL } from '@/constants/constants'
 import { apiSlice } from '@/slices/apiSlice'
+import { attendancePrintSchema } from '@/validators/attendancePrint'
+import { z } from 'zod'
 
 export const usersApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -46,7 +48,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
             }),
         }),
         getUserLogsByDate: builder.mutation({
-            query: (data: string) => ({
+            query: (data) => ({
                 url: `${USERS_URL}/logs`,
                 method: 'POST',
                 body: data,

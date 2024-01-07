@@ -15,8 +15,24 @@ module.exports = {
         "2xl": "1400px",
       },
     },
-    extend: {
 
+    fontSize: {
+      "xs": "0.85rem",
+      "sm": "0.975rem",
+      "base": "1.1rem",
+      "lg": "1.225rem",
+      "xl": "1.35rem",
+      "2xl": "1.6rem",
+      "3xl": "1.975rem",
+      "4xl": "2.35rem",
+      "5xl": "3.1rem",
+      "6xl": "3.85rem",
+      "7xl": "4.6rem",
+      "8xl": "6.1rem",
+      "9xl": "8.1rem"
+    },
+
+    extend: {
       colors: {
         "primary-blue": {
           '50': '#eef2ff',

@@ -171,13 +171,12 @@ const getRfidFromReader = asyncHandler(async (req, res) => {
     if (matchingRfid) {
         const user = await getUserByRfid(matchingRfid.rfidTag)
         const fullName = getFullName(user)
-
         const existingLog = await getAttendanceLog(matchingRfid.user)
 
         if (existingLog) {
-            return handleTimeOut(req, res, existingLog, fullName)
+            return handleTimeOut(req, res, existingLog, fullName, user.idNumber, user.profilePicture)
         } else {
-            return handleTimeIn(req, res, matchingRfid.user, fullName)
+            return handleTimeIn(req, res, matchingRfid.user, fullName, user.idNumber, user.profilePicture)
         }
     } else {
         return handleRfidNotFound(res)

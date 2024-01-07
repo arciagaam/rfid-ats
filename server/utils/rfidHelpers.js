@@ -14,7 +14,7 @@ function getFullName(user) {
     return `${firstName} ${middleName} ${lastName}`
 }
 
-async function handleTimeIn(req, res, userId, fullName) {
+async function handleTimeIn(req, res, userId, fullName, idNumber, profilePicture = null) {
     const newLog = await AttendanceLog.create({
         user: userId,
         userName: fullName,
@@ -25,23 +25,29 @@ async function handleTimeIn(req, res, userId, fullName) {
 
     await newLog.save()
 
-    req.io.emit('newLog', newLog)
+    const newFetchLog = await AttendanceLog.findOne({_id: newLog._id}).lean()
+
+    req.io.emit('newLog', {...newFetchLog, idNumber, profilePicture})
 
     res.status(200).json({
         message: `${fullName} has timed in at ${newLog.timeIn}`,
     })
 }
 
-async function handleTimeOut(req, res, existingLog, fullName) {
+async function handleTimeOut(req, res, existingLog, fullName, idNumber, profilePicture = null) {
+
     existingLog.timeOut = new Date()
 
     existingLog.calculateTotalTimeRendered()
     await existingLog.save()
+    
+    const newFetchLog = await AttendanceLog.findOne({_id: existingLog._id}).lean()
 
-    req.io.emit('newLog', existingLog)
+
+    req.io.emit('newLog', {...newFetchLog, idNumber, profilePicture})
 
     res.status(200).json({
-        message: `${fullName} has timed out at ${existingLog.timeOut}`,
+        message: `${fullName} has timed out at ${existingLog.timeOut}`
     })
 }
 

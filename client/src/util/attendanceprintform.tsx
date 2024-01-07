@@ -12,24 +12,25 @@ import { z } from 'zod'
 import { useGetUserLogsByDateMutation } from '@/slices/usersApiSlice'
 import { IErrorResponse } from '@/types'
 import { toast } from 'react-toastify'
-import { Link, useNavigate } from 'react-router-dom'
-const AttendancePrintForm = () => {
+import { useNavigate } from 'react-router-dom'
+const AttendancePrintForm = ({userId = null}: {userId: number | string | null}) => {
 
-    const [getUserLogsByDate, {isLoading}] = useGetUserLogsByDateMutation();
+    const [getUserLogsByDate, { isLoading }] = useGetUserLogsByDateMutation();
     const navigate = useNavigate();
     const form = useForm<z.infer<typeof attendancePrintSchema>>({
         resolver: zodResolver(attendancePrintSchema),
         defaultValues: {
-            date: new Date()
+            dateFrom: new Date(),
+            dateTo: new Date() 
         }
     })
 
-    const onSubmit = async (date: Date) => {
+    const onSubmit = async (values: z.infer<typeof attendancePrintSchema>) => {
         try {
-            const res = await getUserLogsByDate({date});
-            if(res) {
+            const res = await getUserLogsByDate({ values, userId });
+            if (res) {
                 localStorage.setItem('print', JSON.stringify(res));
-                window.open(window.location.origin+'/attendance/print');
+                window.open(window.location.origin + '/attendance/print');
             }
         } catch (error) {
             toast.error((error as IErrorResponse)?.data?.message || (error as IErrorResponse).error)
@@ -41,10 +42,10 @@ const AttendancePrintForm = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col gap-5'>
                 <FormField
                     control={form.control}
-                    name='date'
+                    name='dateFrom'
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className='text-base'>Select date</FormLabel>
+                            <FormLabel className='text-base'>From</FormLabel>
                             <FormControl>
                                 <Popover>
                                     <PopoverTrigger asChild>
@@ -86,9 +87,52 @@ const AttendancePrintForm = () => {
                     )}
                 />
 
-
-
-
+                <FormField
+                    control={form.control}
+                    name='dateTo'
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className='text-base'>To</FormLabel>
+                            <FormControl>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant={'outline'}
+                                            className={cn(
+                                                'w-full justify-start text-left font-normal',
+                                                !field.value &&
+                                                'text-muted-foreground'
+                                            )}>
+                                            <CalendarIcon className='mr-2 h-4 w-4' />
+                                            {field.value ? (
+                                                format(field.value, 'PPP')
+                                            ) : (
+                                                <span>Pick a date</span>
+                                            )}
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent
+                                        align='start'
+                                        className=' w-auto p-0'>
+                                        <Calendar
+                                            mode='single'
+                                            captionLayout='dropdown-buttons'
+                                            selected={field.value}
+                                            onSelect={field.onChange}
+                                            fromYear={1960}
+                                            toYear={new Date().getFullYear()}
+                                            disabled={(date) =>
+                                                date > new Date() ||
+                                                date < new Date('1900-01-01')
+                                            }
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
                 <Button
                     type='submit'
