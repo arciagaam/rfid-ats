@@ -77,17 +77,24 @@ const SelectRfidComboBox: React.FC<SelectRfidComboBoxProps> = ({
                     {/* <ScrollArea className='max-h-[200px] overflow-auto'> */}
                     <CommandEmpty>No RFID found.</CommandEmpty>
                     <CommandGroup className='max-h-[200px] overflow-auto'>
-                        {selectRfids.map((user: IRfidSelect) => (
-                            <CommandItem key={user.key} value={user.value} onSelect={handleSelect}>
-                                {user.value}
-                                <CheckIcon
-                                    className={cn(
-                                        'ml-auto h-4 w-4',
-                                        value === user.key ? 'opacity-100' : 'opacity-0'
-                                    )}
-                                />
-                            </CommandItem>
-                        ))}
+                        {selectRfids.length == 0 ? (
+                            <CommandItem disabled>No available RFID</CommandItem>
+                        ) : (
+                            selectRfids.map((user: IRfidSelect) => (
+                                <CommandItem
+                                    key={user.key}
+                                    value={user.value}
+                                    onSelect={handleSelect}>
+                                    {user.value}
+                                    <CheckIcon
+                                        className={cn(
+                                            'ml-auto h-4 w-4',
+                                            value === user.key ? 'opacity-100' : 'opacity-0'
+                                        )}
+                                    />
+                                </CommandItem>
+                            ))
+                        )}
                     </CommandGroup>
                     {/* </ScrollArea> */}
                 </Command>

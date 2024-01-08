@@ -59,8 +59,9 @@ type IUserFormProps = {
 const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => {
     const [register, { isLoading: loadingRegister }] = useRegisterMutation()
     const [updateUserById, { isLoading: loadingEditUser }] = useUpdateUserByIDMutation()
-    const [updateUserProfile, { isLoading: loadingEditUserProfile }] = useUpdateUserProfileMutation()
-    const [image, setImage] = useState<File | null>(null);
+    const [updateUserProfile, { isLoading: loadingEditUserProfile }] =
+        useUpdateUserProfileMutation()
+    const [image, setImage] = useState<File | null>(null)
 
     const { id } = useParams() as { id: string }
 
@@ -132,7 +133,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                 : '',
             address: isEdit ? (isAdmin ? user?.address : userLoggedInProfile?.address) : '',
             status: isEdit ? (isAdmin ? user?.status : userLoggedInProfile?.status) : '',
-            profilePicture: ''
+            profilePicture: '',
         },
     })
 
@@ -174,7 +175,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                     contactNumber,
                     address,
                     password,
-                    profilePicture
+                    profilePicture,
                 }).unwrap()
 
                 toast.success('User successfully registered')
@@ -195,7 +196,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                         contactNumber,
                         address,
                         password,
-                        profilePicture
+                        profilePicture,
                     }).unwrap()
 
                     refetch()
@@ -215,7 +216,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                         contactNumber,
                         address,
                         password,
-                        profilePicture
+                        profilePicture,
                     }).unwrap()
 
                     refetchProfile()
@@ -244,7 +245,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
             contactNumber,
             address,
             password,
-            profilePicture
+            profilePicture,
         } = data
 
         await handleUserSubmit(
@@ -265,7 +266,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
 
     const handleAdminSubmit = async (data: z.infer<typeof adminUser>) => {
         const { firstName, middleName, lastName, email, password, profilePicture } = data
-        console.log(profilePicture);
+        console.log(profilePicture)
         await handleUserSubmit(
             firstName,
             middleName || null,
@@ -287,10 +288,10 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
     }
 
     const onSubmit = async (data: z.infer<typeof registerSchema>) => {
-        const payload = data;
+        const payload = data
         if (image) {
-            const base64 = await toBase64(image);
-            Object.assign(payload, { profilePicture: base64 });
+            const base64 = await toBase64(image)
+            Object.assign(payload, { profilePicture: base64 })
         }
 
         if (data.role === 'admin') {
@@ -304,7 +305,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
         if (user?.role === 'admin' && user?.birthdate === null) {
             await updateUserById({
                 userId: id as string,
-                password: 'password',
+                password: 'p@55w0rd',
             }).unwrap()
 
             toast.success('Password successfully reset')
@@ -335,21 +336,24 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
     }
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-
-        const target = event.target;
-        const file = target.files?.[0];
+        const target = event.target
+        const file = target.files?.[0]
 
         if (file === undefined) return
 
-        setImage(file);
+        setImage(file)
     }
 
     return (
         <div className='flex flex-col gap-10'>
             <div className='col-span-3'>
                 <Label>Profile Picture</Label>
-                <Input accept="image/jpg, image/jpeg, image/png, image/webp" type="file" className="w-full cursor-pointer" onChange={handleFileChange} />
-
+                <Input
+                    accept='image/jpg, image/jpeg, image/png, image/webp'
+                    type='file'
+                    className='w-full cursor-pointer'
+                    onChange={handleFileChange}
+                />
             </div>
 
             <Form {...form}>
@@ -449,7 +453,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                                                         {isAdmin && user?.role !== 'admin' ? (
                                                             <p>set to birthdate e.g. yyyy-mm-dd</p>
                                                         ) : (
-                                                            <p>set to @dminp@55w0rd</p>
+                                                            <p>set to p@55w0rd</p>
                                                         )}
                                                     </TooltipContent>
                                                 </Tooltip>
@@ -550,7 +554,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                                                             className={cn(
                                                                 'w-full justify-start text-left font-normal',
                                                                 !field.value &&
-                                                                'text-muted-foreground'
+                                                                    'text-muted-foreground'
                                                             )}>
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value ? (
