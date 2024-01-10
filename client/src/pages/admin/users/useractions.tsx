@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { MoreHorizontal } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 
@@ -49,9 +49,9 @@ const UserActions = ({ userId }: { userId: string }) => {
         <Dialog open={open} onOpenChange={setOpen}>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant='ghost' className='w-8 h-8 p-0'>
+                    <Button className='w-8 h-8 p-0 bg-[#d6ddff] text-slate-600 hover:text-white'>
                         <span className='sr-only'>Open menu</span>
-                        <MoreHorizontal className='w-4 h-4' />
+                        <ChevronDown className='w-4 h-4' />
                     </Button>
                 </DropdownMenuTrigger>
 

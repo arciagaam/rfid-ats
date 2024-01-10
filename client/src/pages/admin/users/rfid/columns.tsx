@@ -33,7 +33,7 @@ export const columns = (loadingRfids: boolean): ColumnDef<Log>[] => [
 
             return <SelectUserComboBox userId={id} rfidTag={rfidTag} loadingRfids={loadingRfids} />
         },
-        size: 300,
+        size: 400,
     },
     {
         accessorKey: 'status',
