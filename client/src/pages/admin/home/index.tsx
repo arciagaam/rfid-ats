@@ -5,6 +5,7 @@ import { Log } from './columns'
 import { columns } from './columns'
 import io from 'socket.io-client'
 
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 import { useGetUsersLogsQuery, useGetUsersQuery } from '@/slices/usersApiSlice'
@@ -16,6 +17,7 @@ import { useGetAccomplishmentReportsQuery } from '@/slices/accomplishmentReportA
 import { API_BASE_URL } from '@/constants/constants'
 
 import { toast } from 'react-toastify'
+import { Link } from 'react-router-dom'
 
 const Home = () => {
     const [data, setData] = useState<Log[]>([])
@@ -151,13 +153,16 @@ const Home = () => {
                         data={data}
                         columnSearch='date'
                         searchPlaceholder='Search date eg. yyyy-mm-dd...'
-                        component={
+                        component={[
+                            <Button asChild>
+                                <Link to='/monitor'>Display Monitor</Link>
+                            </Button>,
                             <FormModalBtn
                                 btnLabel='Print Attendance'
                                 dlgTitle='Print Attendance'
                                 formComponent={<AttendancePrintForm />}
-                            />
-                        }></DataTable>
+                            />,
+                        ]}></DataTable>
                 </CardContent>
             </Card>
         </div>

@@ -40,14 +40,14 @@ import { Monitor } from '@/pages/admin/monitor'
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path='/'>
-            <Route path="/login" element={<Login />} />
+            <Route path='/login' element={<Login />} />
 
-            <Route path='/monitor' element={<Monitor/>}/>
+            <Route path='/monitor' element={<Monitor />} />
 
             <Route element={<PrivateRoute />}>
-            <Route path='attendance/print' element={<AttendanceTablePrint/>}/>
+                <Route path='attendance/print' element={<AttendanceTablePrint />} />
                 {/* users only route */}
-                <Route path="/" element={<UserNav />}>
+                <Route path='/' element={<UserNav />}>
                     <Route index element={<UserHome />} />
 
                     <Route path='/accomplishment-reports'>
@@ -55,7 +55,7 @@ const router = createBrowserRouter(
                         <Route path=':id' element={<UserShowAccomplishmentReport />} />
                     </Route>
 
-                    <Route path='/schedule' element={<Schedule />}/>
+                    <Route path='/schedule' element={<Schedule />} />
                 </Route>
 
                 {/* admin only route */}
@@ -67,14 +67,19 @@ const router = createBrowserRouter(
                     </Route>
 
                     <Route path='accomplishment-reports'>
-                        <Route path=":role">
+                        <Route path=':role'>
                             <Route index element={<AccomplishmentReport />} />
                             <Route path=':user_id'>
-                                <Route index element={<UserAccomplishmentReport isAdmin={true} />} />
-                                <Route path=':id' element={<UserShowAccomplishmentReport isAdmin={true}  />} />
+                                <Route
+                                    index
+                                    element={<UserAccomplishmentReport isAdmin={true} />}
+                                />
+                                <Route
+                                    path=':id'
+                                    element={<UserShowAccomplishmentReport isAdmin={true} />}
+                                />
                             </Route>
                         </Route>
-
                     </Route>
 
                     <Route path='users'>
@@ -84,7 +89,6 @@ const router = createBrowserRouter(
                     </Route>
                 </Route>
             </Route>
-
         </Route>
     )
 )

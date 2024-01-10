@@ -91,7 +91,7 @@ export function DataTable<TData, TValue>({
                         />
                     )}
 
-                    <div>{component}</div>
+                    <div className='space-x-4'>{component}</div>
                 </div>
             </CardHeader>
 

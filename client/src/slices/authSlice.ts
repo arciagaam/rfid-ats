@@ -8,6 +8,7 @@ interface IAuthState {
         lastName: string
         email: string
         role: string
+        department: string
     } | null
 }
 

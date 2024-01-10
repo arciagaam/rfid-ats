@@ -65,7 +65,7 @@ const Users = () => {
                                 formComponent={<UserForm />}
                             />,
 
-                            <Button asChild className='ml-2'>
+                            <Button asChild>
                                 <Link to='rfid'>Manage RFID</Link>
                             </Button>,
                         ]}

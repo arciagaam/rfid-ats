@@ -43,12 +43,11 @@ export function ProfileCard() {
                 sex: user.sex ?? 'N/A',
                 contactNumber: user.contactNumber ?? 'N/A',
                 address: user.address ?? 'N/A',
-                profilePicture: user.profilePicture ?? null
+                profilePicture: user.profilePicture ?? null,
             }
             refetch()
             setProfile(data)
         }
-
     }, [user, refetch])
 
     return (
@@ -64,15 +63,17 @@ export function ProfileCard() {
                             {profile ? (
                                 <div className='flex items-center gap-2'>
                                     <div
-                                        className={`h-4 w-4 rounded-full ${profile?.status === 'active'
-                                            ? 'bg-green-500'
-                                            : 'bg-red-500'
-                                            }`}></div>
+                                        className={`h-4 w-4 rounded-full ${
+                                            profile?.status === 'active'
+                                                ? 'bg-green-500'
+                                                : 'bg-red-500'
+                                        }`}></div>
                                     <span
-                                        className={`text-sm font-medium ${profile?.status === 'active'
-                                            ? 'text-green-500'
-                                            : 'text-red-500'
-                                            }`}>
+                                        className={`text-sm font-medium ${
+                                            profile?.status === 'active'
+                                                ? 'text-green-500'
+                                                : 'text-red-500'
+                                        }`}>
                                         {profile?.status}
                                     </span>
                                 </div>
@@ -88,15 +89,17 @@ export function ProfileCard() {
                     </div>
 
                     <TabsContent value='basicInfo'>
-                        <div className="flex gap-3 mt-10">
-                            <div className="col-span-3 flex w-1/4">
-
-                                <div className="aspect-square h-48 overflow-clip">
-                                    {
-                                        profile?.profilePicture ?
-                                        <img className='h-full object-cover' src={`${API_BASE_URL}/images/${profile?.profilePicture}`}></img>
-                                        : 'No Image'
-                                    }
+                        <div className='flex gap-3 mt-10'>
+                            <div className='col-span-3 flex w-1/4'>
+                                <div className='aspect-square h-48 overflow-clip'>
+                                    {profile?.profilePicture ? (
+                                        <img
+                                            className='h-full object-cover rounded-lg'
+                                            alt='profile picture'
+                                            src={`${API_BASE_URL}/images/${profile?.profilePicture}`}></img>
+                                    ) : (
+                                        'No Image'
+                                    )}
                                 </div>
                             </div>
                             <div className='grid grid-cols-3 gap-6 mt-5 w-full'>
