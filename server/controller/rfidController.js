@@ -80,52 +80,19 @@ const storeRfid = asyncHandler(async (req, res) => {
         res.status(404)
         throw new Error(`Rfid Tag: ${formattedUID} already added.`)
     } else {
+        temporaryRfidData = []
+
         temporaryRfidData.push({
             rfidTag: formattedUID,
         })
+
+        req.io.emit('success', { message: `Rfid Tag: ${formattedUID} read.` })
 
         console.log('RFID added:', temporaryRfidData)
     }
 
     req.io.emit('temporary_rfid_data', { temporaryRfidData })
     res.json({ temporaryRfidData })
-})
-
-// @desc    Save rfid/s
-// @route   POST /api/rfid/add
-// @access  Private/Admin
-const saveRfid = asyncHandler(async (req, res) => {
-    const { rfidData } = req.body
-
-    const responses = []
-
-    for (const rfid of rfidData) {
-        const formattedUID = formatRfidData(rfid.rfidTag)
-        const rfidExists = await Rfid.findOne({ rfidTag: formattedUID })
-
-        if (rfidExists) {
-            responses.push(`Rfid Tag: ${formattedUID} already exists.`)
-            continue // Skip to the next RFID
-        }
-
-        const savedRfid = await Rfid.create({
-            rfidTag: formattedUID,
-            user: null,
-            status: 'not assigned',
-        })
-
-        if (savedRfid) {
-            responses.push('Rfid added')
-        } else {
-            responses.push('Invalid rfid data')
-        }
-    }
-
-    // Emit all errors at once
-    req.io.emit('error', { message: responses.filter((r) => r.startsWith('Rfid Tag')) })
-
-    // Send a single response with all messages
-    res.status(200).json({ messages: responses })
 })
 
 // @desc    Delete rfid
@@ -174,9 +141,23 @@ const getRfidFromReader = asyncHandler(async (req, res) => {
         const existingLog = await getAttendanceLog(matchingRfid.user)
 
         if (existingLog) {
-            return handleTimeOut(req, res, existingLog, fullName, user.idNumber, user.profilePicture)
+            return handleTimeOut(
+                req,
+                res,
+                existingLog,
+                fullName,
+                user.idNumber,
+                user.profilePicture
+            )
         } else {
-            return handleTimeIn(req, res, matchingRfid.user, fullName, user.idNumber, user.profilePicture)
+            return handleTimeIn(
+                req,
+                res,
+                matchingRfid.user,
+                fullName,
+                user.idNumber,
+                user.profilePicture
+            )
         }
     } else {
         return handleRfidNotFound(res)
@@ -231,7 +212,6 @@ export {
     changeWindowState,
     getRfids,
     storeRfid,
-    saveRfid,
     deleteRfid,
     getRfidFromReader,
     assignRfidToUser,

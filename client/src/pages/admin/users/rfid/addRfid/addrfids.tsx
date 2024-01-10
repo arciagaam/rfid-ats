@@ -8,7 +8,7 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { useWindowStateMutation } from '@/slices/rfidApiSlice'
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { BsPersonVcardFill } from 'react-icons/bs'
 
 import { DataTable } from '@/components/global/datatable/dataTable'
@@ -17,50 +17,38 @@ import { columns, IRfidItem } from './columns'
 import { toast } from 'react-toastify'
 import { PropagateLoader } from 'react-spinners'
 
-import { useGetRfidsQuery } from '@/slices/rfidApiSlice'
-import { useSaveRfidMutation } from '@/slices/rfidApiSlice'
-
 import { io } from 'socket.io-client'
 import { API_BASE_URL } from '@/constants/constants'
 
-const AddRfidModal = () => {
-    const { refetch } = useGetRfidsQuery(null)
+interface AddRfidModalProps {
+    rfidTag: string
+    onSelect: (selectedValue: string) => void
+}
 
-    const [saveRfid, { isLoading: loadingSaveRfid }] = useSaveRfidMutation()
+const AddRfidModal: React.FC<AddRfidModalProps> = ({ rfidTag, onSelect }) => {
+    const [value, setValue] = React.useState(rfidTag ?? null)
+
     const [rfidData, setRfidData] = useState<{ temporaryRfidData: IRfidItem[] }>({
         temporaryRfidData: [],
     })
 
     const dialogRef = useRef(null)
     const [windowState] = useWindowStateMutation()
-    let timeout: ReturnType<typeof setTimeout>
+
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
 
     const openModal = async (open: boolean) => {
-        if (open) {
-            const dialog = dialogRef.current as null | HTMLElement
-            clearTimeout(timeout)
-            //If ref is null
-            if (!dialog) {
-                timeout = setTimeout(() => {
-                    openModal(open)
-                }, 10)
-                return
-            }
-
+        if (open === true) {
+            console.log('open')
             try {
                 await windowState({ windowState: 'open' })
             } catch (error) {
                 console.warn(error)
             }
-
-            timeout = setTimeout(() => {
-                openModal(open)
-            }, 10000)
-
-            return
         } else {
+            console.log('closed')
             await windowState({ windowState: 'closed' })
-            setRfidData({ temporaryRfidData: [] })
+            setIsDialogOpen(false)
         }
     }
 
@@ -71,11 +59,18 @@ const AddRfidModal = () => {
             setRfidData(content)
         })
 
+        socket.on('success', (content) => {
+            toast.dismiss()
+            toast.success(content.message)
+        })
+
         socket.on('warning', (content) => {
+            toast.dismiss()
             toast.warning(content.message)
         })
 
         socket.on('error', (content) => {
+            toast.dismiss()
             toast.error(content.message)
         })
 
@@ -85,27 +80,26 @@ const AddRfidModal = () => {
     }, [])
 
     const handleSubmit = async (rfidData: IRfidItem[]) => {
-        try {
-            await saveRfid({ rfidData }).unwrap()
-
-            toast.success('Rfid/s added successfully')
-            openModal(false)
-
-            refetch()
-        } catch (error) {
-            console.log(error)
-            toast.error('Something went wrong!')
-        }
+        setValue(rfidData[0].rfidTag)
+        onSelect(rfidData[0].rfidTag)
+        openModal(false)
+        toast.dismiss()
     }
 
     return (
-        <Dialog onOpenChange={openModal}>
-            <DialogTrigger asChild>
-                <Button>Add Rfid/s</Button>
+        <Dialog open={isDialogOpen} onOpenChange={openModal}>
+            <DialogTrigger
+                asChild
+                onClick={() => {
+                    setIsDialogOpen(true)
+                    toast.dismiss()
+                }}
+                className='w-full'>
+                <Button>Add Rfid</Button>
             </DialogTrigger>
             <DialogContent ref={dialogRef} className='max-h-[80vh] min-w-[60%]'>
                 <DialogHeader>
-                    <DialogTitle>Add Rfid/s</DialogTitle>
+                    <DialogTitle>Add Rfid</DialogTitle>
                 </DialogHeader>
 
                 {rfidData.temporaryRfidData.length > 0 ? (
@@ -113,21 +107,21 @@ const AddRfidModal = () => {
                         <DataTable
                             columns={columns}
                             initialPageSize={5}
+                            noPagination
                             data={rfidData.temporaryRfidData}
                         />
                         <Button
                             type='submit'
                             onClick={() => handleSubmit(rfidData.temporaryRfidData)}
-                            disabled={loadingSaveRfid}
                             className='self-end mt-10 w-24'>
-                            {loadingSaveRfid ? 'Saving...' : 'Save'}
+                            Continue
                         </Button>
                     </div>
                 ) : (
                     <div className='flex flex-col w-full items-center justify-center'>
                         <div className='relative flex flex-col  w-fit items-center p-20'>
                             <BsPersonVcardFill size={150} color='#3657ff' />
-                            <h2 className='text-base mb-3'>Tap the RFID card to add.</h2>
+                            <h2 className='text-base mb-3'>Tap the RFID card to assign.</h2>
                             <PropagateLoader size={11} speedMultiplier={0.75} color='#3657ff' />
                         </div>
                     </div>

@@ -82,7 +82,7 @@ const SelectUserComboBox: React.FC<SelectUserComboBoxProps> = ({
                     variant='outline'
                     role='combobox'
                     aria-expanded={open}
-                    className='w-[300px] justify-between'>
+                    className='w-[350px] justify-between'>
                     {loadingRfids ? (
                         <PulseLoader size={6} color='#1e1e1e50' />
                     ) : value ? (
@@ -94,7 +94,7 @@ const SelectUserComboBox: React.FC<SelectUserComboBoxProps> = ({
                     <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className='w-[300px] p-0'>
+            <PopoverContent className='w-[350px] p-0'>
                 <Command>
                     <CommandInput placeholder='Search user...' className='h-9' />
                     <CommandEmpty>No user found.</CommandEmpty>

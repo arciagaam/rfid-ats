@@ -67,7 +67,6 @@ const CreateRFID = () => {
                         searchPlaceholder='Search RFID Tag...'
                         data={data}
                         columnSearch='rfidTag'
-                        component={<AddRfidModal />}
                     />
                 </CardContent>
             </Card>

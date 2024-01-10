@@ -38,7 +38,6 @@ import { Calendar } from '@/components/ui/calendar'
 import { Calendar as CalendarIcon } from 'lucide-react'
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-// import { FormStepper } from '@/components/ui/formstepper'
 
 import {
     useRegisterMutation,
@@ -47,8 +46,9 @@ import {
     useUpdateUserProfileMutation,
     useGetProfileQuery,
 } from '@/slices/usersApiSlice'
-import { SelectRfidComboBox } from '@/pages/admin/users/adduser/rfidcombobox'
+
 import { Label } from '@radix-ui/react-label'
+import AddRfidModal from '@/pages/admin/users/rfid/addRfid/addrfids'
 
 type IUserFormProps = {
     isEdit?: boolean
@@ -75,36 +75,6 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
     const [selectedRole, setSelectedRole] = useState<string>(user?.role)
     const [selectedSex, setSelectedSex] = useState<string>(user?.sex)
     const [selectedRfid, setSelectedRfid] = useState<string>(user?.rfid || null)
-
-    // console.log('User Profile', userProfile)
-    // console.log('User', user)
-
-    // const form = useForm<z.infer<typeof registerSchema>>({
-    //     resolver: zodResolver(registerSchema),
-    //     defaultValues: {
-    //         firstName: isEdit ? (userProfile ? userProfile?.firstName : user?.firstName) : '',
-    //         middleName: isEdit ? (userProfile ? userProfile?.middleName : user?.middleName) : '',
-    //         lastName: isEdit ? (userProfile ? userProfile?.lastName : user?.lastName) : '',
-    //         email: isEdit ? (userProfile ? userProfile?.email : user?.email) : '',
-    //         password: isEdit ? (userProfile ? userProfile?.password : user?.password) : '',
-    //         role: isEdit ? (userProfile ? userProfile?.role : user?.role) : selectedRole,
-    //         idNumber: isEdit ? (userProfile ? userProfile?.idNumber : user?.idNumber) : '',
-    //         rfid: isEdit ? (userProfile ? userProfile?.rfid : user?.rfid) : '',
-    //         birthdate: isEdit
-    //             ? userProfile
-    //                 ? new Date(userProfile.birthdate!)
-    //                 : new Date(user!.birthdate!)
-    //             : undefined,
-    //         sex: isEdit ? (userProfile ? userProfile?.sex : user?.sex) : selectedSex,
-    //         contactNumber: isEdit
-    //             ? userProfile
-    //                 ? userProfile?.contactNumber
-    //                 : user?.contactNumber
-    //             : '',
-    //         address: isEdit ? (userProfile ? userProfile?.address : user?.address) : '',
-    //         status: isEdit ? (userProfile ? userProfile?.status : user?.status) : '',
-    //     },
-    // })
 
     const form = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
@@ -161,6 +131,11 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
             const status = selectedRfid ? 'active' : 'no assigned RFID'
 
             if (!isEdit) {
+                if (selectedRfid === null) {
+                    toast.error('Please add an RFID')
+                    return
+                }
+
                 await register({
                     firstName,
                     middleName,
@@ -521,21 +496,48 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                                 />
 
                                 {isAdmin ? (
-                                    <div className='flex flex-col gap-2'>
-                                        <div>
-                                            <label htmlFor=''>RFID</label>
-                                            {isEdit ?? (
-                                                <span className='text-slate-400 text-xs ml-1'>
-                                                    Optional
-                                                </span>
-                                            )}
-                                        </div>
-                                        <SelectRfidComboBox
-                                            onSelect={handleRfidSelection}
-                                            rfidTag={selectedRfid}
-                                            disabled={isEdit ? true : false}
-                                        />
-                                    </div>
+                                    <FormField
+                                        name='rfid'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                {/* {isEdit ?? (
+                                                    <span className='text-slate-400 text-xs ml-1'>
+                                                        Optional
+                                                    </span>
+                                                )} */}
+
+                                                {selectedRfid ? (
+                                                    <>
+                                                        <FormLabel className='text-base text-black'>
+                                                            RFID
+                                                        </FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                {...field}
+                                                                value={selectedRfid}
+                                                                readOnly
+                                                            />
+                                                        </FormControl>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <FormLabel className='text-base'>
+                                                            RFID
+                                                        </FormLabel>
+                                                        <FormControl>
+                                                            <div>
+                                                                <AddRfidModal
+                                                                    rfidTag={selectedRfid}
+                                                                    onSelect={handleRfidSelection}
+                                                                />
+                                                            </div>
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </>
+                                                )}
+                                            </FormItem>
+                                        )}
+                                    />
                                 ) : (
                                     ''
                                 )}
@@ -668,7 +670,7 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
                                 : loadingRegister
                         }
                         className='self-end w-fit'>
-                        {isEdit ? 'Update User' : 'Register User'}
+                        {isEdit ? (isAdmin ? 'Update User' : 'Update Profile') : 'Register User'}
                     </Button>
                 </form>
             </Form>

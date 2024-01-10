@@ -45,7 +45,6 @@ const registerUser = asyncHandler(async(req, res) => {
         email,
         password,
         role,
-        department,
         status,
         idNumber,
         rfid,
@@ -55,6 +54,8 @@ const registerUser = asyncHandler(async(req, res) => {
         address,
         profilePicture
     } = req.body
+
+    console.log('rfid', rfid)
 
     let profilePicturePath = ''
 
@@ -77,8 +78,6 @@ const registerUser = asyncHandler(async(req, res) => {
         throw new Error('User already exists')
     }    
 
-    const userRfid = await Rfid.findOne({ rfidTag: rfid })
-
     const user = await User.create({
         firstName,
         middleName,
@@ -89,7 +88,7 @@ const registerUser = asyncHandler(async(req, res) => {
         department: req.user.department,
         status,
         idNumber,
-        rfid: userRfid ? userRfid.rfidTag : null,
+        rfid,
         birthdate,
         sex,
         contactNumber,
@@ -98,10 +97,18 @@ const registerUser = asyncHandler(async(req, res) => {
     })
 
     if (rfid) {
-        userRfid.user = user._id
-        userRfid.status = 'active'
+        const rfidExists = await Rfid.findOne({ rfidTag: rfid })
 
-        await userRfid.save()
+        if (rfidExists) {
+            res.status(400)
+            throw new Error(`Rfid Tag: ${rfid} already exists.`)
+        }
+
+        await Rfid.create({
+            rfidTag: rfid,
+            user: user._id,
+            status: 'active',
+        })
     }
 
     if (user) {

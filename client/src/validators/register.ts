@@ -6,7 +6,7 @@ const registerSchemaBase = z.object({
     lastName: z.string().nonempty('Required'),
     email: z.string().email().nonempty('Required'),
     password: z.string().nonempty('Required'),
-    profilePicture: z.string().optional().nullable()
+    profilePicture: z.string().optional().nullable(),
 })
 
 const adminUser = z
@@ -21,7 +21,7 @@ const facultyUser = z
         role: z.enum(['regular', 'part-time']),
         status: z.string(),
         idNumber: z.string().nonempty('Required'),
-        rfid: z.string().optional().nullable(),
+        rfid: z.string().optional(),
         birthdate: z.date(),
         sex: z.string().nonempty('Required'),
         contactNumber: z
@@ -32,7 +32,6 @@ const facultyUser = z
         address: z.string().nonempty('Required'),
     })
     .merge(registerSchemaBase)
-
 
 export const registerSchema = z.discriminatedUnion('role', [adminUser, facultyUser])
 
