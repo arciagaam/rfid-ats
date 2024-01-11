@@ -20,9 +20,7 @@ import { protect, admin } from '../middleware/authMiddleware.js'
 
 const router = express.Router()
 
-router.route('/logs')
-.get(protect, admin, getAllLogs)
-.post(protect, getAllLogsByDate)
+router.route('/logs').get(protect, admin, getAllLogs).post(protect, getAllLogsByDate)
 
 router.route('/logs/:id').get(protect, getLogs)
 

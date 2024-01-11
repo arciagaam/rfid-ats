@@ -27,6 +27,7 @@ const authUser = asyncHandler(async(req, res) => {
             department: user.department,
             role: user.role,
             status: user.status,
+            isPendingAR: user.isPendingAR,
         })
     } else {
         res.status(401)
@@ -172,7 +173,8 @@ const getUserProfile = asyncHandler(async(req, res) => {
             contactNumber: user.contactNumber,
             address: user.address,
             schedule: user.schedule,
-            profilePicture: user.profilePicture
+            profilePicture: user.profilePicture,
+            isPendingAR: user.isPendingAR,
         })
     } else {
         res.status(404)

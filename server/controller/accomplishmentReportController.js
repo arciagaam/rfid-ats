@@ -55,6 +55,11 @@ const storeAccomplishmentReports = asyncHandler(async (req, res) => {
             type: decoded.userRole,
         });
 
+        const user = await User.findById(decoded.userId)
+        
+        user.isPendingAR = {status: false, deadline: null}
+        user.save()
+
         const newAccomplishmentReport = {
             _id: createdAccomplishmentReport._id,
             title: createdAccomplishmentReport.title,
@@ -99,4 +104,32 @@ const getAccomplishmentReportPerId = asyncHandler(async (req, res) => {
 })
 
 
-export { getAccomplishmentReports, storeAccomplishmentReports, getAccomplishmentReportsPerUser, getAccomplishmentReportPerId }
+// @desc    Notify user for accomplishment report
+// @route   PUT /api/accomplishments-reports/notify/:id
+// @access  Private/Admin
+const notifyUser = asyncHandler(async(req, res) => {
+    const { userId, deadline } = req.body;
+
+    if (!userId) {
+        res.status(400)
+        throw new Error('No id provided.')
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+        res.status(404)
+        throw new Error('User not found.')
+    } else {
+
+        user.isPendingAR = {status: true, deadline: deadline}
+        user.save()
+
+        console.log('User:', user.isPendingAR)
+
+        res.status(200).json({message: 'User notified.'})
+    }
+})
+
+
+export { getAccomplishmentReports, storeAccomplishmentReports, getAccomplishmentReportsPerUser, getAccomplishmentReportPerId, notifyUser }

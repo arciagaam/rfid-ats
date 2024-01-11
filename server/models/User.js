@@ -45,11 +45,18 @@ export const userSchema = new mongoose.Schema(
             },
         },
         schedule: {
-            type: Map
+            type: Map,
         },
         profilePicture: {
-            type: String
-        }
+            type: String,
+        },
+        isPendingAR: {
+            type: Object,
+            default: {
+                status: false,
+                deadline: null,
+            },
+        },
     },
     { timestamps: true }
 )
