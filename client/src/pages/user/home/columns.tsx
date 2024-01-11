@@ -2,8 +2,10 @@ import { ColumnDef } from '@tanstack/react-table'
 
 export type Log = {
     date: string
-    timeIn: string
-    timeOut: string
+    AmTimeIn: string
+    AmTimeOut: string
+    PmTimeIn: string
+    PmTimeOut: string
     totalTimeRendered: string
     updatedAt: Date
 }
@@ -14,12 +16,20 @@ export const columns: ColumnDef<Log>[] = [
         header: 'Date',
     },
     {
-        accessorKey: 'timeIn',
-        header: 'Time in',
+        accessorKey: 'AmTimeIn',
+        header: 'AM IN',
     },
     {
-        accessorKey: 'timeOut',
-        header: 'Time out',
+        accessorKey: 'AmTimeOut',
+        header: 'AM OUT',
+    },
+    {
+        accessorKey: 'PmTimeIn',
+        header: 'PM IN',
+    },
+    {
+        accessorKey: 'PmTimeOut',
+        header: 'PM OUT',
     },
     {
         accessorKey: 'totalTimeRendered',

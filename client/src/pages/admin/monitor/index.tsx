@@ -13,13 +13,23 @@ interface IdleScreenProps {
 
 interface ActiveScreenProps {
     data: {
-        timeIn: string
-        timeOut: string
+        isTimeIn: boolean
+        AmTimeIn: string
+        AmTimeOut: string
+        PmTimeIn: string
+        PmTimeOut: string
         name: string
         idNumber: string
         totalTimeRendered: string
         profilePicture: string
     }
+}
+
+function checkIfAfternoon() {
+    const now = new Date();
+    const hour = now.getHours();
+
+    return (hour >= 12 && hour <= 23)
 }
 
 const Monitor = () => {
@@ -35,24 +45,33 @@ const Monitor = () => {
         bgColor = 'bg-yellow-300'
     }
 
-    let timeout
+    let timeout: ReturnType<typeof setTimeout>
 
     useEffect(() => {
         const socket = io(API_BASE_URL)
 
         socket.on('newLog', (newLogData) => {
             clearTimeout(timeout)
-            console.log(newLogData)
-            const formattedDate = formatDate(new Date(newLogData.date))
-            const formattedTimeIn = formatTime(newLogData.timeIn)
-            const formattedTimeOut = newLogData.timeOut ? formatTime(newLogData.timeOut) : '--:--'
+            const isTimeIn = (newLogData.AmTimeOut === null && newLogData.PmTimeOut === null)
 
+            const formattedDate = formatDate(new Date(newLogData.date))
+
+            const formattedAMTimeIn = newLogData.AmTimeIn ? formatTime(newLogData.AmTimeIn) : '--:--'
+            const formattedAMTimeOut = newLogData.AmTimeOut ? formatTime(newLogData.AmTimeOut) : '--:--'
+
+            const formattedPMTimeIn = newLogData.PmTimeIn ? formatTime(newLogData.PmTimeIn) : '--:--'
+            const formattedPMTimeOut = newLogData.PmTimeOut ? formatTime(newLogData.PmTimeOut) : '--:--'
+
+            newLogData.isTimeIn = isTimeIn;
             newLogData.date = formattedDate
-            newLogData.timeIn = formattedTimeIn
-            newLogData.timeOut = formattedTimeOut
+            newLogData.AmTimeIn = formattedAMTimeIn
+            newLogData.AmTimeOut = formattedAMTimeOut
+            newLogData.PmTimeIn = formattedPMTimeIn
+            newLogData.PmTimeOut = formattedPMTimeOut
             newLogData.totalTimeRendered = newLogData.totalTimeRendered ?? '--:--'
             newLogData.name = newLogData.userName
             newLogData.updatedAt = new Date().toISOString()
+            
 
             setData(newLogData)
             startTimeout(timeout)
@@ -64,25 +83,25 @@ const Monitor = () => {
         }
     }, [])
 
-    const startTimeout = (timeout) => {
+    const startTimeout = (timeout: ReturnType<typeof setTimeout>) => {
         timeout = setTimeout(() => {
             setData(null)
         }, 5000)
     }
 
     return (
-        <div className='flex flex-col h-screen w-full'>
-            <div className={`flex w-full justify-center gap-20 ${bgColor} py-5`}>
-                <div className='aspect-square rounded-full overflow-clip h-[20vh] self-center'>
+        <div className='flex flex-col h-screen max-h-screen w-full'>
+            <div className={`flex w-full justify-center gap-20 ${bgColor} p-5`}>
+                <div className='aspect-square rounded-full p h-[20vh] w-[20vh] self-center'>
                     {department == 'ccs' ? (
-                        <img src={ccslogo} alt='' className='object-cover h-full' />
+                        <img src={ccslogo} alt='' className='object-contain rounded-full overflow-clip h-[20vh] w-[20vh]' />
                     ) : (
-                        <img src={coelogo} alt='' className='object-cover h-full' />
+                        <img src={coelogo} alt='' className='object-contain rounded-full overflow-clip h-[20vh] w-[20vh]' />
                     )}
                 </div>
 
                 <div className='flex flex-col'>
-                    <h2 className='font-bold text-xl md:text-2xl lg:text-4xl 2xl:text-7xl'>
+                    <h2 className='font-bold text-xl md:text-2xl lg:text-4xl 2xl:text-5xl'>
                         LAGUNA STATE POLYTECHNIC UNIVERSITY
                     </h2>
                     <p className='text-lg md:text-xl lg:text-xl 2xl:text-4xl'>
@@ -95,7 +114,7 @@ const Monitor = () => {
                 </div>
             </div>
 
-            <div className='relative flex w-full h-full items-center justify-center'>
+            <div className='relative flex w-full items-center justify-center py-10 flex-1 max-h-full'>
                 {!data ? <IdleScreen department={department} /> : <ActiveScreen data={data} />}
             </div>
         </div>
@@ -131,8 +150,8 @@ const IdleScreen: React.FC<IdleScreenProps> = ({ department }) => {
 
 const ActiveScreen: React.FC<ActiveScreenProps> = ({ data }) => {
     return (
-        <div className='absolute flex flex-col bg-white rounded-lg items-center shadow-lg gap-10 p-5 2xl:p-20'>
-            <div className='flex bg-white shadow-sm aspect-square w-[20rem] rounded-sm items-center justify-center'>
+        <div className='flex flex-col bg-white rounded-lg items-center shadow-lg gap-10 p-5 h-fit'>
+            <div className='flex bg-white shadow-sm aspect-square w-[24rem] rounded-sm items-center justify-center'>
                 {data.profilePicture ? (
                     <img
                         className='h-full object-cover'
@@ -143,12 +162,12 @@ const ActiveScreen: React.FC<ActiveScreenProps> = ({ data }) => {
                 )}
             </div>
             <div className='flex flex-col gap-3 items-center'>
-                {data.timeOut === '--:--' ? (
+                {data.isTimeIn ? (
                     <>
                         <p className='text-xl lg:text-lg'>{data.name}</p>
                         <div className='flex space-x-2'>
                             <p className='text-xl font-extrabold lg:text-lg'>Timed In: </p>
-                            <p className='text-xl lg:text-lg'>{data.timeIn}</p>
+                            <p className='text-xl lg:text-lg'>{checkIfAfternoon() ? data.PmTimeIn : data.AmTimeIn}</p>
                         </div>
                     </>
                 ) : (
@@ -156,7 +175,7 @@ const ActiveScreen: React.FC<ActiveScreenProps> = ({ data }) => {
                         <p className='text-xl lg:text-lg'>{data.name}</p>
                         <div className='flex space-x-2'>
                             <p className='text-xl font-extrabold lg:text-lg'>Timed Out: </p>
-                            <p className='text-xl lg:text-lg'>{data.timeOut}</p>
+                            <p className='text-xl lg:text-lg'>{checkIfAfternoon() ? data.PmTimeOut : data.AmTimeOut}</p>
                         </div>
                         <div className='flex space-x-2'>
                             <p className='text-xl font-extrabold lg:text-lg'>

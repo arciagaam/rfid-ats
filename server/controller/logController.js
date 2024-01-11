@@ -47,13 +47,10 @@ const getAllLogs = asyncHandler(async (req, res) => {
 })
 
 const getAllLogsByDate = asyncHandler(async (req, res) => {
-    const { dateFrom, dateTo  } = req.body.values
+    const { dateFrom, dateTo } = req.body.values
     const { userId } = req.body;
-
     const start = new Date(new Date(dateFrom).toLocaleDateString())
     const end = new Date(new Date(dateTo).setHours(23, 59, 59))
-
-    console.log(userId)
 
     if(!userId) {
         const logs = await AttendanceLog.aggregate([
@@ -85,34 +82,7 @@ const getAllLogsByDate = asyncHandler(async (req, res) => {
     
         res.status(200).json(logs)
     } else {
-        const ObjectId = mongoose.Types.ObjectId;
-        const logs = await AttendanceLog.aggregate([
-            { $match: { createdAt: { $gte: start, $lt: end }, user: {$eq: new ObjectId(userId)} } },
-            {
-                $lookup: {
-                    from: 'users',
-                    let: {
-                        userId: '$user',
-                    },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        { $eq: ['$department', req.user.department] },
-                                        { $eq: ['$$userId', '$_id'] },
-                                    ],
-                                },
-                            },
-                        },
-                    ],
-                    as: 'user',
-                },
-            },
-            { $match: { user: { $ne: [] } } },
-            { $unwind: '$user' },
-        ])
-    
+        const logs = await AttendanceLog.where('user').equals(userId).sort({date: -1})
         res.status(200).json(logs) 
     }
 

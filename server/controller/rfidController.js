@@ -1,7 +1,7 @@
 import Rfid from './../models/Rfid.js'
 import User from './../models/User.js'
 import asyncHandler from '../middleware/asyncHandler.js'
-import { compareUIDToDatabase, getAttendanceLog } from '../utils/logApi.js'
+import { compareUIDToDatabase, getAttendanceLog, getExistingAttendanceLog } from '../utils/logApi.js'
 
 import {
     formatRfidData,
@@ -11,6 +11,7 @@ import {
     handleTimeOut,
     handleRfidNotFound,
     handleInvalidRequest,
+    checkIfAfternoon,
 } from '../utils/rfidHelpers.js'
 
 let storingActive = false
@@ -31,6 +32,7 @@ const changeWindowState = asyncHandler(async (req, res) => {
         windowTimeout = setTimeout(() => {
             storingActive = false
         }, 13000)
+
     } else {
         storingActive = false
         console.log('window is closed')
@@ -138,7 +140,8 @@ const getRfidFromReader = asyncHandler(async (req, res) => {
     if (matchingRfid) {
         const user = await getUserByRfid(matchingRfid.rfidTag)
         const fullName = getFullName(user)
-        const existingLog = await getAttendanceLog(matchingRfid.user)
+
+        const existingLog = await getExistingAttendanceLog(matchingRfid.user)
 
         if (existingLog) {
             return handleTimeOut(

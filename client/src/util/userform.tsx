@@ -66,7 +66,6 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
     const { id } = useParams() as { id: string }
 
     const { userInfo } = useSelector((state: RootState) => state.auth)
-    // console.log('User Info:', userInfo)
 
     const isAdmin = userInfo?.role === 'admin'
 
@@ -241,7 +240,6 @@ const UserForm: React.FC<IUserFormProps> = ({ isEdit, closeDialog, userId }) => 
 
     const handleAdminSubmit = async (data: z.infer<typeof adminUser>) => {
         const { firstName, middleName, lastName, email, password, profilePicture } = data
-        console.log(profilePicture)
         await handleUserSubmit(
             firstName,
             middleName || null,

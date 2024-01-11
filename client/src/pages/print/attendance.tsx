@@ -36,8 +36,10 @@ const AttendanceTablePrint = () => {
                         <tr>
                             <th className='py-2 px-2'>Date</th>
                             <th>Name</th>
-                            <th>Time In</th>
-                            <th>Time Out</th>
+                            <th>AM Time In</th>
+                            <th>AM Time Out</th>
+                            <th>PM Time In</th>
+                            <th>PM Time Out</th>
                             <th>Total Time Rendered</th>
                         </tr>
                     </thead>
@@ -52,8 +54,10 @@ const AttendanceTablePrint = () => {
                                             {item.user.firstName} {item.user.middleName ?? ''} {item.user.lastName}
                                         </p>
                                     </td>
-                                    <td>{formatTime(item.timeIn)}</td>
-                                    <td>{formatTime(item.timeOut)}</td>
+                                    <td>{formatTime(item.AmTimeIn)}</td>
+                                    <td>{formatTime(item.AmTimeOut)}</td>
+                                    <td>{formatTime(item.PmTimeIn)}</td>
+                                    <td>{formatTime(item.PmTimeOut)}</td>
                                     <td>{item.totalTimeRendered}</td>
                                 </tr>
                             ))
