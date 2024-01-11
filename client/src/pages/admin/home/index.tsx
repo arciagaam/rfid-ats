@@ -13,7 +13,10 @@ import { useGetUsersLogsQuery, useGetUsersQuery } from '@/slices/usersApiSlice'
 import { formatDate, formatTime } from '@/util/formatter'
 import AttendancePrintForm from '@/util/attendanceprintform'
 import { FormModalBtn } from '@/components/global/formModalBtn'
-import { useGetAccomplishmentReportsQuery } from '@/slices/accomplishmentReportApiSlice'
+import {
+    useGetAccomplishmentReportsQuery,
+    useGetPendingARQuery,
+} from '@/slices/accomplishmentReportApiSlice'
 import { API_BASE_URL } from '@/constants/constants'
 
 import { toast } from 'react-toastify'
@@ -21,11 +24,16 @@ import { Link } from 'react-router-dom'
 
 const Home = () => {
     const [data, setData] = useState<Log[]>([])
-    const [cardData, setCardData] = useState({})
+    const [cardData, setCardData] = useState({
+        userCount: 0,
+        arsCount: 0,
+        pendingArsCount: 0,
+    })
 
     const { data: userLogs, refetch: logsRefetch } = useGetUsersLogsQuery(null)
     const { data: users, refetch: usersRefetch } = useGetUsersQuery('')
     const { data: ars, refetch: arRefetch } = useGetAccomplishmentReportsQuery('')
+    const { data: pendingArs, refetch: pendingArsRefetch } = useGetPendingARQuery('')
 
     useEffect(() => {
         if (userLogs) {
@@ -46,15 +54,16 @@ const Home = () => {
                     updatedAt: new Date().toISOString(),
                 }
             })
-
-            console.log(tableData)
-
             setData(tableData)
         }
         logsRefetch()
     }, [userLogs, logsRefetch])
 
     useEffect(() => {
+        pendingArsRefetch()
+        arRefetch()
+        usersRefetch()
+
         if (users) {
             setCardData((prev) => ({ ...prev, userCount: users.length }))
         }
@@ -62,7 +71,14 @@ const Home = () => {
         if (ars) {
             setCardData((prev) => ({ ...prev, arsCount: ars.length }))
         }
-    }, [users, ars, usersRefetch, arRefetch])
+
+        if (pendingArs) {
+            setCardData((prev) => ({
+                ...prev,
+                pendingArsCount: pendingArs.length,
+            }))
+        }
+    }, [users, ars, pendingArs, usersRefetch, arRefetch, pendingArsRefetch])
 
     useEffect(() => {
         const socket = io(API_BASE_URL)
@@ -128,7 +144,7 @@ const Home = () => {
                         <CardTitle>Pending AR</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p>0</p>
+                        <p>{cardData.pendingArsCount}</p>
                     </CardContent>
                 </Card>
 

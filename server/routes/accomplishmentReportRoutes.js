@@ -7,6 +7,7 @@ import {
     getAccomplishmentReportsPerUser,
     getAccomplishmentReportPerId,
     notifyUser,
+    getPendingAR,
 } from '../controller/accomplishmentReportController.js'
 
 import { protect, admin } from '../middleware/authMiddleware.js'
@@ -14,6 +15,7 @@ import { protect, admin } from '../middleware/authMiddleware.js'
 const router = express.Router()
 
 router.route('/').get(protect, getAccomplishmentReports).post(protect, storeAccomplishmentReports)
+router.route('/pending').get(protect, getPendingAR)
 
 router.route('/per-user').get(protect, getAccomplishmentReportsPerUser)
 

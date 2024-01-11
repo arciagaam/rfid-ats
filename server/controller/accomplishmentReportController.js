@@ -131,5 +131,24 @@ const notifyUser = asyncHandler(async(req, res) => {
     }
 })
 
+// @desc    Get all number of pending accomplishment reports
+// @route   GET /api/accomplishments-reports/pending
+// @access  Private/Admin
+const getPendingAR = asyncHandler(async(req, res) => {
+    try {
+        const pendingReportsCount = (await User.find({ 'isPendingAR.status': true })).map((user) => ({
+            _id: user._id,
+            status: user.isPendingAR.status,
+            deadline: user.isPendingAR.deadline,
+          }))
 
-export { getAccomplishmentReports, storeAccomplishmentReports, getAccomplishmentReportsPerUser, getAccomplishmentReportPerId, notifyUser }
+        res.status(200).json(pendingReportsCount)
+      } catch (error) {
+        console.error(error)
+
+        res.status(500).json({ error: 'Failed to fetch pending reports count' })
+      }
+})
+
+
+export { getAccomplishmentReports, storeAccomplishmentReports, getAccomplishmentReportsPerUser, getAccomplishmentReportPerId, notifyUser, getPendingAR }

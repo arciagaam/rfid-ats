@@ -32,6 +32,11 @@ export const accomplishmentReportApiSlice = apiSlice.injectEndpoints({
                 body: data,
             }),
         }),
+        getPendingAR: builder.query({
+            query: (params: string) => ({
+                url: `${AR_URL}/pending${params ? `?${params}` : ''}`,
+            }),
+        }),
     }),
 })
 
@@ -41,4 +46,5 @@ export const {
     useGetAccomplishmentReportByIdQuery,
     useStoreAccomplishmentReportMutation,
     useNotifyUserMutation,
+    useGetPendingARQuery,
 } = accomplishmentReportApiSlice
