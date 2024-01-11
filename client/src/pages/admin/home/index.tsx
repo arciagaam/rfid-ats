@@ -183,7 +183,7 @@ const Home = () => {
                         searchPlaceholder='Search date eg. yyyy-mm-dd...'
                         component={[
                             <Button asChild>
-                                <Link to='/monitor'>Display Monitor</Link>
+                                <Link target='_blank' to='/monitor'>Display Monitor</Link>
                             </Button>,
                             <FormModalBtn
                                 btnLabel='Print Attendance'
