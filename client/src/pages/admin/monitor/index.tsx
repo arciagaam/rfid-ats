@@ -72,8 +72,8 @@ const Monitor = () => {
 
     return (
         <div className='flex flex-col h-screen w-full'>
-            <div className={`flex w-full justify-center gap-20 ${bgColor} py-5 h-[25vh]`}>
-                <div className='aspect-square rounded-full overflow-clip'>
+            <div className={`flex w-full justify-center gap-20 ${bgColor} py-5`}>
+                <div className='aspect-square rounded-full overflow-clip h-[20vh] self-center'>
                     {department == 'ccs' ? (
                         <img src={ccslogo} alt='' className='object-cover h-full' />
                     ) : (
@@ -95,7 +95,7 @@ const Monitor = () => {
                 </div>
             </div>
 
-            <div className='relative flex w-full items-center justify-center h-[75vh]'>
+            <div className='relative flex w-full h-full items-center justify-center'>
                 {!data ? <IdleScreen department={department} /> : <ActiveScreen data={data} />}
             </div>
         </div>
@@ -121,9 +121,9 @@ const IdleScreen: React.FC<IdleScreenProps> = ({ department }) => {
     return (
         <div className='h-3/4 opacity-50'>
             {department == 'ccs' ? (
-                <img src={ccslogo} alt='' className='h-full' />
+                <img src={ccslogo} alt='' className='h-[43vh]' />
             ) : (
-                <img src={coelogo} alt='' className='h-full rounded-full' />
+                <img src={coelogo} alt='' className='h-[43vh] rounded-full' />
             )}
         </div>
     )
