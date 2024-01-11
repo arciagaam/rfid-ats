@@ -176,7 +176,7 @@ const ActiveScreen: React.FC<ActiveScreenProps> = ({ data }) => {
                     <>
                         <p className='text-xl lg:text-lg'>{data.name}</p>
                         <div className='flex space-x-2'>
-                            <p className='text-xl font-extrabold lg:text-lg'>{checkIfAfternoon() ? 'PM OUT: ' : 'PM IN: '}</p>
+                            <p className='text-xl font-extrabold lg:text-lg'>{checkIfAfternoon() ? 'PM OUT: ' : 'AM OUT: '}</p>
                             <p className='text-xl lg:text-lg'>{checkIfAfternoon() ? data.PmTimeOut : data.AmTimeOut}</p>
                         </div>
                         <div className='flex space-x-2'>
