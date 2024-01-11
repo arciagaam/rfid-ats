@@ -7,21 +7,35 @@ const attendanceLogSchema = new mongoose.Schema({
         required: true,
     },
     date: { type: Date, required: true },
-    timeIn: { type: Date, required: true },
-    timeOut: { type: Date },
+    AmTimeIn: { type: Date },
+    AmTimeOut: { type: Date },
+    PmTimeIn: { type: Date },
+    PmTimeOut: { type: Date },
     totalTimeRendered: String,
     userName: { type: String },
 }, { timestamps: true })
 
-attendanceLogSchema.methods.calculateTotalTimeRendered = function() {
-    if (this.timeIn && this.timeOut) {
-        const timeDifference = this.timeOut - this.timeIn
-        const hoursRendered = Math.floor(timeDifference / 3600000) // 1 hour = 3600000 milliseconds
-        const minutesRendered = Math.floor((timeDifference % 3600000) / 60000) // 1 minute = 60000 milliseconds
-        this.totalTimeRendered = `${hoursRendered}h ${minutesRendered}m`
+attendanceLogSchema.methods.calculateTotalTimeRendered = function () {
+
+    const amTimeDifference = this.AmTimeOut - this.AmTimeIn;
+    const pmTimeDifference = this.PmTimeOut - this.PmTimeIn;
+    let totalTimeDifference;
+
+    if (!isNaN(parseInt(amTimeDifference)) && !isNaN(parseInt(pmTimeDifference))) {
+        totalTimeDifference = amTimeDifference + pmTimeDifference;
+    } else if (!isNaN(parseInt(amTimeDifference)) && isNaN(parseInt(pmTimeDifference))) {
+        totalTimeDifference = amTimeDifference;
+    } else if (isNaN(parseInt(amTimeDifference)) && !isNaN(parseInt(pmTimeDifference))) {
+        totalTimeDifference = pmTimeDifference
     } else {
         this.totalTimeRendered = 'N/A'
+        return
     }
+
+    // const timeDifference = this.timeOut - this.timeIn
+    const hoursRendered = Math.floor(totalTimeDifference / 3600000) // 1 hour = 3600000 milliseconds
+    const minutesRendered = Math.floor((totalTimeDifference % 3600000) / 60000) // 1 minute = 60000 milliseconds
+    this.totalTimeRendered = `${hoursRendered}h ${minutesRendered}m`
 }
 
 const AttendanceLog = mongoose.model('AttendanceLog', attendanceLogSchema)

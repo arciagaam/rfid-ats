@@ -15,39 +15,52 @@ function getFullName(user) {
 }
 
 async function handleTimeIn(req, res, userId, fullName, idNumber, profilePicture = null) {
-    const newLog = await AttendanceLog.create({
-        user: userId,
-        userName: fullName,
-        date: new Date(),
-        timeIn: new Date(),
-        timeOut: null,
-    })
 
-    await newLog.save()
+    const newLog = checkIfAfternoon() 
+        ? await AttendanceLog.create({
+            user: userId,
+            userName: fullName,
+            date: new Date(),
+            AmTimeIn: null,
+            AmTimeOut: null,
+            PmTimeIn: new Date(),
+            PmTimeOut: null,
+        })
+        : await AttendanceLog.create({
+            user: userId,
+            userName: fullName,
+            date: new Date(),
+            AmTimeIn: new Date(),
+            AmTimeOut: null,
+            PmTimeIn: null,
+            PmTimeOut: null,
+        })
 
-    const newFetchLog = await AttendanceLog.findOne({_id: newLog._id}).lean()
+        await newLog.save()
 
-    req.io.emit('newLog', {...newFetchLog, idNumber, profilePicture})
+    const newFetchLog = await AttendanceLog.findOne({ _id: newLog._id }).lean()
+
+    req.io.emit('newLog', { ...newFetchLog, idNumber, profilePicture })
 
     res.status(200).json({
-        message: `${fullName} has timed in at ${newLog.timeIn}`,
+        message: `${fullName} has timed in at ${checkIfAfternoon() ? newLog.PmTimeIn : newLog.AmTimeIn}`,
     })
 }
 
 async function handleTimeOut(req, res, existingLog, fullName, idNumber, profilePicture = null) {
 
-    existingLog.timeOut = new Date()
-
-    existingLog.calculateTotalTimeRendered()
-    await existingLog.save()
+    checkIfAfternoon() ? existingLog.PmTimeOut = new Date() : existingLog.AmTimeOut = new Date()
     
-    const newFetchLog = await AttendanceLog.findOne({_id: existingLog._id}).lean()
+    existingLog.calculateTotalTimeRendered()
 
+    await existingLog.save()
 
-    req.io.emit('newLog', {...newFetchLog, idNumber, profilePicture})
+    const newFetchLog = await AttendanceLog.findOne({ _id: existingLog._id }).lean()
+
+    req.io.emit('newLog', { ...newFetchLog, idNumber, profilePicture })
 
     res.status(200).json({
-        message: `${fullName} has timed out at ${existingLog.timeOut}`
+        message: `${fullName} has timed out at ${checkIfAfternoon() ? existingLog.PmTimeOut : existingLog.AmTimeOut}`
     })
 }
 
@@ -62,6 +75,13 @@ function handleRfidNotFound(res) {
     throw new Error('RFID not found in database')
 }
 
+function checkIfAfternoon() {
+    const now = new Date();
+    const hour = now.getHours();
+
+    return (hour >= 12 && hour <= 23)
+}
+
 export {
     formatRfidData,
     getUserByRfid,
@@ -70,4 +90,5 @@ export {
     handleTimeOut,
     handleInvalidRequest,
     handleRfidNotFound,
+    checkIfAfternoon
 }
