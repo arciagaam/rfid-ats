@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ccslogo from './../../../assets/images/ccs.jpg'
 import coelogo from './../../../assets/images/coe.jpg'
 import { useSelector } from 'react-redux'
@@ -36,6 +36,7 @@ const Monitor = () => {
     const { userInfo } = useSelector((state: RootState) => state.auth)
     const { role, department } = userInfo
     const [data, setData] = useState(null)
+    const timeout = useRef();
 
     let bgColor
 
@@ -45,13 +46,12 @@ const Monitor = () => {
         bgColor = 'bg-yellow-300'
     }
 
-    let timeout: ReturnType<typeof setTimeout>
-
+    
     useEffect(() => {
         const socket = io(API_BASE_URL)
 
         socket.on('newLog', (newLogData) => {
-            clearTimeout(timeout)
+            clearTimeout(timeout.current)
             const isTimeIn = (newLogData.AmTimeOut === null && newLogData.PmTimeOut === null)
 
             const formattedDate = formatDate(new Date(newLogData.date))
@@ -74,17 +74,17 @@ const Monitor = () => {
             
 
             setData(newLogData)
-            startTimeout(timeout)
+            startTimeout()
         })
 
         return () => {
             socket.disconnect()
-            clearTimeout(timeout)
+            clearTimeout(timeout.current)
         }
     }, [])
 
-    const startTimeout = (timeout: ReturnType<typeof setTimeout>) => {
-        timeout = setTimeout(() => {
+    const startTimeout = () => {
+        timeout.current = setTimeout(() => {
             setData(null)
         }, 5000)
     }
