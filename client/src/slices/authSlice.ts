@@ -9,6 +9,10 @@ interface IAuthState {
         email: string
         role: string
         department: string
+        isPendingAR: {
+            status: boolean
+            deadline: string
+        }
     } | null
 }
 

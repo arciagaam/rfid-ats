@@ -20,12 +20,15 @@ const AccomplishmentReport = () => {
 
     const { data: users, refetch } = useGetUsersQuery(`role=${type}&status=active`)
 
+    console.log(users)
+
     useEffect(() => {
         if (users) {
             const tableData = users.map((user: IUserRow) => ({
                 id: user._id,
                 name: `${user.firstName} ${user.middleName ?? ''} ${user.lastName}`,
                 email: user.email,
+                pending: user.isPendingAR,
                 role: user.role,
                 status: user.status,
             }))

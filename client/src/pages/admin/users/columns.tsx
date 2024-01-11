@@ -18,6 +18,7 @@ export interface IUserRow extends Log {
     firstName: string
     middleName: string
     lastName: string
+    isPendingAR: string[]
 }
 
 export const columns: ColumnDef<Log>[] = [

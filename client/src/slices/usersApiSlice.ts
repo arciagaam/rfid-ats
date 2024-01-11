@@ -1,7 +1,5 @@
 import { USERS_URL } from '@/constants/constants'
 import { apiSlice } from '@/slices/apiSlice'
-import { attendancePrintSchema } from '@/validators/attendancePrint'
-import { z } from 'zod'
 
 export const usersApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
