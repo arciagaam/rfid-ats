@@ -40,7 +40,7 @@ const Home = () => {
 
     // format date to readable format eg. 2021-09-01T16:00:00.000Z -> September 1, 2021
     const formatDate = (date) => moment(date).format('MMMM D, YYYY')
-    const dueDate = formatDate(new Date(userInfo!.isPendingAR.deadline))
+    const dueDate = formatDate(new Date(userInfo!.isPendingAR?.deadline))
 
     useEffect(() => {
         if (user && user.isPendingAR.status) {
