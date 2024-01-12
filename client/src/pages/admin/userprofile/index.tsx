@@ -29,13 +29,19 @@ const ShowUser = () => {
     useEffect(() => {
         if (userLogs) {
             const tableData = userLogs.map((userLog: Log) => {
-                const formattedTimeIn = formatTime(userLog.timeIn)
-                const formattedTimeOut = userLog.timeOut ? formatTime(userLog.timeOut) : '--:--'
+                const formattedAMTimeIn = userLog.AmTimeIn ? formatTime(userLog.AmTimeIn) : '--:--'
+                const formattedAMTimeOut = userLog.AmTimeOut ? formatTime(userLog.AmTimeOut) : '--:--'
+
+                const formattedPMTimeIn = userLog.PmTimeIn ? formatTime(userLog.PmTimeIn) : '--:--'
+                const formattedPMTimeOut = userLog.PmTimeOut ? formatTime(userLog.PmTimeOut) : '--:--'
 
                 return {
+                    _id: userLog._id,
                     date: formatDate(new Date(userLog.date)),
-                    timeIn: formattedTimeIn,
-                    timeOut: formattedTimeOut,
+                    AmTimeIn: formattedAMTimeIn,
+                    AmTimeOut: formattedAMTimeOut,
+                    PmTimeIn: formattedPMTimeIn,
+                    PmTimeOut: formattedPMTimeOut,
                     totalTimeRendered: userLog.totalTimeRendered
                         ? userLog.totalTimeRendered
                         : '--:--',
@@ -52,15 +58,20 @@ const ShowUser = () => {
         const socket = io(API_BASE_URL)
 
         socket.on('newLog', (newLogData) => {
-            const isTimeIn = newLogData.timeOut === null
-
+            const isTimeIn = newLogData.isTimeIn
             const formattedDate = formatDate(new Date(newLogData.date))
-            const formattedTimeIn = formatTime(newLogData.timeIn)
-            const formattedTimeOut = newLogData.timeOut ? formatTime(newLogData.timeOut) : '--:--'
+
+            const formattedAMTimeIn = newLogData.AmTimeIn ? formatTime(newLogData.AmTimeIn) : '--:--'
+            const formattedAMTimeOut = newLogData.AmTimeOut ? formatTime(newLogData.AmTimeOut) : '--:--'
+
+            const formattedPMTimeIn = newLogData.PmTimeIn ? formatTime(newLogData.PmTimeIn) : '--:--'
+            const formattedPMTimeOut = newLogData.PmTimeOut ? formatTime(newLogData.PmTimeOut) : '--:--'
 
             newLogData.date = formattedDate
-            newLogData.timeIn = formattedTimeIn
-            newLogData.timeOut = formattedTimeOut
+            newLogData.AmTimeIn = formattedAMTimeIn
+            newLogData.AmTimeOut = formattedAMTimeOut
+            newLogData.PmTimeIn = formattedPMTimeIn
+            newLogData.PmTimeOut = formattedPMTimeOut
             newLogData.totalTimeRendered = newLogData.totalTimeRendered ?? '--:--'
 
             newLogData.updatedAt = new Date().toISOString()
@@ -70,8 +81,8 @@ const ShowUser = () => {
                     if (isTimeIn) {
                         return [newLogData, ...prevData]
                     } else {
-                        const updatedData = prevData.map((log) => {
-                            if (log.date === formattedDate && log.timeOut === '--:--') {
+                        const updatedData = prevData.map((log: Log) => {
+                            if (log._id === newLogData._id) {
                                 return newLogData
                             }
                             return log

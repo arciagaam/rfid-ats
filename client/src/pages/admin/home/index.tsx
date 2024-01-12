@@ -21,6 +21,7 @@ import { API_BASE_URL } from '@/constants/constants'
 
 import { toast } from 'react-toastify'
 import { Link } from 'react-router-dom'
+import { combineReducers } from '@reduxjs/toolkit'
 
 const Home = () => {
     const [data, setData] = useState<Log[]>([])
@@ -47,6 +48,8 @@ const Home = () => {
                 const fullName = `${userLog.user?.firstName} ${userLog.user?.middleName} ${userLog.user?.lastName}`
 
                 return {
+                    _id: userLog._id,
+                    user: userLog.user._id,
                     date: formatDate(new Date(userLog.date)),
                     name: fullName,
                     AmTimeIn: formattedAMTimeIn,
@@ -89,7 +92,7 @@ const Home = () => {
         const socket = io(API_BASE_URL)
 
         socket.on('newLog', (newLogData) => {
-            const isTimeIn = (newLogData.AmTimeOut === null && newLogData.PmTimeOut === null)
+            const isTimeIn = newLogData.isTimeIn
 
             const formattedDate = formatDate(new Date(newLogData.date))
 
@@ -118,11 +121,7 @@ const Home = () => {
                     return [newLogData, ...prevData]
                 } else {
                     const updatedData = prevData.map((log) => {
-                        if (
-                            log.user === newLogData.user &&
-                            log.date === formattedDate &&
-                            (log.AmTimeOut === '--:--' || log.PmTimeOut === '--:--')
-                        ) {
+                        if (log._id === newLogData._id) {
                             return newLogData
                         }
 

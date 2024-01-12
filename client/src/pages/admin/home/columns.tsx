@@ -4,7 +4,9 @@ import { ColumnDef } from '@tanstack/react-table'
 // import { Button } from '@/components/ui/button'
 
 export type Log = {
+    _id: string,
     user: {
+        _id: string
         firstName: string
         middleName: string
         lastName: string

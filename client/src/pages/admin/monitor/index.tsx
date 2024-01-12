@@ -52,7 +52,7 @@ const Monitor = () => {
 
         socket.on('newLog', (newLogData) => {
             clearTimeout(timeout.current)
-            const isTimeIn = (newLogData.AmTimeOut === null && newLogData.PmTimeOut === null)
+            const isTimeIn = newLogData.isTimeIn
 
             const formattedDate = formatDate(new Date(newLogData.date))
 

@@ -39,4 +39,5 @@ const getExistingAttendanceLog = async (userId) => {
 
 }
 
+
 export { compareUIDToDatabase, getAttendanceLog, getExistingAttendanceLog }

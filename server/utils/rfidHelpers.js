@@ -40,10 +40,24 @@ async function handleTimeIn(req, res, userId, fullName, idNumber, profilePicture
 
     const newFetchLog = await AttendanceLog.findOne({ _id: newLog._id }).lean()
 
-    req.io.emit('newLog', { ...newFetchLog, idNumber, profilePicture })
+    req.io.emit('newLog', { ...newFetchLog, idNumber, profilePicture, isTimeIn: true })
 
     res.status(200).json({
         message: `${fullName} has timed in at ${checkIfAfternoon() ? newLog.PmTimeIn : newLog.AmTimeIn}`,
+    })
+}
+
+async function handlePMTimeIn(req, res, existingLog, fullName, idNumber, profilePicture = null) {
+
+    existingLog.PmTimeIn = new Date()
+    await existingLog.save()
+
+    const newFetchLog = await AttendanceLog.findOne({ _id: existingLog._id }).lean()
+
+    req.io.emit('newLog', { ...newFetchLog, idNumber, profilePicture, isTimeIn: true })
+
+    res.status(200).json({
+        message: `${fullName} has timed in at ${existingLog.PmTimeIn}`
     })
 }
 
@@ -57,7 +71,7 @@ async function handleTimeOut(req, res, existingLog, fullName, idNumber, profileP
 
     const newFetchLog = await AttendanceLog.findOne({ _id: existingLog._id }).lean()
 
-    req.io.emit('newLog', { ...newFetchLog, idNumber, profilePicture })
+    req.io.emit('newLog', { ...newFetchLog, idNumber, profilePicture, isTimeIn: false })
 
     res.status(200).json({
         message: `${fullName} has timed out at ${checkIfAfternoon() ? existingLog.PmTimeOut : existingLog.AmTimeOut}`
@@ -88,6 +102,7 @@ export {
     getFullName,
     handleTimeIn,
     handleTimeOut,
+    handlePMTimeIn,
     handleInvalidRequest,
     handleRfidNotFound,
     checkIfAfternoon

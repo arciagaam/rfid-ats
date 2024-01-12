@@ -1,6 +1,10 @@
 import { ColumnDef } from '@tanstack/react-table'
 
 export type Log = {
+    _id: string
+    user: {
+        _id: string
+    }
     date: string
     AmTimeIn: string
     AmTimeOut: string

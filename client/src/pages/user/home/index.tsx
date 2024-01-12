@@ -58,6 +58,8 @@ const Home = () => {
                 const formattedPMTimeOut = userLog.PmTimeOut ? formatTime(userLog.PmTimeOut) : '--:--'
 
                 return {
+                    _id: userLog._id,
+                    user: userLog.user,
                     date: formatDate(new Date(userLog.date)),
                     AmTimeIn: formattedAMTimeIn,
                     AmTimeOut: formattedAMTimeOut,
@@ -79,7 +81,7 @@ const Home = () => {
         const socket = io(API_BASE_URL)
 
         socket.on('newLog', (newLogData) => {
-            const isTimeIn = (newLogData.AmTimeOut === null && newLogData.PmTimeOut === null)
+            const isTimeIn = newLogData.isTimeIn
 
             const formattedDate = formatDate(new Date(newLogData.date))
 
@@ -103,11 +105,8 @@ const Home = () => {
                     if (isTimeIn) {
                         return [newLogData, ...prevData]
                     } else {
-                        const updatedData = prevData.map((log) => {
-                            if (
-                                log.date === formattedDate &&
-                                (log.AmTimeOut === '--:--' || log.PmTimeOut === '--:--')
-                            ) {
+                        const updatedData = prevData.map((log: Log) => {
+                            if (log._id === newLogData._id) {
                                 return newLogData
                             }
                             return log

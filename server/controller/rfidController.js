@@ -12,7 +12,9 @@ import {
     handleRfidNotFound,
     handleInvalidRequest,
     checkIfAfternoon,
+    handlePMTimeIn,
 } from '../utils/rfidHelpers.js'
+import AttendanceLog from '../models/AttendanceLog.js'
 
 let storingActive = false
 let windowTimeout
@@ -144,14 +146,37 @@ const getRfidFromReader = asyncHandler(async (req, res) => {
         const existingLog = await getExistingAttendanceLog(matchingRfid.user)
 
         if (existingLog) {
-            return handleTimeOut(
-                req,
-                res,
-                existingLog,
-                fullName,
-                user.idNumber,
-                user.profilePicture
-            )
+            const now = new Date();
+            const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            const checkIfAmTimeout = await AttendanceLog.findOne({
+                user: matchingRfid.user,
+                date: {'$gte': startOfToday},
+                AmTimeOut: {'$ne': null},
+                PmTimeIn: null
+            })
+
+            if(checkIfAmTimeout) {
+                return handlePMTimeIn(
+                    req,
+                    res,
+                    existingLog,
+                    fullName,
+                    user.idNumber,
+                    user.profilePicture
+                )
+            } else {
+                return handleTimeOut(
+                    req,
+                    res,
+                    existingLog,
+                    fullName,
+                    user.idNumber,
+                    user.profilePicture
+                )
+            }
+
+
         } else {
             return handleTimeIn(
                 req,
