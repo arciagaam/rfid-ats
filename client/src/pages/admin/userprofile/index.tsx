@@ -79,7 +79,7 @@ const ShowUser = () => {
             if (newLogData.user === userId) {
                 setData((prevData) => {
                     if (isTimeIn) {
-                        if (newLogData.AmTimeIn !== null && newLogData.AmTimeOut !== null) {
+                        if (newLogData.AmTimeOut !== '--:--') {
                             const updatedData = prevData.map((log: Log) => {
                                 if (log._id === newLogData._id) {
                                     return newLogData

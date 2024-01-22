@@ -118,8 +118,8 @@ const Home = () => {
 
             setData((prevData) => {
                 if (isTimeIn) {
-
-                    if (newLogData.AmTimeIn !== null && newLogData.AmTimeOut !== null) {
+                    console.log(newLogData.AmTimeOut);
+                    if (newLogData.AmTimeOut !== '--:--') {
                         const updatedData = prevData.map((log: Log) => {
                             if (log._id === newLogData._id) {
                                 return newLogData
@@ -127,9 +127,9 @@ const Home = () => {
                             return log
                         })
                         return updatedData
+                    }else {
+                        return [newLogData, ...prevData]
                     }
-
-                    return [newLogData, ...prevData]
                 } else {
                     const updatedData = prevData.map((log) => {
                         if (log._id === newLogData._id) {
