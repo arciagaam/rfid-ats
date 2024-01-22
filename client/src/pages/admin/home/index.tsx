@@ -45,7 +45,7 @@ const Home = () => {
                 const formattedPMTimeIn = userLog.PmTimeIn ? formatTime(userLog.PmTimeIn) : '--:--'
                 const formattedPMTimeOut = userLog.PmTimeOut ? formatTime(userLog.PmTimeOut) : '--:--'
 
-                const fullName = `${userLog.user?.firstName} ${userLog.user?.middleName} ${userLog.user?.lastName}`
+                const fullName = `${userLog.user?.firstName} ${userLog.user?.middleName ?? ''} ${userLog.user?.lastName}`
 
                 return {
                     _id: userLog._id,
